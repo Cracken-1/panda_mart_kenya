@@ -2,13 +2,16 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Menu, X, MapPin } from 'lucide-react'
+import { Menu, X, MapPin, ShoppingCart } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import ProductSearch from '../search/ProductSearch'
 import PandaIDSystem from '../auth/PandaIDSystem'
+import { useCartStore } from '@/lib/store/cartStore'
+import EnhancedCartDrawer from '../cart/EnhancedCartDrawer'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const { totalItems, openCart } = useCartStore()
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -58,6 +61,19 @@ const Header = () => {
               <MapPin className="w-5 h-5 mr-1" />
               Find Store
             </Link>
+            
+            {/* Cart Button */}
+            <button
+              onClick={openCart}
+              className="relative text-gray-700 hover:text-panda-red-500 transition-colors"
+            >
+              <ShoppingCart className="w-6 h-6" />
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 bg-panda-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                  {totalItems > 99 ? '99+' : totalItems}
+                </span>
+              )}
+            </button>
             
             <PandaIDSystem redirectTo="/account" />
 
@@ -111,6 +127,9 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      
+      {/* Enhanced Cart Drawer */}
+      <EnhancedCartDrawer />
     </header>
   )
 }

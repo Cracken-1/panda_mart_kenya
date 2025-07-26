@@ -23,30 +23,31 @@ body {
 }
 
 @layer components {
+
   /* Button Styles */
   .btn-primary {
     @apply bg-panda-red-500 hover:bg-panda-red-600 text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl;
   }
-  
+
   .btn-outline {
     @apply border-2 border-panda-red-500 text-panda-red-500 hover:bg-panda-red-500 hover:text-white font-semibold py-3 px-6 rounded-lg transition-all duration-300;
   }
-  
+
   /* Card Styles */
   .card {
     @apply bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1;
   }
-  
+
   /* Gradient Backgrounds */
   .gradient-bg {
     @apply bg-gradient-to-r from-panda-red-500 to-panda-red-600;
   }
-  
+
   /* Text Gradient */
   .text-gradient {
     @apply bg-gradient-to-r from-panda-red-500 to-panda-red-600 bg-clip-text text-transparent;
   }
-  
+
   /* Container */
   .container {
     @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
@@ -57,16 +58,16 @@ body {
   .text-balance {
     text-wrap: balance;
   }
-  
+
   /* Custom animations */
   .animate-fade-in {
     animation: fadeIn 0.6s ease-out;
   }
-  
+
   .animate-slide-up {
     animation: slideUp 0.6s ease-out;
   }
-  
+
   .animate-bounce-gentle {
     animation: bounceGentle 2s infinite;
   }
@@ -78,6 +79,7 @@ body {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -89,6 +91,7 @@ body {
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -96,9 +99,12 @@ body {
 }
 
 @keyframes bounceGentle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-5px);
   }
