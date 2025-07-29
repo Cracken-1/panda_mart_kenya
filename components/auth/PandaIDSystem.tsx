@@ -33,10 +33,10 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
     const checkAuthStatus = () => {
       // Only run on client side
       if (typeof window === 'undefined') return
-      
+
       const authToken = localStorage.getItem('auth-token')
       const userData = localStorage.getItem('user-data')
-      
+
       if (authToken && userData) {
         try {
           const parsedUserData = JSON.parse(userData)
@@ -84,14 +84,14 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
 
   const handleRegister = async () => {
     setIsLoading(true)
-    
+
     try {
       // Validate form
       if (!formData.name || !formData.email || !formData.phone || !formData.password) {
         alert('Please fill in all fields')
         return
       }
-      
+
       if (formData.password !== formData.confirmPassword) {
         alert('Passwords do not match')
         return
@@ -99,11 +99,11 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
 
       // Simulate registration process
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
+
       // Generate new Panda ID
       const pandaId = generatePandaId()
       setNewPandaId(pandaId)
-      
+
       // Create new user profile with zero progress
       const newUserProfile = {
         id: 'user_' + Date.now(),
@@ -120,14 +120,14 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
         achievements: [],
         addresses: []
       }
-      
+
       // Store user data
       localStorage.setItem('auth-token', 'token-' + Date.now())
       localStorage.setItem('user-data', JSON.stringify(newUserProfile))
-      
+
       setUserProfile(newUserProfile)
       setIsLoggedIn(true)
-      
+
       // Show Panda ID for 3 seconds before redirecting
       setShowPandaId(true)
       setTimeout(() => {
@@ -136,7 +136,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
         const redirectUrl = searchParams.get('redirect') || redirectTo
         router.push(redirectUrl)
       }, 3000)
-      
+
     } catch (error) {
       console.error('Registration error:', error)
       alert('Registration failed. Please try again.')
@@ -147,7 +147,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
 
   const handleLogin = async () => {
     setIsLoading(true)
-    
+
     try {
       // Validate form
       if (!formData.email || !formData.password) {
@@ -157,12 +157,12 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
 
       // Simulate login process
       await new Promise(resolve => setTimeout(resolve, 800))
-      
+
       // For demo purposes, create a user profile if login is attempted
       // In a real app, this would authenticate against a backend
       const existingUser = localStorage.getItem('user-data')
       let userProfile
-      
+
       if (existingUser) {
         userProfile = JSON.parse(existingUser)
       } else {
@@ -184,19 +184,19 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
         }
         localStorage.setItem('user-data', JSON.stringify(userProfile))
       }
-      
+
       setUserProfile(userProfile)
       setIsLoggedIn(true)
       setIsOpen(false)
-      
+
       localStorage.setItem('auth-token', 'token-' + Date.now())
-      
+
       // Redirect to dashboard
       const redirectUrl = searchParams.get('redirect') || redirectTo
       setTimeout(() => {
         router.push(redirectUrl)
       }, 100)
-      
+
     } catch (error) {
       console.error('Login error:', error)
       alert('Login failed. Please try again.')
@@ -267,7 +267,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
               {userProfile.points > 0 ? 'Redeem Points' : 'Earn Points'}
             </button>
           </div>
-          
+
           <div className="card p-6 text-center">
             <CreditCard className="w-8 h-8 text-panda-red-500 mx-auto mb-3" />
             <div className="text-2xl font-bold text-panda-black-900 mb-1">{userProfile.totalOrders}</div>
@@ -276,7 +276,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
               {userProfile.totalOrders > 0 ? 'View Orders' : 'Start Shopping'}
             </button>
           </div>
-          
+
           <div className="card p-6 text-center">
             <MapPin className="w-8 h-8 text-panda-red-500 mx-auto mb-3" />
             <div className="text-2xl font-bold text-panda-black-900 mb-1">
@@ -292,7 +292,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
           <h3 className="text-xl font-bold text-panda-black-900 mb-4">
             {isNewUser ? 'Get Started' : 'Recent Activity'}
           </h3>
-          
+
           {isNewUser ? (
             <div className="text-center py-8">
               <div className="w-16 h-16 bg-panda-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -335,14 +335,18 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/50 z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto"
+          style={{ 
+            minHeight: '100vh',
+            minHeight: '100dvh' // Dynamic viewport height for mobile
+          }}
           onClick={() => setIsOpen(false)}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden"
+            className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden my-4 sm:my-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -358,21 +362,19 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
             <div className="flex border-b">
               <button
                 onClick={() => setActiveTab('login')}
-                className={`flex-1 py-3 px-4 font-semibold ${
-                  activeTab === 'login'
-                    ? 'text-panda-red-500 border-b-2 border-panda-red-500'
-                    : 'text-gray-500'
-                }`}
+                className={`flex-1 py-3 px-4 font-semibold ${activeTab === 'login'
+                  ? 'text-panda-red-500 border-b-2 border-panda-red-500'
+                  : 'text-gray-500'
+                  }`}
               >
                 Login
               </button>
               <button
                 onClick={() => setActiveTab('register')}
-                className={`flex-1 py-3 px-4 font-semibold ${
-                  activeTab === 'register'
-                    ? 'text-panda-red-500 border-b-2 border-panda-red-500'
-                    : 'text-gray-500'
-                }`}
+                className={`flex-1 py-3 px-4 font-semibold ${activeTab === 'register'
+                  ? 'text-panda-red-500 border-b-2 border-panda-red-500'
+                  : 'text-gray-500'
+                  }`}
               >
                 Register
               </button>
@@ -389,15 +391,17 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                     <div className="relative">
                       <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                       <input
-                        type="text"
+                        type="email"
                         value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
                         placeholder="Enter email or phone"
+                        autoComplete="email"
+                        inputMode="email"
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Password
@@ -406,9 +410,10 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                       <input
                         type={showPassword ? 'text' : 'password'}
                         value={formData.password}
-                        onChange={(e) => setFormData({...formData, password: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
                         placeholder="Enter password"
+                        autoComplete="current-password"
                       />
                       <button
                         type="button"
@@ -419,7 +424,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                       </button>
                     </div>
                   </div>
-                  
+
                   <button
                     onClick={handleLogin}
                     disabled={isLoading}
@@ -434,7 +439,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                       'Login to Panda ID'
                     )}
                   </button>
-                  
+
                   <div className="text-center">
                     <a href="/forgot-password" className="text-sm text-panda-red-500 hover:underline">
                       Forgot password?
@@ -452,13 +457,15 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                       <input
                         type="text"
                         value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
                         placeholder="Enter full name"
+                        autoComplete="name"
+                        inputMode="text"
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Email
@@ -468,13 +475,15 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                       <input
                         type="email"
                         value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
                         placeholder="Enter email"
+                        autoComplete="email"
+                        inputMode="email"
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Phone Number
@@ -484,13 +493,15 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                       <input
                         type="tel"
                         value={formData.phone}
-                        onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
                         placeholder="+254 700 000 000"
+                        autoComplete="tel"
+                        inputMode="tel"
                       />
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Password
@@ -499,9 +510,10 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                       <input
                         type={showPassword ? 'text' : 'password'}
                         value={formData.password}
-                        onChange={(e) => setFormData({...formData, password: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                         className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
                         placeholder="Create password"
+                        autoComplete="new-password"
                       />
                       <button
                         type="button"
@@ -512,7 +524,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                       </button>
                     </div>
                   </div>
-                  
+
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Confirm Password
@@ -521,13 +533,14 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                       <input
                         type={showPassword ? 'text' : 'password'}
                         value={formData.confirmPassword}
-                        onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                        onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                         className="w-full pr-10 pl-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
                         placeholder="Confirm password"
+                        autoComplete="new-password"
                       />
                     </div>
                   </div>
-                  
+
                   <button
                     onClick={handleRegister}
                     disabled={isLoading}
@@ -542,7 +555,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
                       'Create Panda ID'
                     )}
                   </button>
-                  
+
                   <p className="text-xs text-gray-500 text-center">
                     By creating an account, you agree to our{' '}
                     <a href="/terms" target="_blank" className="text-panda-red-500 hover:underline">
@@ -691,11 +704,10 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
           }
         }}
         disabled={isLoading}
-        className={`flex items-center transition-colors relative ${
-          isLoading 
-            ? 'text-gray-400 cursor-not-allowed' 
-            : 'text-gray-700 hover:text-red-500'
-        }`}
+        className={`flex items-center transition-colors relative ${isLoading
+          ? 'text-gray-400 cursor-not-allowed'
+          : 'text-gray-700 hover:text-red-500'
+          }`}
         title={isLoggedIn ? 'Go to Account' : 'Login to Panda ID'}
       >
         {isLoading ? (
