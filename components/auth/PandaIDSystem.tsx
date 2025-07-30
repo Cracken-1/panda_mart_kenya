@@ -336,7 +336,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black/50 z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto"
-          style={{ 
+          style={{
             minHeight: '100vh',
             minHeight: '100dvh' // Dynamic viewport height for mobile
           }}
