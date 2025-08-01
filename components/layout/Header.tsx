@@ -29,12 +29,12 @@ const Header = () => {
 
   return (
     <header className="bg-white shadow-xl sticky top-0 z-50 border-b border-gray-100">
-      {/* Top Bar */}
-      <div className="bg-gradient-to-r from-panda-red-500 to-red-600 text-white py-3">
+      {/* Top Bar - Hidden on Mobile */}
+      <div className="hidden md:block bg-gradient-to-r from-panda-red-500 to-red-600 text-white py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between">
             {/* Contact Information */}
-            <div className="flex items-center space-x-4 md:space-x-8">
+            <div className="flex items-center space-x-4 lg:space-x-8">
               <div className="flex items-center space-x-1">
                 <Phone className="w-4 h-4" />
                 <span className="text-sm font-medium">Garden City:</span>
@@ -42,7 +42,7 @@ const Header = () => {
                   020 231 1166
                 </a>
               </div>
-              <div className="hidden sm:flex items-center space-x-1">
+              <div className="flex items-center space-x-1">
                 <Phone className="w-4 h-4" />
                 <span className="text-sm font-medium">Galleria:</span>
                 <a href="tel:0778666666" className="text-sm font-semibold hover:text-yellow-200 transition-colors">
@@ -50,7 +50,7 @@ const Header = () => {
                 </a>
               </div>
             </div>
-            
+
             {/* Quick Links */}
             <div className="flex items-center space-x-4 text-sm">
               <Link href="/wholesale" className="font-medium hover:text-yellow-200 transition-colors">
@@ -226,7 +226,7 @@ const Header = () => {
                   </Link>
                 ))}
               </div>
-              
+
               {/* Contact Information - Mobile */}
               <div className="bg-gradient-to-r from-panda-red-50 to-red-100 rounded-xl p-4 mb-4">
                 <h4 className="text-sm font-semibold text-panda-red-800 mb-2">Store Contacts</h4>
