@@ -23,7 +23,7 @@ const BundlesPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-700 text-white py-16">
+      <section className="bg-gradient-to-r from-panda-red-600 via-red-700 to-panda-black-800 text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -65,7 +65,7 @@ const BundlesPage = () => {
                 onClick={() => setSelectedCategory(category.id)}
                 className={`px-6 py-3 rounded-full font-medium transition-all ${
                   selectedCategory === category.id
-                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
+                    ? 'bg-gradient-to-r from-panda-red-500 to-red-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -96,7 +96,7 @@ const BundlesPage = () => {
                       alt={bundle.name}
                       className="w-full h-64 md:h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-4 left-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-full font-bold">
+                    <div className="absolute top-4 left-4 bg-gradient-to-r from-panda-red-500 to-red-600 text-white px-4 py-2 rounded-full font-bold">
                       -{bundle.discount}% OFF
                     </div>
                     <div className="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
@@ -106,7 +106,7 @@ const BundlesPage = () => {
 
                   {/* Bundle Info */}
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-panda-black-900 mb-2 group-hover:text-purple-600 transition-colors">
+                    <h3 className="text-xl font-bold text-panda-black-900 mb-2 group-hover:text-panda-red-600 transition-colors">
                       {bundle.name}
                     </h3>
                     
@@ -125,7 +125,7 @@ const BundlesPage = () => {
                     {/* Price */}
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-2xl font-bold text-purple-600">
+                        <span className="text-2xl font-bold text-panda-red-600">
                           KES {bundle.bundlePrice.toLocaleString()}
                         </span>
                         <span className="text-lg text-gray-500 line-through">
@@ -151,7 +151,7 @@ const BundlesPage = () => {
                     </div>
 
                     {/* Action Button */}
-                    <button className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition-all flex items-center justify-center">
+                    <button className="w-full bg-gradient-to-r from-panda-red-500 to-red-600 text-white py-3 px-4 rounded-lg font-semibold hover:from-red-600 hover:to-panda-red-700 transition-all flex items-center justify-center">
                       <Package className="w-4 h-4 mr-2" />
                       Get This Bundle
                     </button>
@@ -173,7 +173,7 @@ const BundlesPage = () => {
                     <span>Individual Total:</span>
                     <span className="text-gray-500 line-through">KES {bundle.originalPrice.toLocaleString()}</span>
                   </div>
-                  <div className="flex justify-between items-center font-bold text-purple-600">
+                  <div className="flex justify-between items-center font-bold text-panda-red-600">
                     <span>Bundle Price:</span>
                     <span>KES {bundle.bundlePrice.toLocaleString()}</span>
                   </div>
@@ -185,7 +185,7 @@ const BundlesPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
+      <section className="py-16 bg-gradient-to-r from-panda-black-800 to-panda-black-900 text-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
@@ -198,11 +198,11 @@ const BundlesPage = () => {
               Let us create a custom bundle just for you. Contact our team for personalized recommendations.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact" className="bg-white text-purple-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center">
+              <Link href="/contact" className="bg-white text-panda-red-600 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-flex items-center">
                 Request Custom Bundle
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>
-              <Link href="/deals" className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-purple-600 transition-colors inline-flex items-center">
+              <Link href="/deals" className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-panda-red-600 transition-colors inline-flex items-center">
                 View All Deals
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Link>

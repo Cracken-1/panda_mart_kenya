@@ -77,14 +77,14 @@ const Header = () => {
             {/* Right Actions */}
             <div className="flex items-center space-x-3">
               {/* Find Store */}
-              <Link 
-                href="/stores" 
+              <Link
+                href="/stores"
                 className="hidden md:flex items-center px-4 py-2 text-sm font-medium text-panda-red-500 hover:text-panda-red-600 hover:bg-panda-red-50 rounded-xl transition-all duration-200 border border-panda-red-200 hover:border-panda-red-300"
               >
                 <MapPin className="w-4 h-4 mr-2" />
                 Find Store
               </Link>
-              
+
               {/* Cart Button */}
               <button
                 onClick={openCart}
@@ -98,7 +98,7 @@ const Header = () => {
                   </span>
                 )}
               </button>
-              
+
               {/* User Account */}
               <div className="flex items-center">
                 <PandaIDSystem redirectTo="/account" />
@@ -216,7 +216,7 @@ const Header = () => {
                   ))}
                 </div>
               </div>
-              
+
               {/* Mobile Actions */}
               <div className="border-t pt-4 space-y-2">
                 <Link
@@ -248,7 +248,7 @@ const Header = () => {
           </motion.div>
         )}
       </AnimatePresence>
-      
+
       {/* Enhanced Cart Drawer */}
       <EnhancedCartDrawer />
     </header>
