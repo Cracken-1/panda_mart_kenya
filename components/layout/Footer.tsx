@@ -21,9 +21,9 @@ const Footer = () => {
   ]
 
   const support = [
-    { name: 'Contact Us', href: '/contact' },
+    { name: 'Contact Us', href: 'mailto:info@pandamart.co.ke' },
     { name: 'About Us', href: '/about' },
-    { name: 'Wholesale Inquiries', href: '/wholesale' },
+    { name: 'Wholesale Inquiries', href: 'mailto:wholesale@pandamart.co.ke' },
     { name: 'Privacy Policy', href: '/privacy' },
     { name: 'Terms & Conditions', href: '/terms' },
   ]
@@ -65,13 +65,13 @@ const Footer = () => {
             <p className="text-gray-300 mb-6">
               Your trusted destination for affordable home, electronics, beauty, and lifestyle products across Kenya.
             </p>
-            
+
             {/* Social Media */}
             <div className="flex space-x-4">
               <a href="#" className="text-gray-400 hover:text-panda-red-500 transition-colors">
                 <Facebook className="w-6 h-6" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-panda-red-500 transition-colors">
+              <a href="https://instagram.com/pandamartkenya" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-panda-red-500 transition-colors">
                 <Instagram className="w-6 h-6" />
               </a>
               <a href="#" className="text-gray-400 hover:text-panda-red-500 transition-colors">
@@ -111,25 +111,53 @@ const Footer = () => {
           {/* Contact & Support */}
           <div>
             <h3 className="text-lg font-semibold mb-4">Contact & Support</h3>
+
+            {/* Store Locations */}
             <div className="space-y-3 mb-6">
-              <div className="flex items-center space-x-2 text-gray-300">
-                <Phone className="w-4 h-4" />
-                <a href="tel:+254700000000" className="hover:text-panda-red-500 transition-colors">
-                  +254 700 000 000
-                </a>
-              </div>
-              <div className="flex items-center space-x-2 text-gray-300">
-                <Mail className="w-4 h-4" />
-                <a href="mailto:info@pandamart.co.ke" className="hover:text-panda-red-500 transition-colors">
-                  info@pandamart.co.ke
-                </a>
-              </div>
-              <div className="flex items-start space-x-2 text-gray-300">
-                <MapPin className="w-4 h-4 mt-1" />
-                <span>Nairobi, Kenya</span>
+              <h4 className="text-sm font-semibold text-gray-200">Store Locations</h4>
+              <div className="space-y-2 text-sm">
+                <div className="flex items-start space-x-2 text-gray-300">
+                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <div className="font-medium">Garden City Mall</div>
+                    <div className="text-xs text-gray-400">Nairobi</div>
+                    <a href="tel:0202311166" className="text-panda-red-400 hover:text-panda-red-300 transition-colors">
+                      020 231 1166
+                    </a>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-2 text-gray-300">
+                  <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <div className="font-medium">Galleria Shopping Mall</div>
+                    <div className="text-xs text-gray-400">Nairobi</div>
+                    <a href="tel:0778666666" className="text-panda-red-400 hover:text-panda-red-300 transition-colors">
+                      077 866 6666
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
-            
+
+            {/* General Contact */}
+            <div className="space-y-3 mb-6">
+              <h4 className="text-sm font-semibold text-gray-200">General Contact</h4>
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2 text-gray-300">
+                  <Mail className="w-4 h-4" />
+                  <a href="mailto:info@pandamart.co.ke" className="hover:text-panda-red-500 transition-colors text-sm">
+                    info@pandamart.co.ke
+                  </a>
+                </div>
+                <div className="flex items-center space-x-2 text-gray-300">
+                  <Mail className="w-4 h-4" />
+                  <a href="mailto:wholesale@pandamart.co.ke" className="hover:text-panda-red-500 transition-colors text-sm">
+                    wholesale@pandamart.co.ke
+                  </a>
+                </div>
+              </div>
+            </div>
+
             <ul className="space-y-2">
               {support.map((item) => (
                 <li key={item.name}>

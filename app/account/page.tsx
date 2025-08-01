@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  User, Settings, Bell, ShoppingBag, CreditCard, MapPin, Heart, 
+import {
+  User, Settings, Bell, ShoppingBag, CreditCard, MapPin, Heart,
   Gift, Star, HelpCircle, LogOut, Edit, Shield, Camera, QrCode,
   X, Phone, Mail, Home, Truck, Percent, Award, MessageCircle,
   FileText, Info, ChevronRight, Scan, Wallet, Package, Clock,
@@ -112,58 +112,16 @@ const AccountPage = () => {
 
       try {
         const parsedUserData = JSON.parse(userData)
-        // Enhance user data with mock data for demonstration
+        // Use user data as-is without adding mock data for new users
         const enhancedProfile: UserProfile = {
           ...parsedUserData,
-          addresses: [
-            {
-              id: 'addr-1',
-              type: 'home',
-              name: 'Home Address',
-              address: '123 Kiambu Road, Nairobi',
-              city: 'Nairobi',
-              phone: '+254 700 000 000',
-              isDefault: true
-            }
-          ],
-          paymentMethods: [
-            {
-              id: 'pay-1',
-              type: 'mpesa',
-              name: 'M-Pesa',
-              details: '+254 700 000 000',
-              isDefault: true
-            }
-          ],
-          orders: [
-            {
-              id: 'ord-1',
-              date: new Date().toISOString(),
-              status: 'delivered',
-              total: 15000,
-              items: 3,
-              store: 'Panda Mart Westgate'
-            }
-          ],
-          wishlist: [
-            {
-              id: 'wish-1',
-              name: 'Smart TV 55"',
-              price: 45000,
-              image: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=200&h=200&fit=crop',
-              inStock: true
-            }
-          ],
-          notifications: [
-            {
-              id: 'notif-1',
-              type: 'order',
-              title: 'Order Delivered',
-              message: 'Your order #ORD-001 has been delivered successfully',
-              date: new Date().toISOString(),
-              read: false
-            }
-          ]
+          // Only add empty arrays if they don't exist, ensuring new users start with zero progress
+          addresses: parsedUserData.addresses || [],
+          paymentMethods: parsedUserData.paymentMethods || [],
+          orders: parsedUserData.orders || [],
+          wishlist: parsedUserData.wishlist || [],
+          notifications: parsedUserData.notifications || [],
+          rewards: parsedUserData.rewards || []
         }
         setUserProfile(enhancedProfile)
       } catch (error) {
@@ -374,9 +332,8 @@ const AccountPage = () => {
                       <button
                         key={item.id}
                         onClick={() => setActiveSection(item.id)}
-                        className={`w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors ${
-                          activeSection === item.id ? 'bg-panda-red-50 text-panda-red-600 border-r-2 border-panda-red-500' : 'text-gray-700'
-                        }`}
+                        className={`w-full flex items-center space-x-3 px-4 py-3 text-left hover:bg-gray-50 transition-colors ${activeSection === item.id ? 'bg-panda-red-50 text-panda-red-600 border-r-2 border-panda-red-500' : 'text-gray-700'
+                          }`}
                       >
                         <item.icon className="w-5 h-5" />
                         <span>{item.label}</span>
@@ -421,14 +378,14 @@ const AccountPage = () => {
 const DashboardSection = ({ userProfile, isNewUser }: { userProfile: UserProfile, isNewUser: boolean }) => (
   <div>
     <h2 className="text-2xl font-bold text-panda-black-900 mb-6">Dashboard</h2>
-    
+
     {/* Welcome Message */}
     <div className="gradient-bg rounded-xl p-6 text-white mb-6">
       <h3 className="text-xl font-bold mb-2">
         {isNewUser ? `Welcome to Panda Mart, ${userProfile.name}!` : `Welcome back, ${userProfile.name}!`}
       </h3>
       <p className="text-white/90">
-        {isNewUser 
+        {isNewUser
           ? 'Start shopping to earn Panda Points and unlock exclusive rewards'
           : `You have ${userProfile.points} Panda Points ready to use`
         }
@@ -442,13 +399,13 @@ const DashboardSection = ({ userProfile, isNewUser }: { userProfile: UserProfile
         <div className="text-2xl font-bold text-panda-black-900 mb-1">{userProfile.points}</div>
         <div className="text-gray-600">Panda Points</div>
       </div>
-      
+
       <div className="card p-6 text-center">
         <ShoppingBag className="w-8 h-8 text-panda-red-500 mx-auto mb-3" />
         <div className="text-2xl font-bold text-panda-black-900 mb-1">{userProfile.totalOrders}</div>
         <div className="text-gray-600">Total Orders</div>
       </div>
-      
+
       <div className="card p-6 text-center">
         <Wallet className="w-8 h-8 text-panda-red-500 mx-auto mb-3" />
         <div className="text-2xl font-bold text-panda-black-900 mb-1">
@@ -473,11 +430,10 @@ const DashboardSection = ({ userProfile, isNewUser }: { userProfile: UserProfile
           {userProfile.orders.slice(0, 3).map((order) => (
             <div key={order.id} className="flex items-center justify-between py-3 border-b border-gray-100 last:border-b-0">
               <div className="flex items-center space-x-3">
-                <div className={`w-3 h-3 rounded-full ${
-                  order.status === 'delivered' ? 'bg-green-500' :
-                  order.status === 'shipped' ? 'bg-blue-500' :
-                  order.status === 'processing' ? 'bg-yellow-500' : 'bg-gray-500'
-                }`}></div>
+                <div className={`w-3 h-3 rounded-full ${order.status === 'delivered' ? 'bg-green-500' :
+                    order.status === 'shipped' ? 'bg-blue-500' :
+                      order.status === 'processing' ? 'bg-yellow-500' : 'bg-gray-500'
+                  }`}></div>
                 <div>
                   <div className="font-semibold">Order #{order.id}</div>
                   <div className="text-sm text-gray-500">{order.items} items • {order.store}</div>
@@ -519,7 +475,7 @@ const QRScannerModal = ({ isOpen, onClose }: { isOpen: boolean, onClose: () => v
               <X className="w-6 h-6" />
             </button>
           </div>
-          
+
           <div className="p-6">
             <div className="bg-gray-100 rounded-lg p-8 text-center mb-4">
               <Camera className="w-16 h-16 text-gray-400 mx-auto mb-4" />
