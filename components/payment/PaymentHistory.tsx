@@ -36,7 +36,7 @@ const PaymentHistory = ({ userId }: PaymentHistoryProps) => {
         amount: 'KES 15,500',
         method: 'M-Pesa',
         status: 'completed',
-        description: 'Purchase at Westgate Store',
+        description: 'Purchase at Garden City Store',
         reference: 'MPX123456789',
         items: ['Smart TV 43"', 'HDMI Cable', 'Wall Mount']
       },
@@ -56,7 +56,7 @@ const PaymentHistory = ({ userId }: PaymentHistoryProps) => {
         amount: 'KES 3,500',
         method: 'Cash',
         status: 'completed',
-        description: 'Purchase at Sarit Centre',
+        description: 'Purchase at Galleria Store',
         reference: 'CASH001234',
         items: ['Wireless Headphones', 'Phone Case']
       },

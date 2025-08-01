@@ -16,7 +16,7 @@ const OrderHistory = () => {
       {
         id: 'ORD-2024-001',
         date: '2024-01-20',
-        store: 'Westgate Mall',
+        store: 'Panda Mart Garden City',
         items: [
           { name: 'Smart LED TV 43"', quantity: 1, price: 35000, image: 'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=100&h=100&fit=crop' },
           { name: 'HDMI Cable', quantity: 2, price: 1500, image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=100&h=100&fit=crop' }
@@ -44,7 +44,7 @@ const OrderHistory = () => {
       {
         id: 'ORD-2024-003',
         date: '2024-01-10',
-        store: 'Sarit Centre',
+        store: 'Panda Mart Galleria',
         items: [
           { name: 'Beauty Care Bundle', quantity: 1, price: 4500, image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=100&h=100&fit=crop' }
         ],

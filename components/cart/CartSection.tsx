@@ -34,7 +34,7 @@ const CartSection = ({ onCheckout, onClose }: CartSectionProps) => {
   const [couponCode, setCouponCode] = useState('')
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null)
   const [toast, setToast] = useState<{message: string, visible: boolean, type: 'success' | 'error'}>({message: '', visible: false, type: 'success'})
-  const [selectedStore, setSelectedStore] = useState('westgate')
+  const [selectedStore, setSelectedStore] = useState('garden-city')
 
   // Load cart items from localStorage
   useEffect(() => {
@@ -214,10 +214,8 @@ const CartSection = ({ onCheckout, onClose }: CartSectionProps) => {
   }
 
   const stores = [
-    { id: 'westgate', name: 'Westgate Mall', address: 'Westlands, Nairobi' },
-    { id: 'garden-city', name: 'Garden City', address: 'Thika Road, Nairobi' },
-    { id: 'sarit', name: 'Sarit Centre', address: 'Westlands, Nairobi' },
-    { id: 'nyali', name: 'Nyali Cinemax', address: 'Nyali, Mombasa' }
+    { id: 'garden-city', name: 'Panda Mart Garden City', address: 'Garden City Mall, Thika Road, Nairobi' },
+    { id: 'galleria', name: 'Panda Mart Galleria', address: 'Galleria Shopping Mall, Langata Road, Nairobi' }
   ]
 
   if (cartItems.length === 0) {

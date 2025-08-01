@@ -16,7 +16,7 @@ const WishlistSection = () => {
       reviews: 124,
       category: "Electronics",
       availability: "In Stock",
-      store: "Westgate Mall",
+      store: "Panda Mart Garden City",
       addedDate: "2024-01-15",
       onSale: true,
       discount: 18
@@ -31,7 +31,7 @@ const WishlistSection = () => {
       reviews: 89,
       category: "Furniture",
       availability: "In Stock",
-      store: "Garden City",
+      store: "Panda Mart Galleria",
       addedDate: "2024-01-12",
       onSale: true,
       discount: 16
@@ -46,7 +46,7 @@ const WishlistSection = () => {
       reviews: 156,
       category: "Homeware",
       availability: "Low Stock",
-      store: "Sarit Centre",
+      store: "Panda Mart Garden City",
       addedDate: "2024-01-10",
       onSale: false,
       discount: 0
@@ -61,7 +61,7 @@ const WishlistSection = () => {
       reviews: 203,
       category: "Electronics",
       availability: "Out of Stock",
-      store: "Westgate Mall",
+      store: "Panda Mart Galleria",
       addedDate: "2024-01-08",
       onSale: true,
       discount: 29

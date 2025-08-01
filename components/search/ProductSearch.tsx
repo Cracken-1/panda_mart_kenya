@@ -29,7 +29,7 @@ const ProductSearch = () => {
       price: "KES 35,000",
       image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=100&h=100&fit=crop",
       rating: 4.8,
-      store: "Westgate"
+      store: "Garden City"
     },
     {
       id: 2,
@@ -47,7 +47,7 @@ const ProductSearch = () => {
       price: "KES 8,500",
       image: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=100&h=100&fit=crop",
       rating: 4.7,
-      store: "Sarit Centre"
+      store: "Galleria"
     },
     {
       id: 4,
@@ -56,7 +56,7 @@ const ProductSearch = () => {
       price: "KES 3,500",
       image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=100&h=100&fit=crop",
       rating: 4.6,
-      store: "Westgate"
+      store: "Garden City"
     },
     {
       id: 5,
@@ -65,7 +65,7 @@ const ProductSearch = () => {
       price: "KES 12,000",
       image: "https://images.unsplash.com/photo-1541558869434-2840d308329a?w=100&h=100&fit=crop",
       rating: 4.5,
-      store: "Garden City"
+      store: "Galleria"
     }
   ]
 

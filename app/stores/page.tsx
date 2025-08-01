@@ -11,114 +11,43 @@ const StoresPage = () => {
 
   const cities = [
     { id: 'all', name: 'All Cities' },
-    { id: 'nairobi', name: 'Nairobi' },
-    { id: 'mombasa', name: 'Mombasa' },
-    { id: 'kisumu', name: 'Kisumu' },
-    { id: 'nakuru', name: 'Nakuru' }
+    { id: 'nairobi', name: 'Nairobi' }
   ]
 
   const stores = [
     {
       id: 1,
-      name: "Panda Mart Westgate",
+      name: "Panda Mart Garden City",
       city: "nairobi",
-      address: "Westgate Shopping Mall, Westlands, Nairobi",
-      phone: "+254 700 000 001",
-      email: "westgate@pandamart.co.ke",
+      address: "Garden City Mall, Thika Road, Nairobi",
+      phone: "020 231 1166",
+      email: "gardencity@pandamart.co.ke",
       hours: {
-        weekdays: "9:00 AM - 9:00 PM",
-        weekends: "9:00 AM - 10:00 PM"
+        weekdays: "10:00 AM - 10:00 PM",
+        weekends: "10:00 AM - 10:00 PM"
+      },
+      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop",
+      rating: 4.9,
+      reviews: 456,
+      features: ["Free Parking", "Customer Service", "Home Delivery", "Gift Wrapping"],
+      specialties: ["Electronics", "Furniture", "Homeware", "Beauty & Lifestyle"]
+    },
+    {
+      id: 2,
+      name: "Panda Mart Galleria",
+      city: "nairobi",
+      address: "Galleria Shopping Mall, Langata Road, Nairobi",
+      phone: "077 866 6666",
+      email: "galleria@pandamart.co.ke",
+      hours: {
+        weekdays: "10:00 AM - 10:00 PM",
+        weekends: "10:00 AM - 10:00 PM"
       },
       image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop",
       rating: 4.8,
       reviews: 324,
       features: ["Free Parking", "Customer Service", "Home Delivery", "Installation Service"],
-      specialties: ["Electronics", "Furniture", "Homeware"]
-    },
-    {
-      id: 2,
-      name: "Panda Mart Garden City",
-      city: "nairobi",
-      address: "Garden City Mall, Thika Road, Nairobi",
-      phone: "+254 700 000 002",
-      email: "gardencity@pandamart.co.ke",
-      hours: {
-        weekdays: "9:00 AM - 9:00 PM",
-        weekends: "9:00 AM - 10:00 PM"
-      },
-      image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=600&h=400&fit=crop",
-      rating: 4.9,
-      reviews: 456,
-      features: ["Free Parking", "Kids Play Area", "Café", "Gift Wrapping"],
-      specialties: ["Family Products", "Beauty", "Electronics"]
-    },
-    {
-      id: 3,
-      name: "Panda Mart Sarit Centre",
-      city: "nairobi",
-      address: "Sarit Centre, Westlands, Nairobi",
-      phone: "+254 700 000 003",
-      email: "sarit@pandamart.co.ke",
-      hours: {
-        weekdays: "8:30 AM - 9:30 PM",
-        weekends: "8:30 AM - 10:00 PM"
-      },
-      image: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=600&h=400&fit=crop",
-      rating: 4.7,
-      reviews: 289,
-      features: ["Valet Parking", "Personal Shopping", "Express Checkout"],
-      specialties: ["Premium Products", "Hardware", "Appliances"]
-    },
-    {
-      id: 4,
-      name: "Panda Mart Nyali",
-      city: "mombasa",
-      address: "Nyali Cinemax Mall, Mombasa",
-      phone: "+254 700 000 004",
-      email: "nyali@pandamart.co.ke",
-      hours: {
-        weekdays: "9:00 AM - 8:00 PM",
-        weekends: "9:00 AM - 9:00 PM"
-      },
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop",
-      rating: 4.6,
-      reviews: 178,
-      features: ["Beach Delivery", "Tourist Services", "Currency Exchange"],
-      specialties: ["Beach Essentials", "Electronics", "Souvenirs"]
-    },
-    {
-      id: 5,
-      name: "Panda Mart Mega Plaza",
-      city: "kisumu",
-      address: "Mega Plaza, Kisumu",
-      phone: "+254 700 000 005",
-      email: "kisumu@pandamart.co.ke",
-      hours: {
-        weekdays: "9:00 AM - 8:00 PM",
-        weekends: "9:00 AM - 9:00 PM"
-      },
-      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&fit=crop",
-      rating: 4.5,
-      reviews: 134,
-      features: ["Lake View", "Local Products", "Community Events"],
-      specialties: ["Local Crafts", "Fishing Equipment", "Home Essentials"]
-    },
-    {
-      id: 6,
-      name: "Panda Mart Nakuru City",
-      city: "nakuru",
-      address: "Nakuru City Mall, Nakuru",
-      phone: "+254 700 000 006",
-      email: "nakuru@pandamart.co.ke",
-      hours: {
-        weekdays: "9:00 AM - 8:00 PM",
-        weekends: "9:00 AM - 9:00 PM"
-      },
-      image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&h=400&fit=crop",
-      rating: 4.4,
-      reviews: 98,
-      features: ["Ample Parking", "Agricultural Tools", "Bulk Orders"],
-      specialties: ["Farming Equipment", "Household Items", "Electronics"]
+      specialties: ["Electronics", "Furniture", "Homeware", "Hardware"]
     }
   ]
 

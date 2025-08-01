@@ -22,36 +22,25 @@ const InteractiveMap = () => {
   const stores: Store[] = [
     {
       id: 1,
-      name: "Panda Mart Westgate",
-      address: "Westgate Shopping Mall, Westlands, Nairobi",
-      phone: "+254 700 000 001",
-      hours: "9:00 AM - 9:00 PM",
-      rating: 4.8,
-      lat: -1.2676,
-      lng: 36.8108,
-      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop"
-    },
-    {
-      id: 2,
       name: "Panda Mart Garden City",
       address: "Garden City Mall, Thika Road, Nairobi",
-      phone: "+254 700 000 002",
-      hours: "9:00 AM - 10:00 PM",
+      phone: "020 231 1166",
+      hours: "10:00 AM - 10:00 PM",
       rating: 4.9,
       lat: -1.2368,
       lng: 36.8856,
       image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=200&fit=crop"
     },
     {
-      id: 3,
-      name: "Panda Mart Sarit Centre",
-      address: "Sarit Centre, Westlands, Nairobi",
-      phone: "+254 700 000 003",
-      hours: "8:30 AM - 9:30 PM",
-      rating: 4.7,
-      lat: -1.2630,
-      lng: 36.8063,
-      image: "https://images.unsplash.com/photo-1555529669-e69e7aa0ba9a?w=300&h=200&fit=crop"
+      id: 2,
+      name: "Panda Mart Galleria",
+      address: "Galleria Shopping Mall, Langata Road, Nairobi",
+      phone: "077 866 6666",
+      hours: "10:00 AM - 10:00 PM",
+      rating: 4.8,
+      lat: -1.3067,
+      lng: 36.7834,
+      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300&h=200&fit=crop"
     }
   ]
 

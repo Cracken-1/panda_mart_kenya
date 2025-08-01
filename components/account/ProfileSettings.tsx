@@ -36,7 +36,7 @@ const ProfileSettings = ({ userProfile }: ProfileSettingsProps) => {
     gender: 'Female',
     address: '123 Nairobi Street, Westlands',
     city: 'Nairobi',
-    preferredStore: 'Westgate Mall',
+    preferredStore: 'Panda Mart Garden City',
     language: 'English',
     currency: 'KES'
   })
@@ -328,10 +328,8 @@ const ProfileSettings = ({ userProfile }: ProfileSettingsProps) => {
                 isEditing ? 'border-gray-300 focus:ring-2 focus:ring-panda-red-500' : 'border-gray-200 bg-gray-50'
               }`}
             >
-              <option value="Westgate Mall">Westgate Mall</option>
-              <option value="Garden City">Garden City</option>
-              <option value="Sarit Centre">Sarit Centre</option>
-              <option value="Nyali Cinemax">Nyali Cinemax</option>
+              <option value="Panda Mart Garden City">Panda Mart Garden City</option>
+              <option value="Panda Mart Galleria">Panda Mart Galleria</option>
             </select>
           </div>
         </div>

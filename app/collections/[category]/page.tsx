@@ -53,7 +53,7 @@ const CategoryPage = () => {
         description: 'Ultra HD Smart TV with streaming capabilities',
         rating: 4.8,
         reviews: 124,
-        store: 'Panda Mart Westgate',
+        store: 'Panda Mart Garden City',
         sku: 'TV-55-001',
         inStock: true,
         maxQuantity: 5,
@@ -89,7 +89,7 @@ const CategoryPage = () => {
         description: 'Latest smartphone with advanced camera system',
         rating: 4.4,
         reviews: 312,
-        store: 'Panda Mart Sarit Centre',
+        store: 'Panda Mart Galleria',
         sku: 'PH-128-003',
         inStock: true,
         maxQuantity: 3,
@@ -108,7 +108,7 @@ const CategoryPage = () => {
         description: 'Comfortable modern sofa set for living room',
         rating: 4.9,
         reviews: 156,
-        store: 'Panda Mart Westgate',
+        store: 'Panda Mart Garden City',
         sku: 'SF-3ST-001',
         inStock: true,
         maxQuantity: 2,
@@ -125,7 +125,7 @@ const CategoryPage = () => {
         description: '6-seater wooden dining table with chairs',
         rating: 4.7,
         reviews: 203,
-        store: 'Panda Mart Garden City',
+        store: 'Panda Mart Galleria',
         sku: 'DT-6ST-002',
         inStock: true,
         maxQuantity: 1,
@@ -144,7 +144,7 @@ const CategoryPage = () => {
         description: 'Complete kitchen appliance set for modern cooking',
         rating: 4.5,
         reviews: 67,
-        store: 'Panda Mart Westgate',
+        store: 'Panda Mart Garden City',
         sku: 'KA-BND-001',
         inStock: true,
         maxQuantity: 5,
@@ -163,7 +163,7 @@ const CategoryPage = () => {
         description: 'Complete skincare and beauty routine set',
         rating: 4.6,
         reviews: 89,
-        store: 'Panda Mart Garden City',
+        store: 'Panda Mart Galleria',
         sku: 'BC-BND-001',
         inStock: true,
         maxQuantity: 8,
@@ -184,7 +184,7 @@ const CategoryPage = () => {
         description: 'Professional power tools for DIY projects',
         rating: 4.5,
         reviews: 45,
-        store: 'Panda Mart Sarit Centre',
+        store: 'Panda Mart Garden City',
         sku: 'PT-SET-001',
         inStock: true,
         maxQuantity: 3,
@@ -247,7 +247,7 @@ const CategoryPage = () => {
     hardware: 'Hardware'
   }
 
-  const stores = ['all', 'Panda Mart Westgate', 'Panda Mart Garden City', 'Panda Mart Sarit Centre']
+  const stores = ['all', 'Panda Mart Garden City', 'Panda Mart Galleria']
 
   if (loading) {
     return (

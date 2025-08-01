@@ -327,10 +327,8 @@ const SecurePaymentForm = ({
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-transparent"
               >
                 <option value="">Choose a store...</option>
-                <option value="westgate">Panda Mart Westgate</option>
                 <option value="garden-city">Panda Mart Garden City</option>
-                <option value="sarit">Panda Mart Sarit Centre</option>
-                <option value="nyali">Panda Mart Nyali</option>
+                <option value="galleria">Panda Mart Galleria</option>
               </select>
             </div>
 
