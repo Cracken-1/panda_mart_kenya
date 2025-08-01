@@ -174,9 +174,12 @@ const FeaturedDealsSection = () => {
                       <Clock className="w-4 h-4 mr-1" />
                       {deal.endTime}
                     </div>
-                    <button className="bg-white text-panda-red-500 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                    <Link 
+                      href={deal.id === 1 ? '/flash-sale' : '/bundles'}
+                      className="bg-white text-panda-red-500 px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors inline-block"
+                    >
                       {deal.cta}
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -195,7 +198,8 @@ const FeaturedDealsSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="card overflow-hidden group"
+                className="card overflow-hidden group cursor-pointer"
+                onClick={() => window.location.href = '/deals'}
               >
                 <div className="relative">
                   <img

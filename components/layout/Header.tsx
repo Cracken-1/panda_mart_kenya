@@ -15,6 +15,8 @@ const Header = () => {
 
   const navigation = [
     { name: 'Home', href: '/' },
+    { name: 'Flash Sale', href: '/flash-sale' },
+    { name: 'Bundles', href: '/bundles' },
     { name: 'Deals & Promotions', href: '/deals' },
     { name: 'Our Collections', href: '/collections' },
     { name: 'Stores', href: '/stores' },
