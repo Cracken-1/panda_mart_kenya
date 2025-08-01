@@ -4,6 +4,8 @@ import { motion } from 'framer-motion'
 import { Clock, Percent, ArrowRight, Timer } from 'lucide-react'
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { getFeaturedFlashSaleItems } from '@/lib/data/flashSaleData'
+import { getFeaturedBundles } from '@/lib/data/bundleData'
 
 const FeaturedDealsSection = () => {
   const [timeLeft, setTimeLeft] = useState({
@@ -29,59 +31,39 @@ const FeaturedDealsSection = () => {
     return () => clearInterval(timer)
   }, [])
 
+  // Get featured items from shared data
+  const flashSaleItems = getFeaturedFlashSaleItems(4)
+  const featuredBundles = getFeaturedBundles(2)
+
+  // Transform flash sale items for quick deals display
+  const quickDeals = flashSaleItems.map(item => ({
+    id: item.id,
+    name: item.name,
+    price: `KES ${item.price.toLocaleString()}`,
+    originalPrice: `KES ${item.originalPrice.toLocaleString()}`,
+    discount: `${item.discount}%`,
+    image: item.image
+  }))
+
+  // Create featured deals from bundle data
   const featuredDeals = [
     {
       id: 1,
       title: "Flash Sale Weekend",
       description: "Up to 60% off on selected electronics and furniture",
-      image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop",
+      image: flashSaleItems.length > 0 ? flashSaleItems[0].image : "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&h=400&fit=crop",
       discount: "60% OFF",
       endTime: "Limited Time",
       cta: "Shop Flash Sale"
     },
     {
       id: 2,
-      title: "Home Makeover Bundle",
-      description: "Complete furniture sets at unbeatable prices",
-      image: "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop",
-      discount: "Bundle Deal",
+      title: featuredBundles.length > 0 ? featuredBundles[0].name : "Home Makeover Bundle",
+      description: featuredBundles.length > 0 ? featuredBundles[0].description : "Complete furniture sets at unbeatable prices",
+      image: featuredBundles.length > 0 ? featuredBundles[0].image : "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=600&h=400&fit=crop",
+      discount: featuredBundles.length > 0 ? `${featuredBundles[0].discount}% OFF` : "29% OFF",
       endTime: "This Week Only",
       cta: "View Bundles"
-    }
-  ]
-
-  const quickDeals = [
-    {
-      id: 1,
-      name: "Wireless Headphones",
-      price: "KES 3,500",
-      originalPrice: "KES 5,000",
-      discount: "30%",
-      image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=200&fit=crop"
-    },
-    {
-      id: 2,
-      name: "Coffee Maker",
-      price: "KES 8,000",
-      originalPrice: "KES 12,000",
-      discount: "33%",
-      image: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&h=200&fit=crop"
-    },
-    {
-      id: 3,
-      name: "Desk Lamp",
-      price: "KES 2,500",
-      originalPrice: "KES 4,000",
-      discount: "38%",
-      image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=200&fit=crop"
-    },
-    {
-      id: 4,
-      name: "Storage Basket",
-      price: "KES 1,200",
-      originalPrice: "KES 2,000",
-      discount: "40%",
-      image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=200&fit=crop"
     }
   ]
 
