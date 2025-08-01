@@ -215,29 +215,16 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
     setIsLoading(true)
 
     try {
-      // Simulate OAuth login process
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Import OAuth utilities
+      const { initiateGoogleOAuth, initiateAppleOAuth, createUserProfileFromOAuth } = await import('@/lib/auth/oauth')
+      
+      // Initiate OAuth flow
+      const oauthData = provider === 'google' 
+        ? await initiateGoogleOAuth()
+        : await initiateAppleOAuth()
 
-      // Create user profile with OAuth data (simulated)
-      const userProfile = {
-        id: 'user_' + Date.now(),
-        pandaId: generatePandaId(),
-        name: provider === 'google' ? 'Google User' : 'Apple User',
-        email: `user@${provider}.com`,
-        phone: '',
-        tier: 'Bronze',
-        points: 0,
-        joinDate: new Date().toISOString(),
-        totalOrders: 0,
-        totalSpent: 0,
-        favoriteStore: null,
-        achievements: [],
-        addresses: [],
-        notifications: [],
-        paymentMethods: [],
-        rewards: [],
-        authProvider: provider
-      }
+      // Create user profile with real OAuth data
+      const userProfile = createUserProfileFromOAuth(oauthData, provider)
 
       localStorage.setItem('user-data', JSON.stringify(userProfile))
       localStorage.setItem('auth-token', 'token-' + Date.now())
@@ -264,33 +251,17 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
     setIsLoading(true)
 
     try {
-      // Simulate OAuth registration process
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // Import OAuth utilities
+      const { initiateGoogleOAuth, initiateAppleOAuth, createUserProfileFromOAuth } = await import('@/lib/auth/oauth')
+      
+      // Initiate OAuth flow
+      const oauthData = provider === 'google' 
+        ? await initiateGoogleOAuth()
+        : await initiateAppleOAuth()
 
-      // Generate new Panda ID
-      const pandaId = generatePandaId()
-      setNewPandaId(pandaId)
-
-      // Create new user profile with OAuth data and zero progress
-      const newUserProfile = {
-        id: 'user_' + Date.now(),
-        pandaId: pandaId,
-        name: provider === 'google' ? 'Google User' : 'Apple User',
-        email: `user@${provider}.com`,
-        phone: '',
-        tier: 'Bronze',
-        points: 0,
-        joinDate: new Date().toISOString(),
-        totalOrders: 0,
-        totalSpent: 0,
-        favoriteStore: null,
-        achievements: [],
-        addresses: [],
-        notifications: [],
-        paymentMethods: [],
-        rewards: [],
-        authProvider: provider
-      }
+      // Create user profile with real OAuth data
+      const newUserProfile = createUserProfileFromOAuth(oauthData, provider)
+      setNewPandaId(newUserProfile.pandaId)
 
       // Store user data
       localStorage.setItem('auth-token', 'token-' + Date.now())
@@ -865,20 +836,20 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
   return (
     <>
       <button
-        onClick={async () => {
+        onClick={() => {
           // If already logged in, go to account page
           if (isLoggedIn) {
             setIsLoading(true)
             try {
               // Use Next.js router with proper error handling
-              await router.push(redirectTo)
+              router.push(redirectTo)
+              // Reset loading state after navigation
+              setTimeout(() => setIsLoading(false), 500)
             } catch (error) {
               console.error('Navigation error:', error)
               // Fallback to window.location if router fails
               window.location.href = redirectTo
-            } finally {
-              // Reset loading state after a short delay
-              setTimeout(() => setIsLoading(false), 1000)
+              setIsLoading(false)
             }
           } else {
             setIsOpen(true)

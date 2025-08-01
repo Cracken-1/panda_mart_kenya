@@ -261,11 +261,37 @@ const AccountPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          {/* Sidebar */}
-          <div className="lg:w-64 flex-shrink-0">
-            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+      {/* Mobile Header */}
+      <div className="lg:hidden bg-white shadow-sm border-b">
+        <div className="px-4 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="w-12 h-12 bg-gradient-to-r from-panda-red-500 to-panda-red-600 rounded-full flex items-center justify-center text-lg font-bold text-white">
+                {userProfile.name.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h3 className="font-semibold text-panda-black-900">{userProfile.name}</h3>
+                <div className="flex items-center">
+                  <Star className="w-3 h-3 text-yellow-400 mr-1" />
+                  <span className="text-xs font-medium text-yellow-600">{userProfile.tier}</span>
+                </div>
+              </div>
+            </div>
+            <button
+              onClick={handleLogout}
+              className="p-2 text-gray-500 hover:text-red-500 transition-colors"
+            >
+              <LogOut className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-8">
+        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+          {/* Desktop Sidebar */}
+          <div className="hidden lg:block lg:w-64 flex-shrink-0">
+            <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
               {/* Profile Header */}
               <div className="text-center mb-6">
                 <div className="w-20 h-20 bg-gradient-to-r from-panda-red-500 to-panda-red-600 rounded-full flex items-center justify-center text-2xl font-bold text-white mx-auto mb-3">
@@ -319,8 +345,8 @@ const AccountPage = () => {
               </button>
             </div>
 
-            {/* Navigation Menu */}
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            {/* Desktop Navigation Menu */}
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
               {['Account', 'Shopping', 'Benefits & Rewards', 'Support & More'].map((section) => (
                 <div key={section}>
                   <div className="bg-gray-50 px-4 py-2 text-sm font-semibold text-gray-700">
@@ -345,9 +371,57 @@ const AccountPage = () => {
             </div>
           </div>
 
+          {/* Mobile Navigation Tabs */}
+          <div className="lg:hidden mb-4">
+            <div className="bg-white rounded-xl shadow-sm p-2">
+              <div className="grid grid-cols-4 gap-1">
+                {menuItems.slice(0, 8).map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => setActiveSection(item.id)}
+                    className={`flex flex-col items-center p-3 rounded-lg transition-colors ${
+                      activeSection === item.id 
+                        ? 'bg-panda-red-50 text-panda-red-600' 
+                        : 'text-gray-600 hover:bg-gray-50'
+                    }`}
+                  >
+                    <item.icon className="w-5 h-5 mb-1" />
+                    <span className="text-xs font-medium text-center leading-tight">
+                      {item.label.split(' ')[0]}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            {/* More Options for Mobile */}
+            {menuItems.length > 8 && (
+              <div className="bg-white rounded-xl shadow-sm p-2 mt-2">
+                <div className="grid grid-cols-4 gap-1">
+                  {menuItems.slice(8).map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => setActiveSection(item.id)}
+                      className={`flex flex-col items-center p-3 rounded-lg transition-colors ${
+                        activeSection === item.id 
+                          ? 'bg-panda-red-50 text-panda-red-600' 
+                          : 'text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      <item.icon className="w-5 h-5 mb-1" />
+                      <span className="text-xs font-medium text-center leading-tight">
+                        {item.label.split(' ')[0]}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
           {/* Main Content */}
           <div className="flex-1">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+            <div className="bg-white rounded-xl shadow-sm p-4 lg:p-6">
               {/* Dashboard Content will be rendered here based on activeSection */}
               {activeSection === 'dashboard' && <DashboardSection userProfile={userProfile} isNewUser={isNewUser} />}
               {activeSection === 'profile' && <ProfileSection userProfile={userProfile} setUserProfile={setUserProfile} />}
@@ -377,14 +451,14 @@ const AccountPage = () => {
 // Dashboard Section Component
 const DashboardSection = ({ userProfile, isNewUser }: { userProfile: UserProfile, isNewUser: boolean }) => (
   <div>
-    <h2 className="text-2xl font-bold text-panda-black-900 mb-6">Dashboard</h2>
+    <h2 className="text-xl lg:text-2xl font-bold text-panda-black-900 mb-4 lg:mb-6">Dashboard</h2>
 
     {/* Welcome Message */}
-    <div className="gradient-bg rounded-xl p-6 text-white mb-6">
-      <h3 className="text-xl font-bold mb-2">
+    <div className="gradient-bg rounded-xl p-4 lg:p-6 text-white mb-4 lg:mb-6">
+      <h3 className="text-lg lg:text-xl font-bold mb-2">
         {isNewUser ? `Welcome to Panda Mart, ${userProfile.name}!` : `Welcome back, ${userProfile.name}!`}
       </h3>
-      <p className="text-white/90">
+      <p className="text-white/90 text-sm lg:text-base">
         {isNewUser
           ? 'Start shopping to earn Panda Points and unlock exclusive rewards'
           : `You have ${userProfile.points} Panda Points ready to use`
@@ -393,37 +467,37 @@ const DashboardSection = ({ userProfile, isNewUser }: { userProfile: UserProfile
     </div>
 
     {/* Stats Cards */}
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-      <div className="card p-6 text-center">
-        <Gift className="w-8 h-8 text-panda-red-500 mx-auto mb-3" />
-        <div className="text-2xl font-bold text-panda-black-900 mb-1">{userProfile.points}</div>
-        <div className="text-gray-600">Panda Points</div>
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6 mb-4 lg:mb-6">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 lg:p-6 text-center shadow-sm">
+        <Gift className="w-6 h-6 lg:w-8 lg:h-8 text-panda-red-500 mx-auto mb-2 lg:mb-3" />
+        <div className="text-xl lg:text-2xl font-bold text-panda-black-900 mb-1">{userProfile.points}</div>
+        <div className="text-gray-600 text-sm lg:text-base">Panda Points</div>
       </div>
 
-      <div className="card p-6 text-center">
-        <ShoppingBag className="w-8 h-8 text-panda-red-500 mx-auto mb-3" />
-        <div className="text-2xl font-bold text-panda-black-900 mb-1">{userProfile.totalOrders}</div>
-        <div className="text-gray-600">Total Orders</div>
+      <div className="bg-white border border-gray-200 rounded-xl p-4 lg:p-6 text-center shadow-sm">
+        <ShoppingBag className="w-6 h-6 lg:w-8 lg:h-8 text-panda-red-500 mx-auto mb-2 lg:mb-3" />
+        <div className="text-xl lg:text-2xl font-bold text-panda-black-900 mb-1">{userProfile.totalOrders}</div>
+        <div className="text-gray-600 text-sm lg:text-base">Total Orders</div>
       </div>
 
-      <div className="card p-6 text-center">
-        <Wallet className="w-8 h-8 text-panda-red-500 mx-auto mb-3" />
-        <div className="text-2xl font-bold text-panda-black-900 mb-1">
+      <div className="bg-white border border-gray-200 rounded-xl p-4 lg:p-6 text-center shadow-sm">
+        <Wallet className="w-6 h-6 lg:w-8 lg:h-8 text-panda-red-500 mx-auto mb-2 lg:mb-3" />
+        <div className="text-xl lg:text-2xl font-bold text-panda-black-900 mb-1">
           KES {userProfile.totalSpent.toLocaleString()}
         </div>
-        <div className="text-gray-600">Total Spent</div>
+        <div className="text-gray-600 text-sm lg:text-base">Total Spent</div>
       </div>
     </div>
 
     {/* Recent Activity */}
-    <div className="card p-6">
-      <h3 className="text-xl font-bold text-panda-black-900 mb-4">Recent Activity</h3>
+    <div className="bg-white border border-gray-200 rounded-xl p-4 lg:p-6 shadow-sm">
+      <h3 className="text-lg lg:text-xl font-bold text-panda-black-900 mb-4">Recent Activity</h3>
       {isNewUser ? (
-        <div className="text-center py-8">
-          <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-          <h4 className="text-lg font-semibold text-gray-600 mb-2">No activity yet</h4>
-          <p className="text-gray-500 mb-6">Start shopping to see your activity here</p>
-          <button className="btn-primary">Browse Products</button>
+        <div className="text-center py-6 lg:py-8">
+          <Package className="w-12 h-12 lg:w-16 lg:h-16 text-gray-300 mx-auto mb-4" />
+          <h4 className="text-base lg:text-lg font-semibold text-gray-600 mb-2">No activity yet</h4>
+          <p className="text-gray-500 mb-6 text-sm lg:text-base">Start shopping to see your activity here</p>
+          <button className="btn-primary text-sm lg:text-base px-4 lg:px-6 py-2 lg:py-3">Browse Products</button>
         </div>
       ) : (
         <div className="space-y-4">
@@ -435,13 +509,13 @@ const DashboardSection = ({ userProfile, isNewUser }: { userProfile: UserProfile
                       order.status === 'processing' ? 'bg-yellow-500' : 'bg-gray-500'
                   }`}></div>
                 <div>
-                  <div className="font-semibold">Order #{order.id}</div>
-                  <div className="text-sm text-gray-500">{order.items} items • {order.store}</div>
+                  <div className="font-semibold text-sm lg:text-base">Order #{order.id}</div>
+                  <div className="text-xs lg:text-sm text-gray-500">{order.items} items • {order.store}</div>
                 </div>
               </div>
               <div className="text-right">
-                <div className="font-semibold">KES {order.total.toLocaleString()}</div>
-                <div className="text-sm text-gray-500 capitalize">{order.status}</div>
+                <div className="font-semibold text-sm lg:text-base">KES {order.total.toLocaleString()}</div>
+                <div className="text-xs lg:text-sm text-gray-500 capitalize">{order.status}</div>
               </div>
             </div>
           ))}
