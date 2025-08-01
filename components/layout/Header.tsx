@@ -30,21 +30,36 @@ const Header = () => {
   return (
     <header className="bg-white shadow-xl sticky top-0 z-50 border-b border-gray-100">
       {/* Top Bar */}
-      <div className="bg-gradient-to-r from-panda-red-500 to-red-600 text-white py-2">
+      <div className="bg-gradient-to-r from-panda-red-500 to-red-600 text-white py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between text-sm">
-            <div className="flex items-center space-x-6">
-              <span className="flex items-center">
-                <MapPin className="w-4 h-4 mr-1" />
-                Free delivery in Nairobi
-              </span>
-              <span className="hidden sm:flex items-center">
-                📞 Customer Support: 020 231 1166
-              </span>
+          <div className="flex items-center justify-between">
+            {/* Contact Information */}
+            <div className="flex items-center space-x-4 md:space-x-8">
+              <div className="flex items-center space-x-1">
+                <Phone className="w-4 h-4" />
+                <span className="text-sm font-medium">Garden City:</span>
+                <a href="tel:0202311166" className="text-sm font-semibold hover:text-yellow-200 transition-colors">
+                  020 231 1166
+                </a>
+              </div>
+              <div className="hidden sm:flex items-center space-x-1">
+                <Phone className="w-4 h-4" />
+                <span className="text-sm font-medium">Galleria:</span>
+                <a href="tel:0778666666" className="text-sm font-semibold hover:text-yellow-200 transition-colors">
+                  077 866 6666
+                </a>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <Link href="/wholesale" className="hover:underline">Wholesale</Link>
-              <Link href="/contact" className="hover:underline">Contact</Link>
+            
+            {/* Quick Links */}
+            <div className="flex items-center space-x-4 text-sm">
+              <Link href="/wholesale" className="font-medium hover:text-yellow-200 transition-colors">
+                Wholesale
+              </Link>
+              <span className="text-white/60">|</span>
+              <Link href="/contact" className="font-medium hover:text-yellow-200 transition-colors">
+                Contact
+              </Link>
             </div>
           </div>
         </div>
@@ -53,18 +68,18 @@ const Header = () => {
       {/* Main Header */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-16 lg:h-20">
             {/* Logo Section */}
             <div className="flex items-center flex-shrink-0">
-              <Link href="/" className="flex items-center space-x-3 group">
-                <div className="w-14 h-14 gradient-bg rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <span className="text-white font-bold text-2xl">P</span>
+              <Link href="/" className="flex items-center space-x-2 lg:space-x-3 group">
+                <div className="w-10 h-10 lg:w-14 lg:h-14 gradient-bg rounded-xl lg:rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
+                  <span className="text-white font-bold text-lg lg:text-2xl">P</span>
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-panda-black-900 group-hover:text-panda-red-500 transition-colors">
+                  <h1 className="text-lg lg:text-2xl font-bold text-panda-black-900 group-hover:text-panda-red-500 transition-colors">
                     Panda Mart
                   </h1>
-                  <p className="text-sm text-panda-red-500 font-semibold">Kenya</p>
+                  <p className="text-xs lg:text-sm text-panda-red-500 font-semibold">Kenya</p>
                 </div>
               </Link>
             </div>
@@ -75,25 +90,26 @@ const Header = () => {
             </div>
 
             {/* Right Actions */}
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 lg:space-x-3">
               {/* Find Store */}
               <Link
                 href="/stores"
-                className="hidden md:flex items-center px-4 py-2 text-sm font-medium text-panda-red-500 hover:text-panda-red-600 hover:bg-panda-red-50 rounded-xl transition-all duration-200 border border-panda-red-200 hover:border-panda-red-300"
+                className="hidden md:flex items-center px-3 lg:px-4 py-2 text-sm font-medium text-panda-red-500 hover:text-panda-red-600 hover:bg-panda-red-50 rounded-lg lg:rounded-xl transition-all duration-200 border border-panda-red-200 hover:border-panda-red-300"
               >
-                <MapPin className="w-4 h-4 mr-2" />
-                Find Store
+                <MapPin className="w-4 h-4 mr-1 lg:mr-2" />
+                <span className="hidden lg:inline">Find Store</span>
+                <span className="lg:hidden">Store</span>
               </Link>
 
               {/* Cart Button */}
               <button
                 onClick={openCart}
-                className="relative p-3 text-gray-700 hover:text-panda-red-500 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200 hover:border-panda-red-200"
+                className="relative p-2 lg:p-3 text-gray-700 hover:text-panda-red-500 hover:bg-gray-100 rounded-lg lg:rounded-xl transition-all duration-200 border border-gray-200 hover:border-panda-red-200"
                 title="Shopping Cart"
               >
-                <ShoppingCart className="w-6 h-6" />
+                <ShoppingCart className="w-5 h-5 lg:w-6 lg:h-6" />
                 {totalItems > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-panda-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold shadow-lg animate-pulse">
+                  <span className="absolute -top-1 -right-1 lg:-top-2 lg:-right-2 bg-panda-red-500 text-white text-xs rounded-full w-5 h-5 lg:w-6 lg:h-6 flex items-center justify-center font-bold shadow-lg animate-pulse">
                     {totalItems > 99 ? '99+' : totalItems}
                   </span>
                 )}
@@ -107,7 +123,7 @@ const Header = () => {
               {/* Mobile menu button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden p-3 text-panda-black-700 hover:text-panda-red-500 hover:bg-gray-100 rounded-xl transition-all duration-200 border border-gray-200"
+                className="lg:hidden p-2 text-panda-black-700 hover:text-panda-red-500 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 bg-white shadow-sm"
                 title="Menu"
               >
                 {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -167,82 +183,86 @@ const Header = () => {
             exit={{ opacity: 0, height: 0 }}
             className="lg:hidden bg-white border-t shadow-2xl"
           >
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div className="max-w-7xl mx-auto px-4 py-4">
               {/* Mobile Search */}
-              <div className="mb-6">
+              <div className="mb-4">
                 <ProductSearch />
               </div>
 
-              {/* Primary Navigation */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                  Main Menu
-                </h3>
-                <div className="grid grid-cols-1 gap-2">
-                  {primaryNavigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="flex items-center px-4 py-3 text-panda-black-700 hover:text-panda-red-500 hover:bg-panda-red-50 font-medium rounded-xl transition-all duration-200 border border-gray-100 hover:border-panda-red-200"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <span className="mr-3 text-lg">{item.icon}</span>
+              {/* Quick Navigation - Large Buttons */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {primaryNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="relative flex flex-col items-center justify-center p-4 bg-gradient-to-br from-gray-50 to-gray-100 hover:from-panda-red-50 hover:to-red-100 rounded-2xl transition-all duration-200 border border-gray-200 hover:border-panda-red-300 shadow-sm hover:shadow-md group"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    <span className="text-2xl mb-2 group-hover:scale-110 transition-transform">
+                      {item.icon}
+                    </span>
+                    <span className="text-sm font-semibold text-gray-700 group-hover:text-panda-red-600">
                       {item.name}
-                      {item.badge && (
-                        <span className="ml-auto px-2 py-0.5 text-xs font-bold text-white bg-panda-red-500 rounded-full">
-                          {item.badge}
-                        </span>
-                      )}
-                    </Link>
-                  ))}
+                    </span>
+                    {item.badge && (
+                      <span className="absolute -top-1 -right-1 px-2 py-0.5 text-xs font-bold text-white bg-panda-red-500 rounded-full shadow-lg">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
+
+              {/* Secondary Navigation - Compact */}
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                {secondaryNavigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="flex items-center justify-center px-4 py-3 text-gray-600 hover:text-panda-red-500 hover:bg-panda-red-50 font-medium rounded-xl transition-all duration-200 border border-gray-100 hover:border-panda-red-200"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </div>
+              
+              {/* Contact Information - Mobile */}
+              <div className="bg-gradient-to-r from-panda-red-50 to-red-100 rounded-xl p-4 mb-4">
+                <h4 className="text-sm font-semibold text-panda-red-800 mb-2">Store Contacts</h4>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-panda-red-700">Garden City:</span>
+                    <a href="tel:0202311166" className="text-sm font-semibold text-panda-red-800 hover:text-panda-red-900">
+                      020 231 1166
+                    </a>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-panda-red-700">Galleria:</span>
+                    <a href="tel:0778666666" className="text-sm font-semibold text-panda-red-800 hover:text-panda-red-900">
+                      077 866 6666
+                    </a>
+                  </div>
                 </div>
               </div>
 
-              {/* Secondary Navigation */}
-              <div className="mb-6">
-                <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                  More
-                </h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {secondaryNavigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className="flex items-center justify-center px-4 py-3 text-gray-600 hover:text-panda-red-500 hover:bg-gray-50 font-medium rounded-xl transition-all duration-200 border border-gray-100"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-
-              {/* Mobile Actions */}
-              <div className="border-t pt-4 space-y-2">
+              {/* Action Buttons */}
+              <div className="grid grid-cols-2 gap-3">
                 <Link
                   href="/stores"
-                  className="flex items-center justify-center px-4 py-3 text-panda-red-500 hover:text-panda-red-600 hover:bg-panda-red-50 font-medium rounded-xl transition-all duration-200 border border-panda-red-200"
+                  className="flex items-center justify-center px-4 py-3 bg-panda-red-500 text-white hover:bg-panda-red-600 font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <MapPin className="w-5 h-5 mr-2" />
+                  <MapPin className="w-4 h-4 mr-2" />
                   Find Store
                 </Link>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <Link
-                    href="/wholesale"
-                    className="flex items-center justify-center px-3 py-2 text-gray-600 hover:text-panda-red-500 rounded-lg transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Wholesale
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="flex items-center justify-center px-3 py-2 text-gray-600 hover:text-panda-red-500 rounded-lg transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Contact
-                  </Link>
-                </div>
+                <Link
+                  href="/wholesale"
+                  className="flex items-center justify-center px-4 py-3 bg-panda-black-800 text-white hover:bg-panda-black-900 font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Wholesale
+                </Link>
               </div>
             </div>
           </motion.div>
