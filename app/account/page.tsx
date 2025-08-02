@@ -11,20 +11,97 @@ import {
 } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
-// Import section components
-import ProfileSection from '@/components/account/sections/ProfileSection'
-import SecuritySection from '@/components/account/sections/SecuritySection'
-import NotificationsSection from '@/components/account/sections/NotificationsSection'
-import OrdersSection from '@/components/account/sections/OrdersSection'
-import PaymentMethodsSection from '@/components/account/sections/PaymentSection'
-import AddressesSection from '@/components/account/sections/AddressesSection'
-import WishlistSection from '@/components/account/sections/WishlistSection'
-import PointsSection from '@/components/account/sections/PointsSection'
-import CouponsSection from '@/components/account/sections/CouponsSection'
-import AchievementsSection from '@/components/account/sections/LoyaltySection'
-import SupportSection from '@/components/account/sections/HelpSupportSection'
-import FeedbackSection from '@/components/account/sections/HelpSupportSection'
-import AboutSection from '@/components/account/sections/HelpSupportSection'
+// Placeholder components for sections that don't exist yet
+const ProfileSection = ({ userProfile, setUserProfile }: { userProfile: UserProfile, setUserProfile: (profile: UserProfile) => void }) => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Edit Profile</h2>
+    <p>Profile editing functionality coming soon...</p>
+  </div>
+)
+
+const SecuritySection = () => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Security & Privacy</h2>
+    <p>Security settings coming soon...</p>
+  </div>
+)
+
+const NotificationsSection = ({ notifications }: { notifications: Notification[] }) => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Notifications</h2>
+    <p>You have {notifications.length} notifications</p>
+  </div>
+)
+
+const OrdersSection = ({ orders }: { orders: Order[] }) => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">My Orders</h2>
+    <p>You have {orders.length} orders</p>
+  </div>
+)
+
+const PaymentMethodsSection = ({ paymentMethods }: { paymentMethods: PaymentMethod[] }) => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Payment Methods</h2>
+    <p>You have {paymentMethods.length} payment methods</p>
+  </div>
+)
+
+const AddressesSection = ({ addresses }: { addresses: Address[] }) => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Delivery Addresses</h2>
+    <p>You have {addresses.length} saved addresses</p>
+  </div>
+)
+
+const WishlistSection = ({ wishlist }: { wishlist: WishlistItem[] }) => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Wishlist</h2>
+    <p>You have {wishlist.length} items in your wishlist</p>
+  </div>
+)
+
+const PointsSection = ({ userProfile }: { userProfile: UserProfile }) => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Panda Points</h2>
+    <p>You have {userProfile.points} points</p>
+  </div>
+)
+
+const CouponsSection = () => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Coupons & Offers</h2>
+    <p>Coupons functionality coming soon...</p>
+  </div>
+)
+
+const AchievementsSection = ({ achievements }: { achievements: string[] }) => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Achievements</h2>
+    <p>You have {achievements.length} achievements</p>
+  </div>
+)
+
+const SupportSection = () => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Help & Support</h2>
+    <p>Support functionality coming soon...</p>
+  </div>
+)
+
+const FeedbackSection = () => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">Feedback</h2>
+    <p>Feedback functionality coming soon...</p>
+  </div>
+)
+
+const AboutSection = () => (
+  <div>
+    <h2 className="text-xl font-bold mb-4">About Panda Mart</h2>
+    <p>About section coming soon...</p>
+  </div>
+)
 
 interface UserProfile {
   id: string

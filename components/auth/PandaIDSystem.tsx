@@ -17,7 +17,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
   const [showPassword, setShowPassword] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [userProfile, setUserProfile] = useState(null)
+  const [userProfile, setUserProfile] = useState<any>(null)
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -75,7 +75,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
   }
 
   // Calculate tier based on points
-  const calculateTier = (points) => {
+  const calculateTier = (points: number) => {
     if (points >= 5000) return 'Platinum'
     if (points >= 2000) return 'Gold'
     if (points >= 500) return 'Silver'
@@ -419,8 +419,7 @@ const PandaIDSystemInner = ({ redirectTo = '/account' }: PandaIDSystemProps) => 
           exit={{ opacity: 0 }}
           className="fixed inset-0 bg-black/50 z-50 flex items-start sm:items-center justify-center p-4 overflow-y-auto"
           style={{
-            minHeight: '100vh',
-            minHeight: '100dvh' // Dynamic viewport height for mobile
+            minHeight: '100vh'
           }}
           onClick={() => setIsOpen(false)}
         >
