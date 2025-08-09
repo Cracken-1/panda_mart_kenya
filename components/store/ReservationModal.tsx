@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { X, Clock, CreditCard, Calendar, MapPin, Package, CheckCircle, AlertCircle, Info } from 'lucide-react';
+import { X, Clock, CreditCard, Calendar, MapPin, Package, CheckCircle, AlertCircle, Info, XCircle } from 'lucide-react';
+import { validateEmail, validatePhone, formatPhone } from '@/lib/utils/validation';
 
 interface Product {
   id: string;
@@ -34,6 +35,14 @@ export default function ReservationModal({ product, store, onClose }: Reservatio
     notes: ''
   });
   const [loading, setLoading] = useState(false);
+  const [validationErrors, setValidationErrors] = useState({
+    email: '',
+    phone: ''
+  });
+  const [fieldTouched, setFieldTouched] = useState({
+    email: false,
+    phone: false
+  });
 
   const reservationFee = 500; // Fixed reservation fee
   const totalAmount = (product.price * quantity) + reservationFee;
@@ -51,10 +60,48 @@ export default function ReservationModal({ product, store, onClose }: Reservatio
   };
 
   const handleInputChange = (field: string, value: string) => {
+    // Format phone number as user types
+    let formattedValue = value;
+    if (field === 'phone') {
+      formattedValue = formatPhone(value);
+    }
+    
     setCustomerInfo(prev => ({
       ...prev,
-      [field]: value
+      [field]: formattedValue
     }));
+
+    // Real-time validation
+    validateField(field, value);
+  };
+
+  const validateField = (fieldName: string, value: string) => {
+    let validation = { isValid: true, message: '' };
+
+    switch (fieldName) {
+      case 'email':
+        validation = validateEmail(value);
+        setValidationErrors(prev => ({ ...prev, email: validation.message }));
+        break;
+      case 'phone':
+        validation = validatePhone(value);
+        setValidationErrors(prev => ({ ...prev, phone: validation.message }));
+        break;
+    }
+
+    return validation.isValid;
+  };
+
+  const handleFieldBlur = (fieldName: string) => {
+    setFieldTouched(prev => ({ ...prev, [fieldName]: true }));
+  };
+
+  const isFormValid = () => {
+    const emailValid = !customerInfo.email || validateEmail(customerInfo.email).isValid;
+    const phoneValid = validatePhone(customerInfo.phone).isValid;
+    const nameValid = customerInfo.name.trim().length > 0;
+
+    return emailValid && phoneValid && nameValid;
   };
 
   return (
@@ -171,14 +218,38 @@ export default function ReservationModal({ product, store, onClose }: Reservatio
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Phone Number *
                         </label>
-                        <input
-                          type="tel"
-                          value={customerInfo.phone}
-                          onChange={(e) => handleInputChange('phone', e.target.value)}
-                          className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                          placeholder="+254 700 000 000"
-                          required
-                        />
+                        <div className="relative">
+                          <input
+                            type="tel"
+                            value={customerInfo.phone}
+                            onChange={(e) => handleInputChange('phone', e.target.value)}
+                            onBlur={() => handleFieldBlur('phone')}
+                            className={`w-full border rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
+                              fieldTouched.phone && validationErrors.phone
+                                ? 'border-red-300 bg-red-50'
+                                : fieldTouched.phone && !validationErrors.phone && customerInfo.phone
+                                ? 'border-green-300 bg-green-50'
+                                : 'border-gray-300'
+                            }`}
+                            placeholder="+254 700 000 000"
+                            required
+                          />
+                          {fieldTouched.phone && customerInfo.phone && (
+                            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                              {validationErrors.phone ? (
+                                <XCircle className="w-5 h-5 text-red-500" />
+                              ) : (
+                                <CheckCircle className="w-5 h-5 text-green-500" />
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        {fieldTouched.phone && validationErrors.phone && (
+                          <p className="mt-1 text-sm text-red-600 flex items-center">
+                            <AlertCircle className="w-4 h-4 mr-1" />
+                            {validationErrors.phone}
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -186,13 +257,37 @@ export default function ReservationModal({ product, store, onClose }: Reservatio
                       <label className="block text-sm font-medium text-gray-700 mb-1">
                         Email Address
                       </label>
-                      <input
-                        type="email"
-                        value={customerInfo.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                        placeholder="john@example.com"
-                      />
+                      <div className="relative">
+                        <input
+                          type="email"
+                          value={customerInfo.email}
+                          onChange={(e) => handleInputChange('email', e.target.value)}
+                          onBlur={() => handleFieldBlur('email')}
+                          className={`w-full border rounded-lg px-3 py-2 pr-10 focus:ring-2 focus:ring-emerald-500 focus:border-transparent ${
+                            fieldTouched.email && validationErrors.email
+                              ? 'border-red-300 bg-red-50'
+                              : fieldTouched.email && !validationErrors.email && customerInfo.email
+                              ? 'border-green-300 bg-green-50'
+                              : 'border-gray-300'
+                          }`}
+                          placeholder="john@example.com"
+                        />
+                        {fieldTouched.email && customerInfo.email && (
+                          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                            {validationErrors.email ? (
+                              <XCircle className="w-5 h-5 text-red-500" />
+                            ) : (
+                              <CheckCircle className="w-5 h-5 text-green-500" />
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      {fieldTouched.email && validationErrors.email && (
+                        <p className="mt-1 text-sm text-red-600 flex items-center">
+                          <AlertCircle className="w-4 h-4 mr-1" />
+                          {validationErrors.email}
+                        </p>
+                      )}
                     </div>
 
                     <div>
@@ -429,7 +524,7 @@ export default function ReservationModal({ product, store, onClose }: Reservatio
                 </button>
                 <button
                   onClick={() => setStep('payment')}
-                  disabled={!customerInfo.name || !customerInfo.phone}
+                  disabled={!isFormValid()}
                   className="px-6 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Continue to Payment

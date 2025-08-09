@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { ArrowLeft, Shield, Star, Users, Zap, Eye, EyeOff, Mail, Lock, User, Phone } from 'lucide-react'
+import { ArrowLeft, Shield, Star, Users, Zap, Eye, EyeOff, Mail, Lock, User, Phone, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
 import { useAuth } from '@/lib/hooks/useAuth'
+import { validateEmail, validatePhone, validatePassword, formatPhone, getPasswordStrengthColor } from '@/lib/utils/validation'
 
 export default function AuthenticationForm() {
   const [isSignUp, setIsSignUp] = useState(false)
@@ -18,6 +19,27 @@ export default function AuthenticationForm() {
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [validationErrors, setValidationErrors] = useState({
+    email: '',
+    password: '',
+    phone: ''
+  })
+  const [passwordStrength, setPasswordStrength] = useState({
+    strength: 'weak' as 'weak' | 'medium' | 'strong' | 'very-strong',
+    checks: {
+      length: false,
+      uppercase: false,
+      lowercase: false,
+      numbers: false,
+      symbols: false,
+      common: false
+    }
+  })
+  const [fieldTouched, setFieldTouched] = useState({
+    email: false,
+    password: false,
+    phone: false
+  })
 
   const { login, register } = useAuth()
 
@@ -49,6 +71,20 @@ export default function AuthenticationForm() {
     setLoading(true)
     setError('')
 
+    // Mark all fields as touched for validation display
+    setFieldTouched({
+      email: true,
+      password: true,
+      phone: true
+    })
+
+    // Validate all fields
+    if (!isFormValid()) {
+      setError('Please fix the validation errors before submitting')
+      setLoading(false)
+      return
+    }
+
     try {
       if (isSignUp) {
         const result = await register({
@@ -78,10 +114,59 @@ export default function AuthenticationForm() {
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    
+    // Format phone number as user types
+    let formattedValue = value
+    if (name === 'phone') {
+      formattedValue = formatPhone(value)
+    }
+    
     setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value
+      [name]: formattedValue
     }))
+
+    // Real-time validation
+    validateField(name, value)
+  }
+
+  const validateField = (fieldName: string, value: string) => {
+    let validation = { isValid: true, message: '' }
+
+    switch (fieldName) {
+      case 'email':
+        validation = validateEmail(value)
+        setValidationErrors(prev => ({ ...prev, email: validation.message }))
+        break
+      case 'phone':
+        validation = validatePhone(value)
+        setValidationErrors(prev => ({ ...prev, phone: validation.message }))
+        break
+      case 'password':
+        const passwordValidation = validatePassword(value)
+        setValidationErrors(prev => ({ ...prev, password: passwordValidation.message }))
+        setPasswordStrength({
+          strength: passwordValidation.strength,
+          checks: passwordValidation.checks
+        })
+        break
+    }
+
+    return validation.isValid
+  }
+
+  const handleFieldBlur = (fieldName: string) => {
+    setFieldTouched(prev => ({ ...prev, [fieldName]: true }))
+  }
+
+  const isFormValid = () => {
+    const emailValid = validateEmail(formData.email).isValid
+    const passwordValid = validatePassword(formData.password).isValid
+    const phoneValid = isSignUp ? validatePhone(formData.phone).isValid : true
+    const namesValid = isSignUp ? (formData.firstName.trim() && formData.lastName.trim()) : true
+
+    return emailValid && passwordValid && phoneValid && namesValid
   }
 
   return (
@@ -264,11 +349,33 @@ export default function AuthenticationForm() {
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
+                    onBlur={() => handleFieldBlur('email')}
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent ${
+                      fieldTouched.email && validationErrors.email
+                        ? 'border-red-300 bg-red-50'
+                        : fieldTouched.email && !validationErrors.email && formData.email
+                        ? 'border-green-300 bg-green-50'
+                        : 'border-gray-300'
+                    }`}
                     placeholder="john@example.com"
                     required
                   />
+                  {fieldTouched.email && formData.email && (
+                    <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                      {validationErrors.email ? (
+                        <XCircle className="w-5 h-5 text-red-500" />
+                      ) : (
+                        <CheckCircle className="w-5 h-5 text-green-500" />
+                      )}
+                    </div>
+                  )}
                 </div>
+                {fieldTouched.email && validationErrors.email && (
+                  <p className="mt-1 text-sm text-red-600 flex items-center">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    {validationErrors.email}
+                  </p>
+                )}
               </div>
 
               {isSignUp && (
@@ -287,11 +394,33 @@ export default function AuthenticationForm() {
                       name="phone"
                       value={formData.phone}
                       onChange={handleInputChange}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
+                      onBlur={() => handleFieldBlur('phone')}
+                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent ${
+                        fieldTouched.phone && validationErrors.phone
+                          ? 'border-red-300 bg-red-50'
+                          : fieldTouched.phone && !validationErrors.phone && formData.phone
+                          ? 'border-green-300 bg-green-50'
+                          : 'border-gray-300'
+                      }`}
                       placeholder="+254 700 000 000"
                       required={isSignUp}
                     />
+                    {fieldTouched.phone && formData.phone && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                        {validationErrors.phone ? (
+                          <XCircle className="w-5 h-5 text-red-500" />
+                        ) : (
+                          <CheckCircle className="w-5 h-5 text-green-500" />
+                        )}
+                      </div>
+                    )}
                   </div>
+                  {fieldTouched.phone && validationErrors.phone && (
+                    <p className="mt-1 text-sm text-red-600 flex items-center">
+                      <AlertCircle className="w-4 h-4 mr-1" />
+                      {validationErrors.phone}
+                    </p>
+                  )}
                 </motion.div>
               )}
 
@@ -306,7 +435,14 @@ export default function AuthenticationForm() {
                     name="password"
                     value={formData.password}
                     onChange={handleInputChange}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
+                    onBlur={() => handleFieldBlur('password')}
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent ${
+                      fieldTouched.password && validationErrors.password
+                        ? 'border-red-300 bg-red-50'
+                        : fieldTouched.password && !validationErrors.password && formData.password
+                        ? 'border-green-300 bg-green-50'
+                        : 'border-gray-300'
+                    }`}
                     placeholder="••••••••"
                     required
                   />
@@ -318,11 +454,70 @@ export default function AuthenticationForm() {
                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                   </button>
                 </div>
+
+                {/* Password Strength Indicator */}
+                {formData.password && (
+                  <div className="mt-2">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-gray-600">Password Strength:</span>
+                      <span className={`text-xs px-2 py-1 rounded-full ${getPasswordStrengthColor(passwordStrength.strength)}`}>
+                        {passwordStrength.strength.charAt(0).toUpperCase() + passwordStrength.strength.slice(1).replace('-', ' ')}
+                      </span>
+                    </div>
+                    
+                    {/* Strength Bar */}
+                    <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
+                      <div 
+                        className={`h-2 rounded-full transition-all duration-300 ${
+                          passwordStrength.strength === 'weak' ? 'w-1/4 bg-red-500' :
+                          passwordStrength.strength === 'medium' ? 'w-2/4 bg-yellow-500' :
+                          passwordStrength.strength === 'strong' ? 'w-3/4 bg-blue-500' :
+                          'w-full bg-green-500'
+                        }`}
+                      ></div>
+                    </div>
+
+                    {/* Password Requirements */}
+                    <div className="grid grid-cols-2 gap-2 text-xs">
+                      <div className={`flex items-center ${passwordStrength.checks.length ? 'text-green-600' : 'text-gray-400'}`}>
+                        {passwordStrength.checks.length ? <CheckCircle className="w-3 h-3 mr-1" /> : <XCircle className="w-3 h-3 mr-1" />}
+                        8+ characters
+                      </div>
+                      <div className={`flex items-center ${passwordStrength.checks.uppercase ? 'text-green-600' : 'text-gray-400'}`}>
+                        {passwordStrength.checks.uppercase ? <CheckCircle className="w-3 h-3 mr-1" /> : <XCircle className="w-3 h-3 mr-1" />}
+                        Uppercase letter
+                      </div>
+                      <div className={`flex items-center ${passwordStrength.checks.lowercase ? 'text-green-600' : 'text-gray-400'}`}>
+                        {passwordStrength.checks.lowercase ? <CheckCircle className="w-3 h-3 mr-1" /> : <XCircle className="w-3 h-3 mr-1" />}
+                        Lowercase letter
+                      </div>
+                      <div className={`flex items-center ${passwordStrength.checks.numbers ? 'text-green-600' : 'text-gray-400'}`}>
+                        {passwordStrength.checks.numbers ? <CheckCircle className="w-3 h-3 mr-1" /> : <XCircle className="w-3 h-3 mr-1" />}
+                        Number
+                      </div>
+                      <div className={`flex items-center ${passwordStrength.checks.symbols ? 'text-green-600' : 'text-gray-400'}`}>
+                        {passwordStrength.checks.symbols ? <CheckCircle className="w-3 h-3 mr-1" /> : <XCircle className="w-3 h-3 mr-1" />}
+                        Special character
+                      </div>
+                      <div className={`flex items-center ${passwordStrength.checks.common ? 'text-green-600' : 'text-red-600'}`}>
+                        {passwordStrength.checks.common ? <CheckCircle className="w-3 h-3 mr-1" /> : <XCircle className="w-3 h-3 mr-1" />}
+                        Not common
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {fieldTouched.password && validationErrors.password && (
+                  <p className="mt-2 text-sm text-red-600 flex items-center">
+                    <AlertCircle className="w-4 h-4 mr-1" />
+                    {validationErrors.password}
+                  </p>
+                )}
               </div>
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !isFormValid()}
                 className="w-full bg-gradient-to-r from-panda-red-500 to-red-600 text-white py-3 px-4 rounded-lg hover:from-panda-red-600 hover:to-red-700 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? (
@@ -347,6 +542,27 @@ export default function AuthenticationForm() {
                       firstName: '',
                       lastName: '',
                       phone: ''
+                    })
+                    setValidationErrors({
+                      email: '',
+                      password: '',
+                      phone: ''
+                    })
+                    setFieldTouched({
+                      email: false,
+                      password: false,
+                      phone: false
+                    })
+                    setPasswordStrength({
+                      strength: 'weak',
+                      checks: {
+                        length: false,
+                        uppercase: false,
+                        lowercase: false,
+                        numbers: false,
+                        symbols: false,
+                        common: false
+                      }
                     })
                   }}
                   className="text-panda-red-500 hover:text-panda-red-600 font-medium"
