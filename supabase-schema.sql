@@ -681,4 +681,127 @@ CREATE INDEX idx_user_preferences_user_id ON user_preferences(user_id);
 
 -- Trigger for updated_at
 CREATE TRIGGER update_user_preferences_updated_at BEFORE UPDATE ON user_preferences
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();-- Pr
+oduct reservations table
+CREATE TABLE product_reservations (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  reservation_id VARCHAR(50) UNIQUE NOT NULL,
+  product_id VARCHAR(100) NOT NULL,
+  product_name VARCHAR(255) NOT NULL,
+  store_id VARCHAR(50) NOT NULL,
+  quantity INTEGER NOT NULL DEFAULT 1,
+  total_amount DECIMAL(10,2) NOT NULL,
+  reservation_fee DECIMAL(10,2) DEFAULT 500.00,
+  status VARCHAR(20) DEFAULT 'confirmed' CHECK (status IN ('confirmed', 'extended', 'completed', 'cancelled', 'expired')),
+  pickup_deadline TIMESTAMP WITH TIME ZONE NOT NULL,
+  pickup_date TIMESTAMP WITH TIME ZONE,
+  customer_name VARCHAR(255) NOT NULL,
+  customer_phone VARCHAR(20) NOT NULL,
+  customer_email VARCHAR(255),
+  notes TEXT,
+  payment_method VARCHAR(20) DEFAULT 'mpesa' CHECK (payment_method IN ('mpesa', 'card', 'bank')),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Stores table for shop in store feature
+CREATE TABLE stores (
+  id VARCHAR(50) PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  address TEXT NOT NULL,
+  phone VARCHAR(20) NOT NULL,
+  coordinates JSONB, -- {lat: number, lng: number}
+  hours JSONB NOT NULL, -- {monday: string, tuesday: string, ...}
+  rating DECIMAL(3,2) DEFAULT 0.0,
+  review_count INTEGER DEFAULT 0,
+  features TEXT[] DEFAULT '{}',
+  current_capacity INTEGER DEFAULT 0,
+  max_capacity INTEGER NOT NULL,
+  parking_spaces INTEGER DEFAULT 0,
+  available_parking INTEGER DEFAULT 0,
+  staff_on_duty INTEGER DEFAULT 0,
+  special_offers TEXT[] DEFAULT '{}',
+  description TEXT,
+  manager VARCHAR(255),
+  total_products INTEGER DEFAULT 0,
+  categories TEXT[] DEFAULT '{}',
+  images TEXT[] DEFAULT '{}',
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enable RLS
+ALTER TABLE product_reservations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE stores ENABLE ROW LEVEL SECURITY;
+
+-- RLS policies for product_reservations
+CREATE POLICY "Users can view own reservations" ON product_reservations
+    FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can create own reservations" ON product_reservations
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update own reservations" ON product_reservations
+    FOR UPDATE USING (auth.uid() = user_id);
+
+-- RLS policies for stores (public read access)
+CREATE POLICY "Anyone can view active stores" ON stores
+    FOR SELECT USING (is_active = true);
+
+-- Indexes
+CREATE INDEX idx_product_reservations_user_id ON product_reservations(user_id);
+CREATE INDEX idx_product_reservations_status ON product_reservations(status);
+CREATE INDEX idx_product_reservations_pickup_deadline ON product_reservations(pickup_deadline);
+CREATE INDEX idx_product_reservations_reservation_id ON product_reservations(reservation_id);
+
+CREATE INDEX idx_stores_active ON stores(is_active);
+CREATE INDEX idx_stores_coordinates ON stores USING GIN (coordinates);
+
+-- Triggers for updated_at
+CREATE TRIGGER update_product_reservations_updated_at BEFORE UPDATE ON product_reservations
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_stores_updated_at BEFORE UPDATE ON stores
+    FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
+
+-- Insert sample store data
+INSERT INTO stores (id, name, address, phone, coordinates, hours, rating, review_count, features, max_capacity, parking_spaces, available_parking, staff_on_duty, special_offers, description, manager, total_products, categories) VALUES
+('garden-city', 'Panda Mart Garden City', 'Thika Road, Garden City Mall, Nairobi', '020 231 1166', 
+ '{"lat": -1.2197, "lng": 36.8965}',
+ '{"monday": "8:00 AM - 10:00 PM", "tuesday": "8:00 AM - 10:00 PM", "wednesday": "8:00 AM - 10:00 PM", "thursday": "8:00 AM - 10:00 PM", "friday": "8:00 AM - 11:00 PM", "saturday": "8:00 AM - 11:00 PM", "sunday": "9:00 AM - 9:00 PM"}',
+ 4.8, 1247, 
+ ARRAY['Free WiFi', 'Parking', 'Pharmacy', 'Electronics', 'Fresh Produce', 'Bakery', 'ATM', 'Customer Service'],
+ 250, 500, 127, 24,
+ ARRAY['20% off Electronics', 'Buy 2 Get 1 Free Snacks', 'Flash Sale: Home Appliances'],
+ 'Our flagship store at Garden City Mall offers the complete Panda Mart experience with over 50,000 products across all categories.',
+ 'Sarah Wanjiku', 52847,
+ ARRAY['Electronics', 'Fashion', 'Home & Garden', 'Health & Beauty', 'Sports & Outdoors', 'Toys & Games', 'Books & Media', 'Food & Beverages']),
+
+('galleria', 'Panda Mart Galleria', 'Langata Road, Galleria Shopping Mall, Nairobi', '077 866 6666',
+ '{"lat": -1.3167, "lng": 36.7833}',
+ '{"monday": "9:00 AM - 9:00 PM", "tuesday": "9:00 AM - 9:00 PM", "wednesday": "9:00 AM - 9:00 PM", "thursday": "9:00 AM - 9:00 PM", "friday": "9:00 AM - 10:00 PM", "saturday": "9:00 AM - 10:00 PM", "sunday": "10:00 AM - 8:00 PM"}',
+ 4.6, 892,
+ ARRAY['Free WiFi', 'Parking', 'Home & Garden', 'Fashion', 'Food Court', 'Customer Service'],
+ 180, 300, 45, 18,
+ ARRAY['15% off Home Decor', 'Flash Sale: Fashion Items', 'Weekend Special: Garden Tools'],
+ 'Located in the heart of Langata, our Galleria store specializes in home and lifestyle products.',
+ 'James Mwangi', 38920,
+ ARRAY['Home & Garden', 'Fashion', 'Health & Beauty', 'Electronics', 'Sports & Outdoors', 'Food & Beverages']),
+
+('westgate', 'Panda Mart Westgate', 'Westlands, Westgate Shopping Mall, Nairobi', '020 445 7890',
+ '{"lat": -1.2667, "lng": 36.8000}',
+ '{"monday": "8:30 AM - 9:30 PM", "tuesday": "8:30 AM - 9:30 PM", "wednesday": "8:30 AM - 9:30 PM", "thursday": "8:30 AM - 9:30 PM", "friday": "8:30 AM - 10:30 PM", "saturday": "8:30 AM - 10:30 PM", "sunday": "9:30 AM - 8:30 PM"}',
+ 4.7, 1056,
+ ARRAY['Free WiFi', 'Parking', 'Premium Brands', 'Tech Zone', 'Beauty Corner', 'VIP Shopping', 'Personal Shopper'],
+ 300, 800, 234, 32,
+ ARRAY['Premium Brand Showcase', '30% off Beauty Products', 'Tech Zone Grand Opening'],
+ 'Our premium Westgate location caters to discerning customers with an extensive selection of high-end brands.',
+ 'Grace Akinyi', 45632,
+ ARRAY['Premium Electronics', 'Luxury Fashion', 'Beauty & Cosmetics', 'Home Decor', 'Sports & Fitness', 'Books & Media']);
+
+-- Update store capacities with realistic current values
+UPDATE stores SET current_capacity = 180 WHERE id = 'garden-city';
+UPDATE stores SET current_capacity = 95 WHERE id = 'galleria';
+UPDATE stores SET current_capacity = 220 WHERE id = 'westgate';

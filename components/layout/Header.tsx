@@ -14,6 +14,7 @@ const Header = () => {
 
   const primaryNavigation = [
     { name: 'Home', href: '/', icon: '🏠' },
+    { name: 'Shop in Store', href: '/shop-in-store', icon: '🏪', badge: 'New' },
     { name: 'Flash Sale', href: '/flash-sale', icon: '⚡', badge: 'Hot' },
     { name: 'Bundles', href: '/bundles', icon: '📦', badge: 'Save' },
     { name: 'Deals', href: '/deals', icon: '🏷️' },
