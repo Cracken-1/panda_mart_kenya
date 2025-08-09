@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { SupabaseService } from '@/lib/supabase/database'
-import { supabaseAdmin } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
   try {
@@ -14,12 +13,10 @@ export async function GET(request: NextRequest) {
 
     console.log('Debug: Checking Supabase connection...')
     
-    // Test basic database connection
-    const connectionTest = await SupabaseService.testConnection()
-    console.log('Supabase connection successful:', connectionTest)
+    const supabase = createClient()
 
     // Get all users (limited info for security)
-    const { data: users, error: usersError } = await supabaseAdmin
+    const { data: users, error: usersError } = await supabase
       .from('users')
       .select(`
         id, 
@@ -47,7 +44,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: true,
       database: {
-        connected: connectionTest,
+        connected: !usersError,
         provider: 'Supabase'
       },
       users: {

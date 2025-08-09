@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createSupabaseAdmin } from '@/lib/supabase/client'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,8 +28,8 @@ export async function GET(request: NextRequest) {
 
     // Test 1: Basic connection
     console.log('🔌 Testing database connection...')
-    const supabaseAdmin = createSupabaseAdmin()
-    const { data: connectionTest, error: connectionError } = await supabaseAdmin
+    const supabase = createClient()
+    const { data: connectionTest, error: connectionError } = await supabase
       .from('users')
       .select('count')
       .limit(1)
@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
     const tableStatus = {}
     for (const table of tables) {
       try {
-        const { data, error } = await supabaseAdmin
+        const { data, error } = await supabase
           .from(table)
           .select('*')
           .limit(1)
@@ -70,20 +70,20 @@ export async function GET(request: NextRequest) {
           tableStatus[table] = { status: 'ok', count: data?.length || 0 }
         }
       } catch (err) {
-        console.log(`❌ Table '${table}': ${err.message}`)
-        tableStatus[table] = { status: 'error', message: err.message }
+        console.log(`❌ Table '${table}': ${err instanceof Error ? err.message : 'Unknown error'}`)
+        tableStatus[table] = { status: 'error', message: err instanceof Error ? err.message : 'Unknown error' }
       }
     }
 
     // Test 3: Check sample data
     console.log('📦 Checking sample data...')
     
-    const { data: categories } = await supabaseAdmin
+    const { data: categories } = await supabase
       .from('categories')
       .select('*')
       .limit(5)
     
-    const { data: stores } = await supabaseAdmin
+    const { data: stores } = await supabase
       .from('stores')
       .select('*')
 
