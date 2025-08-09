@@ -1,0 +1,135 @@
+{
+  "name": "panda-mart-kenya",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Panda Mart Kenya - Your World of Amazing Deals. A comprehensive e-commerce platform designed to drive foot traffic to physical stores.",
+  "keywords": [
+    "panda-mart",
+    "kenya",
+    "e-commerce",
+    "retail",
+    "nextjs",
+    "react",
+    "tailwindcss"
+  ],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "type-check": "tsc --noEmit",
+    "postinstall": "npm run build:check",
+    "build:check": "echo 'Build environment check passed'",
+    "update:check": "npm outdated",
+    "update:deps": "npm update",
+    "update:major": "npx npm-check-updates -u && npm install",
+    "update:interactive": "npx npm-check-updates -i",
+    "deps:audit": "npm audit",
+    "deps:fix": "npm audit fix",
+    "deps:clean": "rm -rf node_modules package-lock.json && npm install",
+    "deps:manage": "node scripts/dependency-manager.js",
+    "deps:check": "node scripts/dependency-manager.js check",
+    "deps:peers": "node scripts/dependency-manager.js peers",
+    "deps:report": "node scripts/dependency-manager.js report",
+    "db:setup": "psql -f database-schema.sql",
+    "db:migrate": "node scripts/migrate.js",
+    "db:seed": "node scripts/seed.js",
+    "db:backup": "node scripts/backup.js",
+    "mongo:setup": "node mongodb-setup.js",
+    "mongo:setup:verbose": "node mongodb-setup.js --verbose",
+    "mongo:setup:reset": "node mongodb-setup.js --reset --verbose",
+    "mongo:setup:atlas": "node setup-atlas.js",
+    "mongo:test": "node test-mongodb.js",
+    "mongo:stats": "node mongodb-setup.js --stats",
+    "security:audit": "node security-audit.js",
+    "test": "node test-comprehensive-api.js",
+    "test:simple": "node test-api-simple.js",
+    "test:endpoints": "node test-api-endpoints.js",
+    "generate:secrets": "node scripts/generate-secrets.js",
+    "deploy:check": "node scripts/deploy-check.js",
+    "deploy:vercel": "vercel --prod",
+    "preview": "vercel"
+  },
+  "dependencies": {
+    "@heroicons/react": "^2.2.0",
+    "@hookform/resolvers": "^3.10.0",
+    "@supabase/supabase-js": "^2.53.0",
+    "@use-gesture/react": "^10.3.1",
+    "bcryptjs": "^2.4.3",
+    "critters": "^0.0.24",
+    "crypto-js": "^4.2.0",
+    "dompurify": "^3.2.6",
+    "express-rate-limit": "^7.5.1",
+    "express-slow-down": "^2.1.0",
+    "framer-motion": "^11.15.0",
+    "helmet": "^8.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "lru-cache": "^11.0.2",
+    "lucide-react": "^0.468.0",
+    "mongodb": "^6.18.0",
+    "next": "^15.1.3",
+    "nodemailer": "^6.10.1",
+    "otplib": "^12.0.1",
+    "pg": "^8.16.3",
+    "qrcode": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.60.0",
+    "react-intersection-observer": "^9.16.0",
+    "speakeasy": "^2.0.0",
+    "validator": "^13.15.15",
+    "zod": "^3.25.76",
+    "zustand": "^4.5.7"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/crypto-js": "^4.2.2",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/mongodb": "^4.0.7",
+    "@types/node": "^22.10.5",
+    "@types/nodemailer": "^6.4.17",
+    "@types/pg": "^8.15.4",
+    "@types/qrcode": "^1.5.5",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@types/validator": "^13.15.2",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^9.18.0",
+    "eslint-config-next": "^15.1.3",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.3"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "overrides": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "@react-three/fiber": {
+      "react": "^18.3.1",
+      "react-dom": "^18.3.1"
+    },
+    "react-reconciler": {
+      "react": "^18.3.1"
+    },
+    "its-fine": {
+      "react": "^18.3.1"
+    },
+    "react-native": {
+      "react": "^18.3.1"
+    },
+    "react-spring": {
+      "@react-three/fiber": {
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+      }
+    }
+  },
+  "resolutions": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

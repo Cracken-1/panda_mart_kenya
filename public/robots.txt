@@ -1,0 +1,65 @@
+# Robots.txt for Panda Mart Kenya
+# https://pandamart.co.ke/robots.txt
+
+User-agent: *
+Allow: /
+
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: YandexBot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+# Disallow admin and private areas
+Disallow: /admin/
+Disallow: /api/
+Disallow: /account/
+Disallow: /_next/
+Disallow: /private/
+Disallow: /temp/
+Disallow: /backup/
+
+# Disallow search parameters to avoid duplicate content
+Disallow: /*?*
+Disallow: /*&*
+
+# Disallow file types that shouldn't be indexed
+Disallow: *.json$
+Disallow: *.xml$
+Disallow: *.txt$
+Disallow: *.log$
+
+# Allow important files
+Allow: /sitemap.xml
+Allow: /manifest.json
+Allow: /panda.ico
+Allow: /robots.txt
+
+# Crawl delay for aggressive bots
+User-agent: *
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://pandamart.co.ke/sitemap.xml
+
+# Host directive (preferred domain)
+Host: https://pandamart.co.ke

@@ -1,0 +1,76 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base",
+    "schedule:weeklyNonOfficeHours"
+  ],
+  "timezone": "Africa/Nairobi",
+  "labels": ["dependencies"],
+  "assignees": ["Cracken-1"],
+  "reviewers": ["Cracken-1"],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["^@types/"],
+      "groupName": "TypeScript type definitions",
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "matchPackagePatterns": ["^eslint", "^@typescript-eslint/"],
+      "groupName": "ESLint packages",
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "matchPackageNames": ["react", "react-dom"],
+      "groupName": "React core",
+      "separateMajorMinor": true,
+      "separateMultipleMajor": true
+    },
+    {
+      "matchPackageNames": ["next"],
+      "groupName": "Next.js",
+      "separateMajorMinor": true
+    },
+    {
+      "matchPackagePatterns": ["^@next/"],
+      "groupName": "Next.js related packages",
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "automerge": true,
+      "automergeType": "pr",
+      "matchUpdateTypes": ["patch", "minor"]
+    },
+    {
+      "matchDepTypes": ["dependencies"],
+      "matchUpdateTypes": ["patch"],
+      "automerge": true,
+      "automergeType": "pr"
+    },
+    {
+      "matchUpdateTypes": ["major"],
+      "dependencyDashboardApproval": true,
+      "labels": ["major-update"]
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security"]
+  },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 6am on Monday"]
+  },
+  "dependencyDashboard": true,
+  "dependencyDashboardTitle": "🤖 Dependency Dashboard - Panda Mart Kenya",
+  "dependencyDashboardHeader": "This dashboard shows all pending dependency updates for Panda Mart Kenya.",
+  "prHourlyLimit": 3,
+  "prConcurrentLimit": 5,
+  "branchConcurrentLimit": 10,
+  "semanticCommits": "enabled",
+  "semanticCommitType": "chore",
+  "semanticCommitScope": "deps"
+}

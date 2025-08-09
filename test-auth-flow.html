@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Panda Mart Auth Flow</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+        button {
+            background: #FF6B35;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #e55a2b;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        h1 {
+            color: #FF6B35;
+            text-align: center;
+        }
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #FF6B35;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🐼 Panda Mart Auth Flow Test</h1>
+    
+    <!-- Setup Test -->
+    <div class="container">
+        <h2>1. Database Setup Test</h2>
+        <button onclick="testSetup()">Test Database Setup</button>
+        <div id="setupResult"></div>
+    </div>
+
+    <!-- Registration Test -->
+    <div class="container">
+        <h2>2. User Registration Test</h2>
+        <div class="form-group">
+            <label>First Name:</label>
+            <input type="text" id="regFirstName" value="Test">
+        </div>
+        <div class="form-group">
+            <label>Last Name:</label>
+            <input type="text" id="regLastName" value="User">
+        </div>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="regEmail" value="">
+        </div>
+        <div class="form-group">
+            <label>Phone:</label>
+            <input type="tel" id="regPhone" value="+254712345678">
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="regPassword" value="TestPassword123!">
+        </div>
+        <button onclick="testRegistration()">Register User</button>
+        <button onclick="generateRandomEmail()">Generate Random Email</button>
+        <div id="regResult"></div>
+    </div>
+
+    <!-- Login Test -->
+    <div class="container">
+        <h2>3. User Login Test</h2>
+        <div class="form-group">
+            <label>Email:</label>
+            <input type="email" id="loginEmail" value="">
+        </div>
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" id="loginPassword" value="TestPassword123!">
+        </div>
+        <button onclick="testLogin()">Login User</button>
+        <div id="loginResult"></div>
+    </div>
+
+    <!-- Profile Test -->
+    <div class="container">
+        <h2>4. Profile Access Test</h2>
+        <button onclick="testProfile()">Get User Profile</button>
+        <div id="profileResult"></div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://panda-mart-kenya.vercel.app/api';
+        let authToken = '';
+
+        function generateRandomEmail() {
+            const randomId = Math.random().toString(36).substring(2, 8);
+            const email = `test.${randomId}@example.com`;
+            document.getElementById('regEmail').value = email;
+            document.getElementById('loginEmail').value = email;
+        }
+
+        async function testSetup() {
+            const resultDiv = document.getElementById('setupResult');
+            resultDiv.innerHTML = '<div class="info">Testing database setup...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/test-setup`);
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.innerHTML = `<div class="success">✅ Database Setup Successful!
+
+Environment Variables: ${JSON.stringify(data.envCheck, null, 2)}
+
+Tables Status:
+${Object.entries(data.tableStatus).map(([table, status]) => 
+    `${table}: ${status.status === 'ok' ? '✅' : '❌'} ${status.message || ''}`
+).join('\n')}
+
+Sample Data:
+- Categories: ${data.sampleData.categories}
+- Stores: ${data.sampleData.stores}
+${data.sampleData.storeDetails.map(store => `  - ${store.name}: ${store.phone}`).join('\n')}
+</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Setup Failed: ${data.error}
+${data.details || ''}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Request Failed: ${error.message}</div>`;
+            }
+        }
+
+        async function testRegistration() {
+            const resultDiv = document.getElementById('regResult');
+            resultDiv.innerHTML = '<div class="info">Registering user...</div>';
+
+            const userData = {
+                firstName: document.getElementById('regFirstName').value,
+                lastName: document.getElementById('regLastName').value,
+                email: document.getElementById('regEmail').value,
+                phone: document.getElementById('regPhone').value,
+                password: document.getElementById('regPassword').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.innerHTML = `<div class="success">✅ Registration Successful!
+
+User Created:
+- ID: ${data.user.id}
+- Panda ID: ${data.user.pandaId}
+- Email: ${data.user.email}
+- Name: ${data.user.firstName} ${data.user.lastName}
+- Points: ${data.user.pandaPoints}
+- Created: ${new Date(data.user.createdAt).toLocaleString()}
+</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Registration Failed: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Request Failed: ${error.message}</div>`;
+            }
+        }
+
+        async function testLogin() {
+            const resultDiv = document.getElementById('loginResult');
+            resultDiv.innerHTML = '<div class="info">Logging in user...</div>';
+
+            const loginData = {
+                email: document.getElementById('loginEmail').value,
+                password: document.getElementById('loginPassword').value
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    authToken = data.tokens.accessToken;
+                    resultDiv.innerHTML = `<div class="success">✅ Login Successful!
+
+User Info:
+- ID: ${data.user.id}
+- Panda ID: ${data.user.pandaId}
+- Email: ${data.user.email}
+- Name: ${data.user.firstName} ${data.user.lastName}
+- Points: ${data.user.pandaPoints}
+- Tier: ${data.user.currentTier}
+- Streak: ${data.user.dailyStreak}
+
+Tokens:
+- Access Token: ${data.tokens.accessToken.substring(0, 50)}...
+- Expires In: ${data.tokens.expiresIn} seconds
+</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Login Failed: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Request Failed: ${error.message}</div>`;
+            }
+        }
+
+        async function testProfile() {
+            const resultDiv = document.getElementById('profileResult');
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<div class="error">❌ Please login first to get auth token</div>';
+                return;
+            }
+
+            resultDiv.innerHTML = '<div class="info">Fetching user profile...</div>';
+
+            try {
+                const response = await fetch(`${API_BASE}/account/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    resultDiv.innerHTML = `<div class="success">✅ Profile Access Successful!
+
+Profile Data:
+- ID: ${data.user.id}
+- Panda ID: ${data.user.pandaId}
+- Email: ${data.user.email}
+- Name: ${data.user.firstName} ${data.user.lastName}
+- Points: ${data.user.pandaPoints}
+- Lifetime Points: ${data.user.lifetimePoints}
+- Tier: ${data.user.currentTier}
+- Daily Streak: ${data.user.dailyStreak}
+- Total Orders: ${data.user.totalOrders}
+- Recent Transactions: ${data.user.recentTransactions?.length || 0}
+</div>`;
+                } else {
+                    resultDiv.innerHTML = `<div class="error">❌ Profile Access Failed: ${data.error}</div>`;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<div class="error">❌ Request Failed: ${error.message}</div>`;
+            }
+        }
+
+        // Generate random email on page load
+        window.onload = function() {
+            generateRandomEmail();
+        };
+    </script>
+</body>
+</html>
