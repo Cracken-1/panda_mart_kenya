@@ -69,7 +69,7 @@ const Header = () => {
       {/* Main Header */}
       <div className="bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
+          <div className="flex items-center justify-between h-14 sm:h-16 lg:h-20">
             {/* Logo Section */}
             <div className="flex items-center flex-shrink-0">
               <Link href="/" className="flex items-center space-x-2 lg:space-x-3 group">
@@ -86,7 +86,7 @@ const Header = () => {
             </div>
 
             {/* Search Bar - Center */}
-            <div className="hidden lg:block flex-1 max-w-2xl mx-8">
+            <div className="hidden md:block flex-1 max-w-xl lg:max-w-2xl mx-4 lg:mx-8">
               <ProductSearch />
             </div>
 

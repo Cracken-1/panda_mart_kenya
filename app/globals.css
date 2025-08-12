@@ -132,3 +132,236 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   background: #dc2626;
 }
+
+/* Form Input Fixes */
+input, textarea, select {
+  color: #1f2937 !important; /* Force dark text */
+  background-color: #ffffff !important; /* Force white background */
+}
+
+input::placeholder, textarea::placeholder {
+  color: #9ca3af !important; /* Force gray placeholder */
+  opacity: 1 !important;
+}
+
+input:focus, textarea:focus, select:focus {
+  color: #1f2937 !important;
+  background-color: #ffffff !important;
+}
+
+/* Autofill styles */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  -webkit-text-fill-color: #1f2937 !important;
+}
+
+/* Comprehensive Media Queries */
+
+/* Extra Small Devices (phones, 320px and up) */
+@media only screen and (min-width: 320px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  body {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  h1 { font-size: 1.5rem; }
+  h2 { font-size: 1.25rem; }
+  h3 { font-size: 1.125rem; }
+}
+
+/* Small Devices (landscape phones, 480px and up) */
+@media only screen and (min-width: 480px) {
+  .container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  
+  body {
+    font-size: 15px;
+  }
+  
+  h1 { font-size: 1.75rem; }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.25rem; }
+}
+
+/* Medium Devices (tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  body {
+    font-size: 16px;
+  }
+  
+  h1 { font-size: 2rem; }
+  h2 { font-size: 1.75rem; }
+  h3 { font-size: 1.5rem; }
+}
+
+/* Large Devices (desktops, 1024px and up) */
+@media only screen and (min-width: 1024px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  h1 { font-size: 2.5rem; }
+  h2 { font-size: 2rem; }
+  h3 { font-size: 1.75rem; }
+}
+
+/* Extra Large Devices (large desktops, 1280px and up) */
+@media only screen and (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+  
+  h1 { font-size: 3rem; }
+  h2 { font-size: 2.25rem; }
+  h3 { font-size: 2rem; }
+}
+
+/* 2XL Devices (larger desktops, 1536px and up) */
+@media only screen and (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+  
+  h1 { font-size: 3.5rem; }
+  h2 { font-size: 2.5rem; }
+  h3 { font-size: 2.25rem; }
+}
+
+/* Ultra Wide Screens (1920px and up) */
+@media only screen and (min-width: 1920px) {
+  .container {
+    max-width: 1800px;
+  }
+  
+  body {
+    font-size: 18px;
+  }
+}
+
+/* 4K Screens (2560px and up) */
+@media only screen and (min-width: 2560px) {
+  .container {
+    max-width: 2400px;
+  }
+  
+  body {
+    font-size: 20px;
+  }
+  
+  h1 { font-size: 4rem; }
+  h2 { font-size: 3rem; }
+  h3 { font-size: 2.5rem; }
+}
+
+/* Height-based media queries for better mobile experience */
+@media only screen and (max-height: 600px) {
+  .min-h-screen {
+    min-height: 100vh;
+  }
+}
+
+@media only screen and (max-height: 500px) {
+  .py-16 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  
+  .py-12 {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+}
+
+/* Landscape orientation adjustments */
+@media only screen and (orientation: landscape) and (max-height: 500px) {
+  .min-h-screen {
+    min-height: 100vh;
+  }
+  
+  .py-16 {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+}
+
+/* High DPI displays */
+@media only screen and (-webkit-min-device-pixel-ratio: 2),
+       only screen and (min--moz-device-pixel-ratio: 2),
+       only screen and (-o-min-device-pixel-ratio: 2/1),
+       only screen and (min-device-pixel-ratio: 2),
+       only screen and (min-resolution: 192dpi),
+       only screen and (min-resolution: 2dppx) {
+  /* Sharper images and icons for retina displays */
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+    color: black;
+    background: white;
+  }
+  
+  .container {
+    max-width: none;
+    padding: 0;
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  input, textarea, select {
+    color: #f9fafb !important;
+    background-color: #374151 !important;
+    border-color: #6b7280 !important;
+  }
+  
+  input::placeholder, textarea::placeholder {
+    color: #9ca3af !important;
+  }
+  
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
+    -webkit-text-fill-color: #f9fafb !important;
+  }
+}

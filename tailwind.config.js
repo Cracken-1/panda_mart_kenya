@@ -6,6 +6,23 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   theme: {
+    screens: {
+      'xs': '320px',    // Extra small devices
+      'sm': '480px',    // Small devices
+      'md': '768px',    // Medium devices
+      'lg': '1024px',   // Large devices
+      'xl': '1280px',   // Extra large devices
+      '2xl': '1536px',  // 2X large devices
+      '3xl': '1920px',  // Ultra wide screens
+      '4xl': '2560px',  // 4K screens
+      // Height-based breakpoints
+      'h-sm': {'raw': '(max-height: 600px)'},
+      'h-md': {'raw': '(min-height: 601px) and (max-height: 900px)'},
+      'h-lg': {'raw': '(min-height: 901px)'},
+      // Orientation breakpoints
+      'landscape': {'raw': '(orientation: landscape)'},
+      'portrait': {'raw': '(orientation: portrait)'},
+    },
     extend: {
       colors: {
         panda: {

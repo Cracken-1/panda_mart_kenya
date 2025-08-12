@@ -211,9 +211,9 @@ class AuthService {
   isAuthenticated(): boolean {
     const token = this.getAccessToken()
     const expires = localStorage.getItem('panda_token_expires')
-    
+
     if (!token || !expires) return false
-    
+
     return Date.now() < parseInt(expires)
   }
 

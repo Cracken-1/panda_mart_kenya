@@ -170,9 +170,9 @@ export default function AuthenticationForm() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 flex">
+    <div className="fixed inset-0 z-50 bg-gradient-to-br from-slate-50 via-blue-50 to-emerald-50 flex overflow-y-auto">
       {/* Left Side - Branding & Features */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-panda-red-500 via-red-600 to-orange-600 p-12 flex-col justify-between relative overflow-hidden">
+      <div className="hidden lg:flex lg:w-1/2 xl:w-2/5 bg-gradient-to-br from-panda-red-500 via-red-600 to-orange-600 p-6 lg:p-12 flex-col justify-between relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-20 left-20 w-32 h-32 bg-white rounded-full"></div>
@@ -240,8 +240,8 @@ export default function AuthenticationForm() {
       </div>
 
       {/* Right Side - Auth Form */}
-      <div className="flex-1 flex items-center justify-center p-6 lg:p-12">
-        <div className="w-full max-w-md">
+      <div className="flex-1 lg:w-1/2 xl:w-3/5 flex items-center justify-center p-4 sm:p-6 lg:p-12 min-h-screen">
+        <div className="w-full max-w-md lg:max-w-lg xl:max-w-xl">
           {/* Back Button */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -283,7 +283,7 @@ export default function AuthenticationForm() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100"
+            className="bg-white rounded-2xl shadow-xl p-4 sm:p-6 lg:p-8 border border-gray-100 w-full"
           >
             <form onSubmit={handleSubmit} className="space-y-6">
               {error && (
@@ -311,7 +311,7 @@ export default function AuthenticationForm() {
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500"
                           placeholder="John"
                           required={isSignUp}
                         />
@@ -328,7 +328,7 @@ export default function AuthenticationForm() {
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleInputChange}
-                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent"
+                          className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500"
                           placeholder="Doe"
                           required={isSignUp}
                         />
@@ -350,7 +350,7 @@ export default function AuthenticationForm() {
                     value={formData.email}
                     onChange={handleInputChange}
                     onBlur={() => handleFieldBlur('email')}
-                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent ${
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${
                       fieldTouched.email && validationErrors.email
                         ? 'border-red-300 bg-red-50'
                         : fieldTouched.email && !validationErrors.email && formData.email
@@ -395,7 +395,7 @@ export default function AuthenticationForm() {
                       value={formData.phone}
                       onChange={handleInputChange}
                       onBlur={() => handleFieldBlur('phone')}
-                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent ${
+                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${
                         fieldTouched.phone && validationErrors.phone
                           ? 'border-red-300 bg-red-50'
                           : fieldTouched.phone && !validationErrors.phone && formData.phone
@@ -436,7 +436,7 @@ export default function AuthenticationForm() {
                     value={formData.password}
                     onChange={handleInputChange}
                     onBlur={() => handleFieldBlur('password')}
-                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent ${
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${
                       fieldTouched.password && validationErrors.password
                         ? 'border-red-300 bg-red-50'
                         : fieldTouched.password && !validationErrors.password && formData.password
