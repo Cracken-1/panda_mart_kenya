@@ -40,7 +40,14 @@ export default function MockLoginButton({
   const handleMockLogin = async () => {
     setLoading(true);
     try {
-      await mockLogin();
+      const result = await mockLogin();
+      if (result.success) {
+        // Successful mock login - redirect to account or intended page
+        const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/account';
+        window.location.href = redirectUrl;
+      } else {
+        console.error('Mock login failed:', result.error);
+      }
     } catch (error) {
       console.error('Mock login failed:', error);
     } finally {

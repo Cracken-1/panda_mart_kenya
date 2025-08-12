@@ -82,13 +82,14 @@ export async function POST(request: NextRequest) {
     // Prepare user data
     const user = {
       id: authData.user.id,
+      pandaId: userProfile?.panda_id || `PANDA-${authData.user.id.slice(-6).toUpperCase()}`,
       email: authData.user.email,
       firstName: userProfile?.first_name || authData.user.user_metadata?.first_name || '',
       lastName: userProfile?.last_name || authData.user.user_metadata?.last_name || '',
       phone: userProfile?.phone || authData.user.user_metadata?.phone || null,
       emailVerified: authData.user.email_confirmed_at ? true : false,
       createdAt: authData.user.created_at,
-      lastLoginAt: new Date().toISOString()
+      updatedAt: new Date().toISOString()
     };
 
     // Prepare tokens

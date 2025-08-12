@@ -90,20 +90,31 @@ export default function AuthenticationForm() {
         const result = await register({
           email: formData.email,
           password: formData.password,
+          confirmPassword: formData.password, // Use same password for confirmation
           firstName: formData.firstName,
           lastName: formData.lastName,
-          phone: formData.phone
+          phone: formData.phone,
+          acceptTerms: true, // Auto-accept for now
+          marketingConsent: false
         })
-        if (!result.success) {
-          setError(result.message)
+        if (result.success) {
+          // Successful registration - redirect to account or intended page
+          const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/account';
+          window.location.href = redirectUrl;
+        } else {
+          setError(result.error || result.message || 'Registration failed')
         }
       } else {
         const result = await login({
           email: formData.email,
           password: formData.password
         })
-        if (!result.success) {
-          setError(result.message)
+        if (result.success) {
+          // Successful login - redirect to account or intended page
+          const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/account';
+          window.location.href = redirectUrl;
+        } else {
+          setError(result.error || result.message || 'Login failed')
         }
       }
     } catch (err) {
@@ -583,7 +594,11 @@ export default function AuthenticationForm() {
                       setError('')
                       try {
                         const result = await mockLogin()
-                        if (!result.success) {
+                        if (result.success) {
+                          // Successful mock login - redirect to account or intended page
+                          const redirectUrl = new URLSearchParams(window.location.search).get('redirect') || '/account';
+                          window.location.href = redirectUrl;
+                        } else {
                           setError(result.error || 'Mock login failed')
                         }
                       } catch (err) {

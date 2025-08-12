@@ -112,12 +112,14 @@ export async function POST(request: NextRequest) {
     // Return success response with user data and tokens
     const user = {
       id: authData.user.id,
+      pandaId: `PANDA-${authData.user.id.slice(-6).toUpperCase()}`,
       email: authData.user.email,
       firstName: firstName,
       lastName: lastName,
       phone: phone || null,
       emailVerified: authData.user.email_confirmed_at ? true : false,
-      createdAt: authData.user.created_at
+      createdAt: authData.user.created_at,
+      updatedAt: new Date().toISOString()
     };
 
     const tokens = {

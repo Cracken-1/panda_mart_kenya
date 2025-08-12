@@ -1,7 +1,7 @@
 // Authentication and User Types
 export interface User {
   id: string
-  pandaId: string
+  pandaId?: string
   email: string
   firstName: string
   lastName: string
@@ -9,7 +9,7 @@ export interface User {
   avatar?: string
   emailVerified: boolean
   createdAt: string
-  updatedAt: string
+  updatedAt?: string
 }
 
 export interface AuthTokens {

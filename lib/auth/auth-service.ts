@@ -49,11 +49,12 @@ class AuthService {
       // Create mock user data
       const mockUser: User = {
         id: 'mock-user-123',
+        pandaId: 'PANDA-123456',
         email: 'test@pandamart.co.ke',
         firstName: 'John',
         lastName: 'Doe',
         phone: '+254700123456',
-        isVerified: true,
+        emailVerified: true,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
       }
