@@ -804,4 +804,42 @@ INSERT INTO stores (id, name, address, phone, coordinates, hours, rating, review
 -- Update store capacities with realistic current values
 UPDATE stores SET current_capacity = 180 WHERE id = 'garden-city';
 UPDATE stores SET current_capacity = 95 WHERE id = 'galleria';
-UPDATE stores SET current_capacity = 220 WHERE id = 'westgate';
+UPDATE stores SET current_capacity = 220 WHERE id = 'westgate';-- Funct
+ion to generate unique panda_id
+CREATE OR REPLACE FUNCTION generate_panda_id() RETURNS TEXT AS $$
+DECLARE
+    new_id TEXT;
+    counter INTEGER := 0;
+BEGIN
+    LOOP
+        -- Generate a random 8-digit number
+        new_id := 'PND' || LPAD((RANDOM() * 99999999)::INTEGER::TEXT, 8, '0');
+        
+        -- Check if it already exists
+        IF NOT EXISTS (SELECT 1 FROM users WHERE panda_id = new_id) THEN
+            RETURN new_id;
+        END IF;
+        
+        -- Prevent infinite loop
+        counter := counter + 1;
+        IF counter > 100 THEN
+            RAISE EXCEPTION 'Unable to generate unique panda_id after 100 attempts';
+        END IF;
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to auto-generate panda_id for new users
+CREATE OR REPLACE FUNCTION set_panda_id() RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.panda_id IS NULL OR NEW.panda_id = '' THEN
+        NEW.panda_id := generate_panda_id();
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_set_panda_id
+    BEFORE INSERT ON users
+    FOR EACH ROW
+    EXECUTE FUNCTION set_panda_id();

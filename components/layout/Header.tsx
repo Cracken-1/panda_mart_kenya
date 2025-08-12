@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import ProductSearch from '../search/ProductSearch'
 import { useCartStore } from '@/lib/store/cartStore'
 import EnhancedCartDrawer from '../cart/EnhancedCartDrawer'
+import MockLoginButton from '../auth/MockLoginButton'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -126,6 +127,17 @@ const Header = () => {
                 </svg>
                 <span className="hidden lg:inline">Account</span>
               </Link>
+
+              {/* Mock Login Button for Testing */}
+              {process.env.NODE_ENV === 'development' && (
+                <MockLoginButton 
+                  size="sm" 
+                  variant="outline"
+                  className="hidden lg:flex"
+                >
+                  🧪 Test Login
+                </MockLoginButton>
+              )}
 
 
 

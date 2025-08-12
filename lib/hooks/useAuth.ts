@@ -73,6 +73,40 @@ export function useAuth() {
     }
   }, [])
 
+  // Mock login function for testing
+  const mockLogin = useCallback(async () => {
+    setAuthState(prev => ({ ...prev, isLoading: true, error: null }))
+
+    try {
+      const response = await authService.mockLogin()
+
+      if (response.success && response.user) {
+        setAuthState({
+          user: response.user,
+          isAuthenticated: true,
+          isLoading: false,
+          error: null,
+        })
+        return { success: true, message: response.message }
+      } else {
+        setAuthState(prev => ({
+          ...prev,
+          isLoading: false,
+          error: response.error || response.message,
+        }))
+        return { success: false, error: response.error || response.message }
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Mock login failed'
+      setAuthState(prev => ({
+        ...prev,
+        isLoading: false,
+        error: errorMessage,
+      }))
+      return { success: false, error: errorMessage }
+    }
+  }, [])
+
   // Register function
   const register = useCallback(async (userData: RegisterData) => {
     setAuthState(prev => ({ ...prev, isLoading: true, error: null }))
@@ -186,6 +220,7 @@ export function useAuth() {
 
     // Actions
     login,
+    mockLogin, // Mock login for testing
     register,
     logout,
     updateProfile,

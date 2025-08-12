@@ -41,7 +41,7 @@ export default function AuthenticationForm() {
     phone: false
   })
 
-  const { login, register } = useAuth()
+  const { login, register, mockLogin } = useAuth()
 
   const features = [
     {
@@ -572,6 +572,39 @@ export default function AuthenticationForm() {
                     : "Don't have an account? Sign Up"
                   }
                 </button>
+
+                {/* Mock Login Button for Testing */}
+                <div className="pt-4 border-t border-gray-200">
+                  <p className="text-xs text-gray-500 mb-2 text-center">For testing purposes:</p>
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      setLoading(true)
+                      setError('')
+                      try {
+                        const result = await mockLogin()
+                        if (!result.success) {
+                          setError(result.error || 'Mock login failed')
+                        }
+                      } catch (err) {
+                        setError('Mock login failed')
+                      } finally {
+                        setLoading(false)
+                      }
+                    }}
+                    disabled={loading}
+                    className="w-full bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-2 px-4 rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 font-medium shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  >
+                    {loading ? (
+                      <div className="flex items-center justify-center">
+                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
+                        Signing In...
+                      </div>
+                    ) : (
+                      '🧪 Mock Login (Testing)'
+                    )}
+                  </button>
+                </div>
               </div>
             </form>
           </motion.div>

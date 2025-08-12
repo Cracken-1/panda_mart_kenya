@@ -40,6 +40,50 @@ class AuthService {
     }
   }
 
+  // Mock login for testing purposes
+  async mockLogin(): Promise<AuthResponse> {
+    try {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Create mock user data
+      const mockUser: User = {
+        id: 'mock-user-123',
+        email: 'test@pandamart.co.ke',
+        firstName: 'John',
+        lastName: 'Doe',
+        phone: '+254700123456',
+        isVerified: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+
+      // Create mock tokens
+      const mockTokens: AuthTokens = {
+        accessToken: 'mock-access-token-' + Date.now(),
+        refreshToken: 'mock-refresh-token-' + Date.now(),
+        expiresIn: 3600 // 1 hour
+      }
+
+      // Store the mock data
+      this.storeTokens(mockTokens)
+      this.storeUser(mockUser)
+
+      return {
+        success: true,
+        message: 'Mock login successful',
+        user: mockUser,
+        tokens: mockTokens
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message: 'Mock login failed',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      }
+    }
+  }
+
   async register(userData: RegisterData): Promise<AuthResponse> {
     try {
       const response = await fetch(`${this.baseUrl}/register`, {
