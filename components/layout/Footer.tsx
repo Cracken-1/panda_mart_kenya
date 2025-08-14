@@ -49,14 +49,14 @@ export default function Footer() {
       ]
     },
     {
-      title: 'Account',
+      title: 'Support',
       links: [
-        { name: 'My Account', href: '/account' },
-        { name: 'Order History', href: '/account/orders' },
-        { name: 'Wishlist', href: '/account/wishlist' },
-        { name: 'Loyalty Program', href: '/account/loyalty' },
-        { name: 'Address Book', href: '/account/addresses' },
-        { name: 'Payment Methods', href: '/account/payments' }
+        { name: 'Help Center', href: '/help' },
+        { name: 'Contact Us', href: '/contact' },
+        { name: 'Live Chat', href: '/chat' },
+        { name: 'Phone Support', href: 'tel:+254712345678' },
+        { name: 'Email Support', href: 'mailto:support@pandamart.co.ke' },
+        { name: 'Track Order', href: '/track' }
       ]
     },
     {
@@ -68,17 +68,6 @@ export default function Footer() {
         { name: 'Investor Relations', href: '/investors' },
         { name: 'Sustainability', href: '/sustainability' },
         { name: 'Community', href: '/community' }
-      ]
-    },
-    {
-      title: 'Support',
-      links: [
-        { name: 'Help Center', href: '/help' },
-        { name: 'Contact Us', href: '/contact' },
-        { name: 'Live Chat', href: '/chat' },
-        { name: 'Shipping Info', href: '/shipping' },
-        { name: 'Size Guide', href: '/size-guide' },
-        { name: 'Track Order', href: '/track' }
       ]
     }
   ];
@@ -95,21 +84,10 @@ export default function Footer() {
       address: 'Langata Road, Nairobi',
       phone: '077 866 6666',
       hours: 'Mon-Sun: 9AM-9PM'
-    },
-    {
-      name: 'Westgate Mall',
-      address: 'Westlands, Nairobi',
-      phone: '020 445 7890',
-      hours: 'Mon-Sun: 8:30AM-9:30PM'
     }
   ];
 
-  const paymentMethods = [
-    { name: 'M-Pesa', logo: '/payments/mpesa.png' },
-    { name: 'Visa', logo: '/payments/visa.png' },
-    { name: 'Mastercard', logo: '/payments/mastercard.png' },
-    { name: 'PayPal', logo: '/payments/paypal.png' }
-  ];
+
 
   const features = [
     {
@@ -247,28 +225,8 @@ export default function Footer() {
 
           {/* Footer Links */}
           <div className="lg:col-span-2">
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-              {footerSections.slice(0, 3).map((section) => (
-                <div key={section.title}>
-                  <h4 className="font-semibold text-white mb-4">{section.title}</h4>
-                  <ul className="space-y-3">
-                    {section.links.map((link) => (
-                      <li key={link.name}>
-                        <Link
-                          href={link.href}
-                          className="text-gray-400 hover:text-white transition-colors"
-                        >
-                          {link.name}
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-              {footerSections.slice(3).map((section) => (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+              {footerSections.map((section) => (
                 <div key={section.title}>
                   <h4 className="font-semibold text-white mb-4">{section.title}</h4>
                   <ul className="space-y-3">
@@ -344,22 +302,7 @@ export default function Footer() {
               © {currentYear} Panda Mart Kenya. All rights reserved.
             </div>
 
-            {/* Payment Methods */}
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-400">We accept:</span>
-              <div className="flex items-center space-x-2">
-                {paymentMethods.map((method) => (
-                  <div
-                    key={method.name}
-                    className="w-10 h-6 bg-white rounded flex items-center justify-center"
-                  >
-                    <span className="text-xs font-bold text-gray-800">
-                      {method.name.slice(0, 2)}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
+
 
             {/* Legal Links */}
             <div className="flex items-center space-x-6 text-sm">

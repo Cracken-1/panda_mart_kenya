@@ -9,29 +9,20 @@ import {
   Search,
   ShoppingCart,
   User,
-  Bell,
   Menu,
   X,
-  Heart,
-  Package,
-  MapPin,
-  Phone,
-  Mail,
   Store,
-  Gift,
-  Settings,
-  LogOut,
   ChevronDown,
   Home,
   Smartphone,
   Shirt,
-  Leaf,
   Sparkles,
   Dumbbell,
-  UtensilsCrossed
+  UtensilsCrossed,
+  MapPin,
+  Phone
 } from 'lucide-react';
 import GlobalSearch from '@/components/search/GlobalSearch';
-import NotificationCenter from '@/components/notifications/NotificationCenter';
 
 export default function Header() {
   const { user, logout } = useAuth();
@@ -41,9 +32,7 @@ export default function Header() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const [showNotifications, setShowNotifications] = useState(false);
   const [showCategories, setShowCategories] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   const categories = [
     { name: 'Electronics', icon: Smartphone, href: '/categories/electronics' },
@@ -56,20 +45,13 @@ export default function Header() {
 
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'Shop in Store', href: '/shop-in-store' },
-    { name: 'Categories', href: '#', hasDropdown: true },
-    { name: 'Deals', href: '/deals' },
-    { name: 'Support', href: '/support' }
+    { name: 'Hot Deals', href: '/deals' },
+    { name: 'Bundles', href: '/bundles' },
+    { name: 'Collection', href: '#', hasDropdown: true },
+    { name: 'Stores', href: '/stores' },
+    { name: 'Community', href: '/community' },
+    { name: 'Contact', href: '/contact' }
   ];
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -92,33 +74,29 @@ export default function Header() {
     router.push('/');
   };
 
-  const unreadNotifications = 3; // This would come from your notification state
-
   return (
     <>
-      <header className={`sticky top-0 z-40 bg-white transition-all duration-200 ${
-        scrolled ? 'shadow-lg' : 'shadow-sm'
-      }`}>
-        {/* Top Bar */}
-        <div className="bg-gray-900 text-white">
+      <header className="sticky top-0 z-40 bg-white shadow-sm">
+        {/* Top Red Bar */}
+        <div className="bg-red-500 text-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-10 text-sm">
               <div className="flex items-center space-x-6">
                 <div className="flex items-center space-x-2">
-                  <Phone className="w-3 h-3" />
-                  <span>+254 712 345 678</span>
+                  <MapPin className="w-3 h-3" />
+                  <span>Free delivery in Nairobi</span>
                 </div>
                 <div className="hidden sm:flex items-center space-x-2">
-                  <Mail className="w-3 h-3" />
-                  <span>support@pandamart.co.ke</span>
+                  <Phone className="w-3 h-3" />
+                  <span>Customer Support: 020 231 1166</span>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <Link href="/shop-in-store" className="hover:text-emerald-400 transition-colors">
-                  Find Store
+                <Link href="/wholesale" className="hover:text-red-200 transition-colors">
+                  Wholesale
                 </Link>
-                <Link href="/support" className="hover:text-emerald-400 transition-colors">
-                  Help
+                <Link href="/contact" className="hover:text-red-200 transition-colors">
+                  Contact
                 </Link>
               </div>
             </div>
@@ -131,10 +109,10 @@ export default function Header() {
             {/* Logo */}
             <div className="flex items-center">
               <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
                   <Store className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-xl font-bold text-gray-900">Panda Mart</span>
+                <span className="text-xl font-bold text-black">Panda Mart</span>
               </Link>
             </div>
 
@@ -147,9 +125,9 @@ export default function Header() {
                       <button
                         onClick={() => setShowCategories(!showCategories)}
                         className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                          pathname.startsWith('/categories')
-                            ? 'text-emerald-600 bg-emerald-50'
-                            : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
+                          pathname.startsWith('/collection')
+                            ? 'text-red-600 bg-red-50'
+                            : 'text-black hover:text-red-600 hover:bg-gray-50'
                         }`}
                       >
                         <span>{item.name}</span>
@@ -165,8 +143,8 @@ export default function Header() {
                               onClick={() => setShowCategories(false)}
                               className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
                             >
-                              <category.icon className="w-5 h-5 text-gray-400" />
-                              <span className="text-gray-700">{category.name}</span>
+                              <category.icon className="w-5 h-5 text-red-500" />
+                              <span className="text-black">{category.name}</span>
                             </Link>
                           ))}
                         </div>
@@ -177,8 +155,8 @@ export default function Header() {
                       href={item.href}
                       className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                         pathname === item.href
-                          ? 'text-emerald-600 bg-emerald-50'
-                          : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
+                          ? 'text-red-600 bg-red-50'
+                          : 'text-black hover:text-red-600 hover:bg-gray-50'
                       }`}
                     >
                       {item.name}
@@ -194,57 +172,38 @@ export default function Header() {
                 onClick={() => setShowSearch(true)}
                 className="w-full flex items-center space-x-3 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
               >
-                <Search className="w-5 h-5 text-gray-400" />
-                <span className="text-gray-500 text-left flex-1">Search products, stores...</span>
-                <kbd className="hidden sm:inline-block px-2 py-1 text-xs text-gray-500 bg-white rounded border">
-                  ⌘K
-                </kbd>
+                <Search className="w-5 h-5 text-red-500" />
+                <span className="text-black text-left flex-1">Search products...</span>
               </button>
             </div>
 
             {/* Right Side Actions */}
             <div className="flex items-center space-x-4">
+              {/* Find Store */}
+              <Link
+                href="/stores"
+                className="hidden lg:flex items-center space-x-2 px-3 py-2 text-black hover:text-red-600 transition-colors"
+              >
+                <MapPin className="w-4 h-4" />
+                <span className="text-sm">Find Store</span>
+              </Link>
+
               {/* Mobile Search */}
               <button
                 onClick={() => setShowSearch(true)}
-                className="md:hidden p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                className="md:hidden p-2 text-black hover:text-red-600 rounded-lg hover:bg-gray-100"
               >
                 <Search className="w-5 h-5" />
               </button>
 
-              {/* Notifications */}
-              {user && (
-                <button
-                  onClick={() => setShowNotifications(true)}
-                  className="relative p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
-                >
-                  <Bell className="w-5 h-5" />
-                  {unreadNotifications > 0 && (
-                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                      {unreadNotifications}
-                    </span>
-                  )}
-                </button>
-              )}
-
-              {/* Wishlist */}
-              {user && (
-                <Link
-                  href="/account/wishlist"
-                  className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
-                >
-                  <Heart className="w-5 h-5" />
-                </Link>
-              )}
-
               {/* Cart */}
               <Link
                 href="/cart"
-                className="relative p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                className="relative p-2 text-black hover:text-red-600 rounded-lg hover:bg-gray-100"
               >
                 <ShoppingCart className="w-5 h-5" />
                 {cart.itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 text-white text-xs rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
                     {cart.itemCount}
                   </span>
                 )}
@@ -257,21 +216,21 @@ export default function Header() {
                     onClick={() => setShowUserMenu(!showUserMenu)}
                     className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
                   >
-                    <div className="w-8 h-8 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
                       <span className="text-white text-sm font-medium">
                         {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
                       </span>
                     </div>
-                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                    <ChevronDown className="w-4 h-4 text-black" />
                   </button>
 
                   {showUserMenu && (
-                    <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                    <div className="absolute right-0 top-full mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                       <div className="px-4 py-3 border-b border-gray-200">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-black">
                           {user.firstName} {user.lastName}
                         </p>
-                        <p className="text-sm text-gray-500">{user.email}</p>
+                        <p className="text-sm text-gray-600">{user.email}</p>
                       </div>
                       
                       <div className="py-2">
@@ -280,63 +239,15 @@ export default function Header() {
                           onClick={() => setShowUserMenu(false)}
                           className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
                         >
-                          <User className="w-4 h-4 text-gray-400" />
-                          <span className="text-gray-700">Account Dashboard</span>
+                          <User className="w-4 h-4 text-red-500" />
+                          <span className="text-black">My Account</span>
                         </Link>
                         
-                        <Link
-                          href="/account/orders"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
-                        >
-                          <Package className="w-4 h-4 text-gray-400" />
-                          <span className="text-gray-700">My Orders</span>
-                        </Link>
-                        
-                        <Link
-                          href="/account/wishlist"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
-                        >
-                          <Heart className="w-4 h-4 text-gray-400" />
-                          <span className="text-gray-700">Wishlist</span>
-                        </Link>
-                        
-                        <Link
-                          href="/account/loyalty"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
-                        >
-                          <Gift className="w-4 h-4 text-gray-400" />
-                          <span className="text-gray-700">Loyalty Program</span>
-                        </Link>
-                        
-                        <Link
-                          href="/shop-in-store"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
-                        >
-                          <MapPin className="w-4 h-4 text-gray-400" />
-                          <span className="text-gray-700">Find Stores</span>
-                        </Link>
-                        
-                        <Link
-                          href="/account/settings"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
-                        >
-                          <Settings className="w-4 h-4 text-gray-400" />
-                          <span className="text-gray-700">Settings</span>
-                        </Link>
-                      </div>
-                      
-                      <div className="border-t border-gray-200 pt-2">
                         <button
                           onClick={handleLogout}
                           className="flex items-center space-x-3 px-4 py-2 w-full text-left hover:bg-gray-50 transition-colors"
                         >
-                          <LogOut className="w-4 h-4 text-gray-400" />
-                          <span className="text-gray-700">Sign Out</span>
+                          <span className="text-black">Sign Out</span>
                         </button>
                       </div>
                     </div>
@@ -346,13 +257,13 @@ export default function Header() {
                 <div className="flex items-center space-x-2">
                   <Link
                     href="/auth/login"
-                    className="px-4 py-2 text-gray-700 hover:text-emerald-600 font-medium"
+                    className="px-4 py-2 text-black hover:text-red-600 font-medium"
                   >
                     Sign In
                   </Link>
                   <Link
                     href="/auth/register"
-                    className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors font-medium"
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
                   >
                     Sign Up
                   </Link>
@@ -362,7 +273,7 @@ export default function Header() {
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="lg:hidden p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                className="lg:hidden p-2 text-black hover:text-red-600 rounded-lg hover:bg-gray-100"
               >
                 {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
               </button>
@@ -380,7 +291,7 @@ export default function Header() {
                     <div>
                       <button
                         onClick={() => setShowCategories(!showCategories)}
-                        className="flex items-center justify-between w-full px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                        className="flex items-center justify-between w-full px-3 py-2 text-black hover:bg-gray-50 rounded-lg"
                       >
                         <span>{item.name}</span>
                         <ChevronDown className={`w-4 h-4 transition-transform ${
@@ -397,9 +308,9 @@ export default function Header() {
                                 setShowMobileMenu(false);
                                 setShowCategories(false);
                               }}
-                              className="flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"
+                              className="flex items-center space-x-3 px-3 py-2 text-black hover:bg-gray-50 rounded-lg"
                             >
-                              <category.icon className="w-4 h-4" />
+                              <category.icon className="w-4 h-4 text-red-500" />
                               <span>{category.name}</span>
                             </Link>
                           ))}
@@ -412,8 +323,8 @@ export default function Header() {
                       onClick={() => setShowMobileMenu(false)}
                       className={`block px-3 py-2 rounded-lg font-medium ${
                         pathname === item.href
-                          ? 'text-emerald-600 bg-emerald-50'
-                          : 'text-gray-700 hover:bg-gray-50'
+                          ? 'text-red-600 bg-red-50'
+                          : 'text-black hover:bg-gray-50'
                       }`}
                     >
                       {item.name}
@@ -428,12 +339,6 @@ export default function Header() {
 
       {/* Global Search Modal */}
       <GlobalSearch isOpen={showSearch} onClose={() => setShowSearch(false)} />
-
-      {/* Notifications Modal */}
-      <NotificationCenter 
-        isOpen={showNotifications} 
-        onClose={() => setShowNotifications(false)} 
-      />
     </>
   );
 }
