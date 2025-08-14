@@ -1,313 +1,439 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { Menu, X, MapPin, ShoppingCart, Phone } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import ProductSearch from '../search/ProductSearch'
-import { useCartStore } from '@/lib/store/cartStore'
-import EnhancedCartDrawer from '../cart/EnhancedCartDrawer'
-import MockLoginButton from '../auth/MockLoginButton'
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useCart } from '@/lib/hooks/useCart';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import {
+  Search,
+  ShoppingCart,
+  User,
+  Bell,
+  Menu,
+  X,
+  Heart,
+  Package,
+  MapPin,
+  Phone,
+  Mail,
+  Store,
+  Gift,
+  Settings,
+  LogOut,
+  ChevronDown,
+  Home,
+  Smartphone,
+  Shirt,
+  Leaf,
+  Sparkles,
+  Dumbbell,
+  UtensilsCrossed
+} from 'lucide-react';
+import GlobalSearch from '@/components/search/GlobalSearch';
+import NotificationCenter from '@/components/notifications/NotificationCenter';
 
-const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const { totalItems, openCart } = useCartStore()
+export default function Header() {
+  const { user, logout } = useAuth();
+  const { cart } = useCart();
+  const router = useRouter();
+  const pathname = usePathname();
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [showCategories, setShowCategories] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const primaryNavigation = [
-    { name: 'Home', href: '/', icon: '🏠' },
-    { name: 'Shop in Store', href: '/shop-in-store', icon: '🏪', badge: 'New' },
-    { name: 'Flash Sale', href: '/flash-sale', icon: '⚡', badge: 'Hot' },
-    { name: 'Bundles', href: '/bundles', icon: '📦', badge: 'Save' },
-    { name: 'Deals', href: '/deals', icon: '🏷️' },
-  ]
+  const categories = [
+    { name: 'Electronics', icon: Smartphone, href: '/categories/electronics' },
+    { name: 'Fashion', icon: Shirt, href: '/categories/fashion' },
+    { name: 'Home & Garden', icon: Home, href: '/categories/home-garden' },
+    { name: 'Health & Beauty', icon: Sparkles, href: '/categories/health-beauty' },
+    { name: 'Sports & Outdoors', icon: Dumbbell, href: '/categories/sports' },
+    { name: 'Food & Beverages', icon: UtensilsCrossed, href: '/categories/food' }
+  ];
 
-  const secondaryNavigation = [
-    { name: 'Collections', href: '/collections' },
-    { name: 'Stores', href: '/stores' },
-    { name: 'Community', href: '/community' },
-    { name: 'About', href: '/about' },
-  ]
+  const navigation = [
+    { name: 'Home', href: '/' },
+    { name: 'Shop in Store', href: '/shop-in-store' },
+    { name: 'Categories', href: '#', hasDropdown: true },
+    { name: 'Deals', href: '/deals' },
+    { name: 'Support', href: '/support' }
+  ];
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (!target.closest('.user-menu')) {
+        setShowUserMenu(false);
+      }
+      if (!target.closest('.categories-menu')) {
+        setShowCategories(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    await logout();
+    setShowUserMenu(false);
+    router.push('/');
+  };
+
+  const unreadNotifications = 3; // This would come from your notification state
 
   return (
-    <header className="bg-white shadow-xl sticky top-0 z-50 border-b border-gray-100">
-      {/* Top Bar - Hidden on Mobile */}
-      <div className="hidden md:block bg-gradient-to-r from-panda-red-500 to-red-600 text-white py-3">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between">
-            {/* Contact Information */}
-            <div className="flex items-center space-x-4 lg:space-x-8">
-              <div className="flex items-center space-x-1">
-                <Phone className="w-4 h-4" />
-                <span className="text-sm font-medium">Garden City:</span>
-                <a href="tel:0202311166" className="text-sm font-semibold hover:text-yellow-200 transition-colors">
-                  020 231 1166
-                </a>
-              </div>
-              <div className="flex items-center space-x-1">
-                <Phone className="w-4 h-4" />
-                <span className="text-sm font-medium">Galleria:</span>
-                <a href="tel:0778666666" className="text-sm font-semibold hover:text-yellow-200 transition-colors">
-                  077 866 6666
-                </a>
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div className="flex items-center space-x-4 text-sm">
-              <Link href="/wholesale" className="font-medium hover:text-yellow-200 transition-colors">
-                Wholesale
-              </Link>
-              <span className="text-white/60">|</span>
-              <Link href="/contact" className="font-medium hover:text-yellow-200 transition-colors">
-                Contact
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Header */}
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-14 sm:h-16 lg:h-20">
-            {/* Logo Section */}
-            <div className="flex items-center flex-shrink-0">
-              <Link href="/" className="flex items-center space-x-2 lg:space-x-3 group">
-                <div className="w-10 h-10 lg:w-14 lg:h-14 gradient-bg rounded-xl lg:rounded-2xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                  <span className="text-white font-bold text-lg lg:text-2xl">P</span>
+    <>
+      <header className={`sticky top-0 z-40 bg-white transition-all duration-200 ${
+        scrolled ? 'shadow-lg' : 'shadow-sm'
+      }`}>
+        {/* Top Bar */}
+        <div className="bg-gray-900 text-white">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-10 text-sm">
+              <div className="flex items-center space-x-6">
+                <div className="flex items-center space-x-2">
+                  <Phone className="w-3 h-3" />
+                  <span>+254 712 345 678</span>
                 </div>
-                <div>
-                  <h1 className="text-lg lg:text-2xl font-bold text-panda-black-900 group-hover:text-panda-red-500 transition-colors">
-                    Panda Mart
-                  </h1>
-                  <p className="text-xs lg:text-sm text-panda-red-500 font-semibold">Kenya</p>
-                </div>
-              </Link>
-            </div>
-
-            {/* Search Bar - Center */}
-            <div className="hidden md:block flex-1 max-w-xl lg:max-w-2xl mx-4 lg:mx-8">
-              <ProductSearch />
-            </div>
-
-            {/* Right Actions */}
-            <div className="flex items-center space-x-2 lg:space-x-3">
-              {/* Find Store */}
-              <Link
-                href="/stores"
-                className="hidden md:flex items-center px-3 lg:px-4 py-2 text-sm font-medium text-panda-red-500 hover:text-panda-red-600 hover:bg-panda-red-50 rounded-lg lg:rounded-xl transition-all duration-200 border border-panda-red-200 hover:border-panda-red-300"
-              >
-                <MapPin className="w-4 h-4 mr-1 lg:mr-2" />
-                <span className="hidden lg:inline">Find Store</span>
-                <span className="lg:hidden">Store</span>
-              </Link>
-
-              {/* Cart Button */}
-              <button
-                onClick={openCart}
-                className="relative p-2 lg:p-3 text-gray-700 hover:text-panda-red-500 hover:bg-gray-100 rounded-lg lg:rounded-xl transition-all duration-200 border border-gray-200 hover:border-panda-red-200"
-                title="Shopping Cart"
-              >
-                <ShoppingCart className="w-5 h-5 lg:w-6 lg:h-6" />
-                {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 lg:-top-2 lg:-right-2 bg-panda-red-500 text-white text-xs rounded-full w-5 h-5 lg:w-6 lg:h-6 flex items-center justify-center font-bold shadow-lg animate-pulse">
-                    {totalItems > 99 ? '99+' : totalItems}
-                  </span>
-                )}
-              </button>
-
-              {/* Account Button */}
-              <Link
-                href="/account"
-                className="hidden md:flex items-center px-3 lg:px-4 py-2 text-sm font-medium text-gray-700 hover:text-panda-red-500 hover:bg-gray-100 rounded-lg lg:rounded-xl transition-all duration-200 border border-gray-200 hover:border-panda-red-200"
-                title="My Account"
-              >
-                <svg className="w-4 h-4 lg:w-5 lg:h-5 mr-1 lg:mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                <span className="hidden lg:inline">Account</span>
-              </Link>
-
-              {/* Mock Login Button for Testing */}
-              {process.env.NODE_ENV === 'development' && (
-                <MockLoginButton 
-                  size="sm" 
-                  variant="outline"
-                  className="hidden lg:flex"
-                >
-                  🧪 Test Login
-                </MockLoginButton>
-              )}
-
-
-
-              {/* Mobile menu button */}
-              <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="lg:hidden p-2 text-panda-black-700 hover:text-panda-red-500 hover:bg-gray-100 rounded-lg transition-all duration-200 border border-gray-200 bg-white shadow-sm"
-                title="Menu"
-              >
-                {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Bar */}
-      <div className="bg-gray-50 border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between py-3">
-            {/* Primary Navigation */}
-            <nav className="hidden lg:flex items-center space-x-1">
-              {primaryNavigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="relative flex items-center px-4 py-2 text-sm font-medium text-panda-black-700 hover:text-panda-red-500 hover:bg-white rounded-xl transition-all duration-200 group"
-                >
-                  <span className="mr-2 text-lg group-hover:scale-110 transition-transform">
-                    {item.icon}
-                  </span>
-                  {item.name}
-                  {item.badge && (
-                    <span className="ml-2 px-2 py-0.5 text-xs font-bold text-white bg-panda-red-500 rounded-full">
-                      {item.badge}
-                    </span>
-                  )}
-                </Link>
-              ))}
-            </nav>
-
-            {/* Secondary Navigation */}
-            <nav className="hidden lg:flex items-center space-x-6">
-              {secondaryNavigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-sm font-medium text-gray-600 hover:text-panda-red-500 transition-colors duration-200"
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-white border-t shadow-2xl"
-          >
-            <div className="max-w-7xl mx-auto px-4 py-4">
-              {/* Mobile Search */}
-              <div className="mb-4">
-                <ProductSearch />
-              </div>
-
-              {/* Quick Navigation - Large Buttons */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-                {primaryNavigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="relative flex flex-col items-center justify-center p-4 bg-gradient-to-br from-gray-50 to-gray-100 hover:from-panda-red-50 hover:to-red-100 rounded-2xl transition-all duration-200 border border-gray-200 hover:border-panda-red-300 shadow-sm hover:shadow-md group"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    <span className="text-2xl mb-2 group-hover:scale-110 transition-transform">
-                      {item.icon}
-                    </span>
-                    <span className="text-sm font-semibold text-gray-700 group-hover:text-panda-red-600">
-                      {item.name}
-                    </span>
-                    {item.badge && (
-                      <span className="absolute -top-1 -right-1 px-2 py-0.5 text-xs font-bold text-white bg-panda-red-500 rounded-full shadow-lg">
-                        {item.badge}
-                      </span>
-                    )}
-                  </Link>
-                ))}
-              </div>
-
-              {/* Secondary Navigation - Compact */}
-              <div className="grid grid-cols-2 gap-2 mb-4">
-                {secondaryNavigation.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className="flex items-center justify-center px-4 py-3 text-gray-600 hover:text-panda-red-500 hover:bg-panda-red-50 font-medium rounded-xl transition-all duration-200 border border-gray-100 hover:border-panda-red-200"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </div>
-
-              {/* Contact Information - Mobile */}
-              <div className="bg-gradient-to-r from-panda-red-50 to-red-100 rounded-xl p-4 mb-4">
-                <h4 className="text-sm font-semibold text-panda-red-800 mb-2">Store Contacts</h4>
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-panda-red-700">Garden City:</span>
-                    <a href="tel:0202311166" className="text-sm font-semibold text-panda-red-800 hover:text-panda-red-900">
-                      020 231 1166
-                    </a>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-panda-red-700">Galleria:</span>
-                    <a href="tel:0778666666" className="text-sm font-semibold text-panda-red-800 hover:text-panda-red-900">
-                      077 866 6666
-                    </a>
-                  </div>
+                <div className="hidden sm:flex items-center space-x-2">
+                  <Mail className="w-3 h-3" />
+                  <span>support@pandamart.co.ke</span>
                 </div>
               </div>
-
-
-
-              {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-3 mb-3">
-                <Link
-                  href="/stores"
-                  className="flex items-center justify-center px-4 py-3 bg-emerald-500 text-white hover:bg-emerald-600 font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <MapPin className="w-4 h-4 mr-2" />
+              <div className="flex items-center space-x-4">
+                <Link href="/shop-in-store" className="hover:text-emerald-400 transition-colors">
                   Find Store
                 </Link>
-                <Link
-                  href="/wholesale"
-                  className="flex items-center justify-center px-4 py-3 bg-panda-black-800 text-white hover:bg-panda-black-900 font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  Wholesale
+                <Link href="/support" className="hover:text-emerald-400 transition-colors">
+                  Help
                 </Link>
               </div>
+            </div>
+          </div>
+        </div>
 
-              {/* Account Button - Mobile */}
-              <Link
-                href="/account"
-                className="flex items-center justify-center w-full px-4 py-3 bg-gradient-to-r from-panda-red-500 to-red-600 text-white hover:from-panda-red-600 hover:to-red-700 font-semibold rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                </svg>
-                My Account
+        {/* Main Header */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <Link href="/" className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-lg flex items-center justify-center">
+                  <Store className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl font-bold text-gray-900">Panda Mart</span>
               </Link>
             </div>
-          </motion.div>
+
+            {/* Desktop Navigation */}
+            <nav className="hidden lg:flex items-center space-x-8">
+              {navigation.map((item) => (
+                <div key={item.name} className="relative">
+                  {item.hasDropdown ? (
+                    <div className="categories-menu">
+                      <button
+                        onClick={() => setShowCategories(!showCategories)}
+                        className={`flex items-center space-x-1 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                          pathname.startsWith('/categories')
+                            ? 'text-emerald-600 bg-emerald-50'
+                            : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
+                        }`}
+                      >
+                        <span>{item.name}</span>
+                        <ChevronDown className="w-4 h-4" />
+                      </button>
+                      
+                      {showCategories && (
+                        <div className="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                          {categories.map((category) => (
+                            <Link
+                              key={category.name}
+                              href={category.href}
+                              onClick={() => setShowCategories(false)}
+                              className="flex items-center space-x-3 px-4 py-3 hover:bg-gray-50 transition-colors"
+                            >
+                              <category.icon className="w-5 h-5 text-gray-400" />
+                              <span className="text-gray-700">{category.name}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                        pathname === item.href
+                          ? 'text-emerald-600 bg-emerald-50'
+                          : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </nav>
+
+            {/* Search Bar */}
+            <div className="hidden md:flex flex-1 max-w-lg mx-8">
+              <button
+                onClick={() => setShowSearch(true)}
+                className="w-full flex items-center space-x-3 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                <Search className="w-5 h-5 text-gray-400" />
+                <span className="text-gray-500 text-left flex-1">Search products, stores...</span>
+                <kbd className="hidden sm:inline-block px-2 py-1 text-xs text-gray-500 bg-white rounded border">
+                  ⌘K
+                </kbd>
+              </button>
+            </div>
+
+            {/* Right Side Actions */}
+            <div className="flex items-center space-x-4">
+              {/* Mobile Search */}
+              <button
+                onClick={() => setShowSearch(true)}
+                className="md:hidden p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+              >
+                <Search className="w-5 h-5" />
+              </button>
+
+              {/* Notifications */}
+              {user && (
+                <button
+                  onClick={() => setShowNotifications(true)}
+                  className="relative p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                >
+                  <Bell className="w-5 h-5" />
+                  {unreadNotifications > 0 && (
+                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                      {unreadNotifications}
+                    </span>
+                  )}
+                </button>
+              )}
+
+              {/* Wishlist */}
+              {user && (
+                <Link
+                  href="/account/wishlist"
+                  className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                >
+                  <Heart className="w-5 h-5" />
+                </Link>
+              )}
+
+              {/* Cart */}
+              <Link
+                href="/cart"
+                className="relative p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+              >
+                <ShoppingCart className="w-5 h-5" />
+                {cart.itemCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-emerald-500 text-white text-xs rounded-full flex items-center justify-center">
+                    {cart.itemCount}
+                  </span>
+                )}
+              </Link>
+
+              {/* User Menu */}
+              {user ? (
+                <div className="relative user-menu">
+                  <button
+                    onClick={() => setShowUserMenu(!showUserMenu)}
+                    className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                  >
+                    <div className="w-8 h-8 bg-gradient-to-r from-emerald-400 to-teal-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-medium">
+                        {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
+                      </span>
+                    </div>
+                    <ChevronDown className="w-4 h-4 text-gray-400" />
+                  </button>
+
+                  {showUserMenu && (
+                    <div className="absolute right-0 top-full mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                      <div className="px-4 py-3 border-b border-gray-200">
+                        <p className="text-sm font-medium text-gray-900">
+                          {user.firstName} {user.lastName}
+                        </p>
+                        <p className="text-sm text-gray-500">{user.email}</p>
+                      </div>
+                      
+                      <div className="py-2">
+                        <Link
+                          href="/account"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
+                        >
+                          <User className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-700">Account Dashboard</span>
+                        </Link>
+                        
+                        <Link
+                          href="/account/orders"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
+                        >
+                          <Package className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-700">My Orders</span>
+                        </Link>
+                        
+                        <Link
+                          href="/account/wishlist"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
+                        >
+                          <Heart className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-700">Wishlist</span>
+                        </Link>
+                        
+                        <Link
+                          href="/account/loyalty"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
+                        >
+                          <Gift className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-700">Loyalty Program</span>
+                        </Link>
+                        
+                        <Link
+                          href="/shop-in-store"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
+                        >
+                          <MapPin className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-700">Find Stores</span>
+                        </Link>
+                        
+                        <Link
+                          href="/account/settings"
+                          onClick={() => setShowUserMenu(false)}
+                          className="flex items-center space-x-3 px-4 py-2 hover:bg-gray-50 transition-colors"
+                        >
+                          <Settings className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-700">Settings</span>
+                        </Link>
+                      </div>
+                      
+                      <div className="border-t border-gray-200 pt-2">
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center space-x-3 px-4 py-2 w-full text-left hover:bg-gray-50 transition-colors"
+                        >
+                          <LogOut className="w-4 h-4 text-gray-400" />
+                          <span className="text-gray-700">Sign Out</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <Link
+                    href="/auth/login"
+                    className="px-4 py-2 text-gray-700 hover:text-emerald-600 font-medium"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/auth/register"
+                    className="px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors font-medium"
+                  >
+                    Sign Up
+                  </Link>
+                </div>
+              )}
+
+              {/* Mobile Menu Button */}
+              <button
+                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                className="lg:hidden p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+              >
+                {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {showMobileMenu && (
+          <div className="lg:hidden border-t border-gray-200 bg-white">
+            <div className="px-4 py-4 space-y-2">
+              {navigation.map((item) => (
+                <div key={item.name}>
+                  {item.hasDropdown ? (
+                    <div>
+                      <button
+                        onClick={() => setShowCategories(!showCategories)}
+                        className="flex items-center justify-between w-full px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg"
+                      >
+                        <span>{item.name}</span>
+                        <ChevronDown className={`w-4 h-4 transition-transform ${
+                          showCategories ? 'rotate-180' : ''
+                        }`} />
+                      </button>
+                      {showCategories && (
+                        <div className="mt-2 ml-4 space-y-1">
+                          {categories.map((category) => (
+                            <Link
+                              key={category.name}
+                              href={category.href}
+                              onClick={() => {
+                                setShowMobileMenu(false);
+                                setShowCategories(false);
+                              }}
+                              className="flex items-center space-x-3 px-3 py-2 text-gray-600 hover:bg-gray-50 rounded-lg"
+                            >
+                              <category.icon className="w-4 h-4" />
+                              <span>{category.name}</span>
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.href}
+                      onClick={() => setShowMobileMenu(false)}
+                      className={`block px-3 py-2 rounded-lg font-medium ${
+                        pathname === item.href
+                          ? 'text-emerald-600 bg-emerald-50'
+                          : 'text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {item.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         )}
-      </AnimatePresence>
+      </header>
 
-      {/* Enhanced Cart Drawer */}
-      <EnhancedCartDrawer />
-    </header>
-  )
+      {/* Global Search Modal */}
+      <GlobalSearch isOpen={showSearch} onClose={() => setShowSearch(false)} />
+
+      {/* Notifications Modal */}
+      <NotificationCenter 
+        isOpen={showNotifications} 
+        onClose={() => setShowNotifications(false)} 
+      />
+    </>
+  );
 }
-
-export default Header

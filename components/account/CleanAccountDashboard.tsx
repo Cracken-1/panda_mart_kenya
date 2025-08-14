@@ -43,6 +43,7 @@ export default function CleanAccountDashboard() {
   const [locationPermission, setLocationPermission] = useState<'pending' | 'granted' | 'denied'>('pending');
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [nearbyStores, setNearbyStores] = useState<any[]>([]);
   const [stats, setStats] = useState({
     totalOrders: 0,
     totalSpent: 0,
@@ -71,31 +72,49 @@ export default function CleanAccountDashboard() {
 
   const checkLocationPermission = async () => {
     try {
-      const permission = await navigator.permissions.query({ name: 'geolocation' });
-      if (permission.state === 'granted') {
-        setLocationPermission('granted');
-        getCurrentLocation();
-      } else if (permission.state === 'denied') {
-        setLocationPermission('denied');
+      // First try to get current position to check if permission is already granted
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setUserLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            });
+            setLocationPermission('granted');
+            console.log('Location obtained successfully');
+          },
+          (error) => {
+            console.log('Location error:', error.message);
+            if (error.code === error.PERMISSION_DENIED) {
+              setLocationPermission('denied');
+            } else {
+              setLocationPermission('pending');
+            }
+          },
+          {
+            enableHighAccuracy: false,
+            timeout: 5000,
+            maximumAge: 300000 // 5 minutes
+          }
+        );
       } else {
-        setLocationPermission('pending');
+        console.log('Geolocation not supported');
+        setLocationPermission('denied');
       }
-      
-      permission.onchange = () => {
-        if (permission.state === 'granted') {
-          setLocationPermission('granted');
-          getCurrentLocation();
-        } else if (permission.state === 'denied') {
-          setLocationPermission('denied');
-        }
-      };
     } catch (error) {
-      console.log('Permission API not supported, trying direct geolocation');
+      console.log('Error checking location permission:', error);
       setLocationPermission('pending');
     }
   };
 
   const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by this browser');
+      setLocationPermission('denied');
+      return;
+    }
+
+    setLocationPermission('pending');
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setUserLocation({
@@ -103,16 +122,67 @@ export default function CleanAccountDashboard() {
           lng: position.coords.longitude
         });
         setLocationPermission('granted');
+        console.log('Location obtained successfully:', position.coords);
+        
+        // Calculate distances to stores
+        const updatedStores = stores.map(store => ({
+          ...store,
+          distance: calculateDistance(
+            position.coords.latitude,
+            position.coords.longitude,
+            store.coordinates.lat,
+            store.coordinates.lng
+          )
+        }));
+        
+        // Sort by distance
+        updatedStores.sort((a, b) => parseFloat(a.distance) - parseFloat(b.distance));
+        setNearbyStores(updatedStores);
       },
       (error) => {
         console.error('Error getting location:', error);
-        setLocationPermission('denied');
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationPermission('denied');
+            alert('Location access denied. Please enable location services in your browser settings to find nearby stores.');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setLocationPermission('denied');
+            alert('Location information is unavailable. Showing all stores.');
+            break;
+          case error.TIMEOUT:
+            setLocationPermission('pending');
+            alert('Location request timed out. Please try again.');
+            break;
+          default:
+            setLocationPermission('denied');
+            alert('An unknown error occurred while getting your location.');
+            break;
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
       }
     );
   };
 
   const requestLocationAccess = () => {
     getCurrentLocation();
+  };
+
+  const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+    const R = 6371; // Radius of the Earth in kilometers
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const distance = R * c;
+    return distance.toFixed(1) + ' km';
   };
 
   const stores = [
