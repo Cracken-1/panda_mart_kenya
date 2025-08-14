@@ -27,13 +27,33 @@ export default function ShopInStorePage() {
         getCurrentLocation();
       } else if (permission.state === 'denied') {
         setLocationPermission('denied');
+      } else {
+        setLocationPermission('pending');
       }
+      
+      // Listen for permission changes
+      permission.onchange = () => {
+        if (permission.state === 'granted') {
+          setLocationPermission('granted');
+          getCurrentLocation();
+        } else if (permission.state === 'denied') {
+          setLocationPermission('denied');
+        }
+      };
     } catch (error) {
-      console.log('Permission API not supported');
+      console.log('Permission API not supported, trying direct geolocation');
+      // Fallback for browsers that don't support permissions API
+      setLocationPermission('pending');
     }
   };
 
   const getCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      console.error('Geolocation is not supported by this browser');
+      setLocationPermission('denied');
+      return;
+    }
+
     navigator.geolocation.getCurrentPosition(
       (position) => {
         setUserLocation({
@@ -41,15 +61,35 @@ export default function ShopInStorePage() {
           lng: position.coords.longitude
         });
         setLocationPermission('granted');
+        console.log('Location obtained successfully');
       },
       (error) => {
         console.error('Error getting location:', error);
-        setLocationPermission('denied');
+        switch(error.code) {
+          case error.PERMISSION_DENIED:
+            setLocationPermission('denied');
+            break;
+          case error.POSITION_UNAVAILABLE:
+            setLocationPermission('denied');
+            break;
+          case error.TIMEOUT:
+            setLocationPermission('pending');
+            break;
+          default:
+            setLocationPermission('denied');
+            break;
+        }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutes
       }
     );
   };
 
   const requestLocationAccess = () => {
+    setLocationPermission('pending');
     getCurrentLocation();
   };
 

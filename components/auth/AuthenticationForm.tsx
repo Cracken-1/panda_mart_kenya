@@ -11,6 +11,7 @@ export default function AuthenticationForm() {
   const [isSignUp, setIsSignUp] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [formData, setFormData] = useState({
+
     email: '',
     password: '',
     firstName: '',
@@ -362,10 +363,10 @@ export default function AuthenticationForm() {
                     onChange={handleInputChange}
                     onBlur={() => handleFieldBlur('email')}
                     className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${fieldTouched.email && validationErrors.email
-                        ? 'border-red-300 bg-red-50'
-                        : fieldTouched.email && !validationErrors.email && formData.email
-                          ? 'border-green-300 bg-green-50'
-                          : 'border-gray-300'
+                      ? 'border-red-300 bg-red-50'
+                      : fieldTouched.email && !validationErrors.email && formData.email
+                        ? 'border-green-300 bg-green-50'
+                        : 'border-gray-300'
                       }`}
                     placeholder="john@example.com"
                     required
@@ -406,10 +407,10 @@ export default function AuthenticationForm() {
                       onChange={handleInputChange}
                       onBlur={() => handleFieldBlur('phone')}
                       className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${fieldTouched.phone && validationErrors.phone
-                          ? 'border-red-300 bg-red-50'
-                          : fieldTouched.phone && !validationErrors.phone && formData.phone
-                            ? 'border-green-300 bg-green-50'
-                            : 'border-gray-300'
+                        ? 'border-red-300 bg-red-50'
+                        : fieldTouched.phone && !validationErrors.phone && formData.phone
+                          ? 'border-green-300 bg-green-50'
+                          : 'border-gray-300'
                         }`}
                       placeholder="+254 700 000 000"
                       required={isSignUp}
@@ -446,10 +447,10 @@ export default function AuthenticationForm() {
                     onChange={handleInputChange}
                     onBlur={() => handleFieldBlur('password')}
                     className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${fieldTouched.password && validationErrors.password
-                        ? 'border-red-300 bg-red-50'
-                        : fieldTouched.password && !validationErrors.password && formData.password
-                          ? 'border-green-300 bg-green-50'
-                          : 'border-gray-300'
+                      ? 'border-red-300 bg-red-50'
+                      : fieldTouched.password && !validationErrors.password && formData.password
+                        ? 'border-green-300 bg-green-50'
+                        : 'border-gray-300'
                       }`}
                     placeholder="••••••••"
                     required
@@ -477,9 +478,9 @@ export default function AuthenticationForm() {
                     <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
                       <div
                         className={`h-2 rounded-full transition-all duration-300 ${passwordStrength.strength === 'weak' ? 'w-1/4 bg-red-500' :
-                            passwordStrength.strength === 'medium' ? 'w-2/4 bg-yellow-500' :
-                              passwordStrength.strength === 'strong' ? 'w-3/4 bg-blue-500' :
-                                'w-full bg-green-500'
+                          passwordStrength.strength === 'medium' ? 'w-2/4 bg-yellow-500' :
+                            passwordStrength.strength === 'strong' ? 'w-3/4 bg-blue-500' :
+                              'w-full bg-green-500'
                           }`}
                       ></div>
                     </div>
