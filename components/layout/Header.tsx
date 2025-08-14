@@ -124,8 +124,8 @@ export default function Header() {
               </Link>
             </div>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden xl:flex items-center">
+            {/* Desktop Navigation - Always Visible */}
+            <nav className="hidden lg:flex items-center">
               <div className="flex items-center bg-gray-50 rounded-full p-1 space-x-1">
                 {navigation.map((item, index) => (
                   <div key={item.name} className="relative">
@@ -133,7 +133,7 @@ export default function Header() {
                       <div className="categories-menu">
                         <button
                           onClick={() => setShowCategories(!showCategories)}
-                          className={`flex items-center space-x-1 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                          className={`flex items-center space-x-1 px-3 py-2 rounded-full text-xs font-medium transition-all duration-200 ${
                             pathname.startsWith('/collection')
                               ? 'text-white bg-red-500 shadow-md'
                               : 'text-gray-700 hover:text-red-600 hover:bg-white hover:shadow-sm'
@@ -169,7 +169,7 @@ export default function Header() {
                     ) : (
                       <Link
                         href={item.href}
-                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+                        className={`px-3 py-2 rounded-full text-xs font-medium transition-all duration-200 ${
                           pathname === item.href
                             ? 'text-white bg-red-500 shadow-md'
                             : 'text-gray-700 hover:text-red-600 hover:bg-white hover:shadow-sm'
@@ -183,23 +183,30 @@ export default function Header() {
               </div>
             </nav>
 
-            {/* Search Bar */}
-            <div className="hidden lg:flex flex-1 max-w-md mx-6">
+            {/* Enhanced Search Bar */}
+            <div className="hidden md:flex flex-1 max-w-lg mx-4">
               <div className="relative w-full group">
                 <button
                   onClick={() => setShowSearch(true)}
-                  className="w-full flex items-center space-x-3 px-5 py-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-2xl hover:from-gray-100 hover:to-gray-200 transition-all duration-300 border border-gray-200 hover:border-red-200 hover:shadow-lg group-hover:scale-[1.02]"
+                  className="w-full flex items-center space-x-3 px-4 py-3 bg-white rounded-2xl border-2 border-gray-200 hover:border-red-300 transition-all duration-300 shadow-sm hover:shadow-lg group-hover:scale-[1.01]"
                 >
-                  <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
-                    <Search className="w-3 h-3 text-white" />
+                  <div className="w-6 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-sm">
+                    <Search className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-gray-600 text-left flex-1 font-medium">Search products, brands...</span>
-                  <div className="hidden sm:flex items-center space-x-1 px-2 py-1 bg-white rounded-lg border border-gray-200">
-                    <span className="text-xs text-gray-400">⌘</span>
-                    <span className="text-xs text-gray-400">K</span>
+                  <div className="flex-1 text-left">
+                    <div className="text-sm font-medium text-gray-700">Search products, brands...</div>
+                    <div className="text-xs text-gray-500">Try "iPhone", "Nike shoes", "Samsung TV"</div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="hidden lg:flex items-center space-x-1 px-2 py-1 bg-gray-100 rounded-lg">
+                      <span className="text-xs text-gray-500 font-medium">Advanced</span>
+                    </div>
+                    <div className="flex items-center space-x-1 px-2 py-1 bg-red-50 rounded-lg border border-red-200">
+                      <span className="text-xs text-red-600 font-bold">⌘K</span>
+                    </div>
                   </div>
                 </button>
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 to-pink-500/10 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-pink-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
               </div>
             </div>
 
@@ -222,7 +229,7 @@ export default function Header() {
               {/* Mobile Search */}
               <button
                 onClick={() => setShowSearch(true)}
-                className="lg:hidden relative p-3 text-gray-700 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all duration-200 group"
+                className="md:hidden relative p-3 text-gray-700 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all duration-200 group"
               >
                 <Search className="w-5 h-5" />
                 <div className="absolute inset-0 bg-red-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 -z-10"></div>
@@ -315,26 +322,24 @@ export default function Header() {
                   )}
                 </div>
               ) : (
-                <div className="flex items-center space-x-3">
-                  <Link
-                    href="/auth/login"
-                    className="px-4 py-2 text-gray-700 hover:text-red-600 font-medium rounded-xl hover:bg-red-50 transition-all duration-200"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    className="px-6 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105"
-                  >
-                    Sign Up
-                  </Link>
-                </div>
+                <Link
+                  href="/account"
+                  className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 group"
+                >
+                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
+                    <User className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="hidden lg:block text-left">
+                    <div className="text-sm font-semibold">Account</div>
+                    <div className="text-xs opacity-90">Sign in or Register</div>
+                  </div>
+                </Link>
               )}
 
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="xl:hidden p-3 text-gray-700 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all duration-200 group ml-2"
+                className="lg:hidden p-3 text-gray-700 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all duration-200 group ml-2"
               >
                 <div className="relative">
                   {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -347,21 +352,24 @@ export default function Header() {
 
         {/* Mobile Menu */}
         {showMobileMenu && (
-          <div className="xl:hidden border-t border-gray-100 bg-white">
+          <div className="lg:hidden border-t border-gray-100 bg-white">
             <div className="px-4 py-6 space-y-3">
               {/* Mobile Search */}
-              <div className="lg:hidden mb-4">
+              <div className="md:hidden mb-4">
                 <button
                   onClick={() => {
                     setShowSearch(true);
                     setShowMobileMenu(false);
                   }}
-                  className="w-full flex items-center space-x-3 px-4 py-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                  className="w-full flex items-center space-x-3 px-4 py-3 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 transition-colors shadow-sm"
                 >
-                  <div className="w-8 h-8 bg-red-500 rounded-lg flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center">
                     <Search className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-gray-600 font-medium">Search products...</span>
+                  <div className="flex-1 text-left">
+                    <div className="text-sm font-medium text-gray-700">Search products...</div>
+                    <div className="text-xs text-gray-500">Advanced search available</div>
+                  </div>
                 </button>
               </div>
 

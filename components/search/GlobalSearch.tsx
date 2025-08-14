@@ -15,7 +15,8 @@ import {
   Filter,
   MapPin,
   Star,
-  ShoppingBag
+  ShoppingBag,
+  ChevronDown
 } from 'lucide-react';
 
 interface SearchResult {
@@ -47,6 +48,14 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
     'Instant Pot',
     'Dyson Vacuum'
   ]);
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [filters, setFilters] = useState({
+    category: '',
+    priceRange: '',
+    brand: '',
+    location: '',
+    rating: ''
+  });
   const [loading, setLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -204,7 +213,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
         {/* Search Input */}
         <div className="p-6 border-b border-gray-200">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-red-500 w-5 h-5" />
             <input
               ref={inputRef}
               type="text"
@@ -212,7 +221,7 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
               onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Search products, stores, categories..."
-              className="w-full pl-12 pr-12 py-4 text-lg border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-12 pr-12 py-4 text-lg border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
             />
             <button
               onClick={onClose}
@@ -221,13 +230,107 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
               <X className="w-5 h-5" />
             </button>
           </div>
+          
+          {/* Advanced Search Toggle */}
+          <div className="flex items-center justify-between mt-4">
+            <button
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="flex items-center space-x-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+            >
+              <Filter className="w-4 h-4" />
+              <span>Advanced Search</span>
+              <ChevronDown className={`w-4 h-4 transition-transform ${showAdvanced ? 'rotate-180' : ''}`} />
+            </button>
+            <div className="flex items-center space-x-2 text-xs text-gray-500">
+              <span>Press</span>
+              <kbd className="px-2 py-1 bg-gray-100 rounded border">⌘K</kbd>
+              <span>to search</span>
+            </div>
+          </div>
+
+          {/* Advanced Search Filters */}
+          {showAdvanced && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-xl space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <select
+                    value={filters.category}
+                    onChange={(e) => setFilters({...filters, category: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  >
+                    <option value="">All Categories</option>
+                    <option value="electronics">Electronics</option>
+                    <option value="fashion">Fashion</option>
+                    <option value="home">Home & Garden</option>
+                    <option value="beauty">Health & Beauty</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Price Range</label>
+                  <select
+                    value={filters.priceRange}
+                    onChange={(e) => setFilters({...filters, priceRange: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  >
+                    <option value="">Any Price</option>
+                    <option value="0-1000">Under KSh 1,000</option>
+                    <option value="1000-5000">KSh 1,000 - 5,000</option>
+                    <option value="5000-20000">KSh 5,000 - 20,000</option>
+                    <option value="20000+">Over KSh 20,000</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
+                  <select
+                    value={filters.brand}
+                    onChange={(e) => setFilters({...filters, brand: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  >
+                    <option value="">All Brands</option>
+                    <option value="apple">Apple</option>
+                    <option value="samsung">Samsung</option>
+                    <option value="nike">Nike</option>
+                    <option value="sony">Sony</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                  <select
+                    value={filters.location}
+                    onChange={(e) => setFilters({...filters, location: e.target.value})}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  >
+                    <option value="">All Locations</option>
+                    <option value="nairobi">Nairobi</option>
+                    <option value="mombasa">Mombasa</option>
+                    <option value="kisumu">Kisumu</option>
+                  </select>
+                </div>
+              </div>
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => setFilters({category: '', priceRange: '', brand: '', location: '', rating: ''})}
+                  className="text-sm text-gray-600 hover:text-gray-800"
+                >
+                  Clear Filters
+                </button>
+                <button
+                  onClick={() => handleSearch(query)}
+                  className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm font-medium"
+                >
+                  Apply Filters
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Search Content */}
         <div className="overflow-y-auto max-h-96">
           {loading ? (
             <div className="flex items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-red-500"></div>
             </div>
           ) : query.length > 0 ? (
             // Search Results
@@ -243,22 +346,22 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
                       <button
                         key={result.id}
                         onClick={() => handleResultClick(result)}
-                        className={`w-full flex items-center gap-4 p-3 rounded-lg hover:bg-gray-50 transition-colors text-left ${
-                          selectedIndex === index ? 'bg-blue-50 border border-blue-200' : ''
+                        className={`w-full flex items-center gap-4 p-3 rounded-lg hover:bg-red-50 transition-colors text-left ${
+                          selectedIndex === index ? 'bg-red-50 border border-red-200' : ''
                         }`}
                       >
                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center ${
-                          result.type === 'product' ? 'bg-blue-100' :
+                          result.type === 'product' ? 'bg-red-100' :
                           result.type === 'store' ? 'bg-green-100' :
                           result.type === 'category' ? 'bg-purple-100' :
-                          result.type === 'brand' ? 'bg-yellow-100' :
+                          result.type === 'brand' ? 'bg-orange-100' :
                           'bg-gray-100'
                         }`}>
                           <IconComponent className={`w-5 h-5 ${
-                            result.type === 'product' ? 'text-blue-600' :
+                            result.type === 'product' ? 'text-red-600' :
                             result.type === 'store' ? 'text-green-600' :
                             result.type === 'category' ? 'text-purple-600' :
-                            result.type === 'brand' ? 'text-yellow-600' :
+                            result.type === 'brand' ? 'text-orange-600' :
                             'text-gray-600'
                           }`} />
                         </div>
