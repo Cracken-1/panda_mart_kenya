@@ -429,6 +429,7 @@ export default function Header() {
             </div>
           </div>
         )}
+        </div>
       </header>
 
       {/* Global Search Modal */}

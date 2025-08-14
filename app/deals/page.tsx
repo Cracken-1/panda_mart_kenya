@@ -23,7 +23,7 @@ import {
   Share2,
   Bookmark,
   Tag,
-  Fire,
+  Flame as Fire,
   Crown,
   Sparkles
 } from 'lucide-react';
