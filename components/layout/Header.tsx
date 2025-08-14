@@ -107,245 +107,196 @@ export default function Header() {
         {/* Main Header */}
         <div className="bg-white border-b border-gray-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-18 py-3">
-            {/* Logo */}
-            <div className="flex items-center flex-shrink-0">
-              <Link href="/" className="flex items-center space-x-3 group">
-                <div className="relative">
-                  <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-105">
-                    <Store className="w-6 h-6 text-white" />
+            <div className="flex items-center h-16">
+              {/* Logo */}
+              <div className="flex items-center flex-shrink-0 mr-8">
+                <Link href="/" className="flex items-center space-x-2 group">
+                  <div className="relative">
+                    <div className="w-9 h-9 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">
+                      <Store className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-400 rounded-full animate-pulse"></div>
                   </div>
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-400 rounded-full animate-pulse"></div>
-                </div>
-                <div className="hidden sm:block">
-                  <span className="text-xl font-bold text-gray-900 group-hover:text-red-600 transition-colors">Panda Mart</span>
-                  <div className="text-xs text-gray-500 font-medium">Kenya</div>
-                </div>
-              </Link>
-            </div>
+                  <div className="hidden sm:block">
+                    <span className="text-lg font-bold text-gray-900 group-hover:text-red-600 transition-colors">Panda Mart</span>
+                    <div className="text-xs text-gray-500 font-medium -mt-1">Kenya</div>
+                  </div>
+                </Link>
+              </div>
 
-            {/* Desktop Navigation - Always Visible */}
-            <nav className="hidden lg:flex items-center">
-              <div className="flex items-center bg-gray-50 rounded-full p-1 space-x-1">
-                {navigation.map((item, index) => (
-                  <div key={item.name} className="relative">
-                    {item.hasDropdown ? (
-                      <div className="categories-menu">
-                        <button
-                          onClick={() => setShowCategories(!showCategories)}
-                          className={`flex items-center space-x-1 px-3 py-2 rounded-full text-xs font-medium transition-all duration-200 ${
-                            pathname.startsWith('/collection')
-                              ? 'text-white bg-red-500 shadow-md'
-                              : 'text-gray-700 hover:text-red-600 hover:bg-white hover:shadow-sm'
+              {/* Desktop Navigation */}
+              <nav className="hidden lg:flex items-center mr-6">
+                <div className="flex items-center space-x-1">
+                  {navigation.map((item, index) => (
+                    <div key={item.name} className="relative">
+                      {item.hasDropdown ? (
+                        <div className="categories-menu">
+                          <button
+                            onClick={() => setShowCategories(!showCategories)}
+                            className={`flex items-center space-x-1 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                              pathname.startsWith('/collection')
+                                ? 'text-red-600 bg-red-50'
+                                : 'text-gray-700 hover:text-red-600 hover:bg-red-50'
+                            }`}
+                          >
+                            <span>{item.name}</span>
+                            <ChevronDown className={`w-3 h-3 transition-transform ${showCategories ? 'rotate-180' : ''}`} />
+                          </button>
+                          
+                          {showCategories && (
+                            <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-xl shadow-2xl border border-gray-100 py-3 z-50">
+                              <div className="px-4 py-2 border-b border-gray-100">
+                                <h3 className="text-sm font-semibold text-gray-900">Browse Categories</h3>
+                              </div>
+                              <div className="py-2">
+                                {categories.map((category) => (
+                                  <Link
+                                    key={category.name}
+                                    href={category.href}
+                                    onClick={() => setShowCategories(false)}
+                                    className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors group"
+                                  >
+                                    <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
+                                      <category.icon className="w-4 h-4 text-red-600" />
+                                    </div>
+                                    <span className="text-gray-700 group-hover:text-red-600 font-medium">{category.name}</span>
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                            pathname === item.href
+                              ? 'text-red-600 bg-red-50'
+                              : 'text-gray-700 hover:text-red-600 hover:bg-red-50'
                           }`}
                         >
-                          <span>{item.name}</span>
-                          <ChevronDown className={`w-3 h-3 transition-transform ${showCategories ? 'rotate-180' : ''}`} />
-                        </button>
-                        
-                        {showCategories && (
-                          <div className="absolute top-full left-0 mt-3 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-in slide-in-from-top-2 duration-200">
-                            <div className="px-4 py-2 border-b border-gray-100">
-                              <h3 className="text-sm font-semibold text-gray-900">Browse Categories</h3>
-                            </div>
-                            <div className="py-2">
-                              {categories.map((category) => (
-                                <Link
-                                  key={category.name}
-                                  href={category.href}
-                                  onClick={() => setShowCategories(false)}
-                                  className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors group"
-                                >
-                                  <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200 transition-colors">
-                                    <category.icon className="w-4 h-4 text-red-600" />
-                                  </div>
-                                  <span className="text-gray-700 group-hover:text-red-600 font-medium">{category.name}</span>
-                                </Link>
-                              ))}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <Link
-                        href={item.href}
-                        className={`px-3 py-2 rounded-full text-xs font-medium transition-all duration-200 ${
-                          pathname === item.href
-                            ? 'text-white bg-red-500 shadow-md'
-                            : 'text-gray-700 hover:text-red-600 hover:bg-white hover:shadow-sm'
-                        }`}
-                      >
-                        {item.name}
-                      </Link>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </nav>
+                          {item.name}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </nav>
 
-            {/* Enhanced Search Bar */}
-            <div className="hidden md:flex flex-1 max-w-lg mx-4">
-              <div className="relative w-full group">
+              {/* Compact Search Bar */}
+              <div className="flex-1 max-w-md mx-4">
                 <button
                   onClick={() => setShowSearch(true)}
-                  className="w-full flex items-center space-x-3 px-4 py-3 bg-white rounded-2xl border-2 border-gray-200 hover:border-red-300 transition-all duration-300 shadow-sm hover:shadow-lg group-hover:scale-[1.01]"
+                  className="w-full flex items-center space-x-3 px-4 py-2.5 bg-gray-50 rounded-xl hover:bg-gray-100 transition-all duration-200 border border-gray-200 hover:border-red-300 group"
                 >
-                  <div className="w-6 h-6 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center shadow-sm">
-                    <Search className="w-4 h-4 text-white" />
+                  <div className="w-5 h-5 bg-red-500 rounded-lg flex items-center justify-center">
+                    <Search className="w-3 h-3 text-white" />
                   </div>
-                  <div className="flex-1 text-left">
-                    <div className="text-sm font-medium text-gray-700">Search products, brands...</div>
-                    <div className="text-xs text-gray-500">Try "iPhone", "Nike shoes", "Samsung TV"</div>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="hidden lg:flex items-center space-x-1 px-2 py-1 bg-gray-100 rounded-lg">
-                      <span className="text-xs text-gray-500 font-medium">Advanced</span>
-                    </div>
-                    <div className="flex items-center space-x-1 px-2 py-1 bg-red-50 rounded-lg border border-red-200">
-                      <span className="text-xs text-red-600 font-bold">⌘K</span>
-                    </div>
+                  <span className="text-gray-600 text-sm flex-1 text-left">Search products...</span>
+                  <div className="hidden sm:flex items-center space-x-2">
+                    <span className="text-xs text-gray-500">Advanced</span>
+                    <div className="px-2 py-1 bg-white rounded border text-xs text-gray-500">⌘K</div>
                   </div>
                 </button>
-                <div className="absolute inset-0 bg-gradient-to-r from-red-500/5 to-pink-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10"></div>
               </div>
-            </div>
 
-            {/* Right Side Actions */}
-            <div className="flex items-center space-x-2">
-              {/* Find Store */}
-              <Link
-                href="/stores"
-                className="hidden xl:flex items-center space-x-2 px-4 py-2 text-gray-700 hover:text-red-600 transition-all duration-200 rounded-xl hover:bg-red-50 group"
-              >
-                <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                  <MapPin className="w-4 h-4 group-hover:text-red-600" />
-                </div>
-                <div className="hidden 2xl:block">
-                  <div className="text-sm font-medium">Find Store</div>
-                  <div className="text-xs text-gray-500">Locate nearby</div>
-                </div>
-              </Link>
+              {/* Right Side Actions */}
+              <div className="flex items-center space-x-2">
+                {/* Find Store */}
+                <Link
+                  href="/stores"
+                  className="hidden xl:flex items-center px-3 py-2 text-gray-700 hover:text-red-600 transition-colors rounded-lg hover:bg-red-50"
+                >
+                  <MapPin className="w-4 h-4 mr-2" />
+                  <span className="text-sm font-medium">Stores</span>
+                </Link>
 
-              {/* Mobile Search */}
-              <button
-                onClick={() => setShowSearch(true)}
-                className="md:hidden relative p-3 text-gray-700 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all duration-200 group"
-              >
-                <Search className="w-5 h-5" />
-                <div className="absolute inset-0 bg-red-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 -z-10"></div>
-              </button>
+                {/* Mobile Search */}
+                <button
+                  onClick={() => setShowSearch(true)}
+                  className="md:hidden p-2 text-gray-700 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                >
+                  <Search className="w-5 h-5" />
+                </button>
 
-              {/* Cart */}
-              <Link
-                href="/cart"
-                className="relative p-3 text-gray-700 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all duration-200 group"
-              >
-                <div className="relative">
+                {/* Cart */}
+                <Link
+                  href="/cart"
+                  className="relative p-2 text-gray-700 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors"
+                >
                   <ShoppingCart className="w-5 h-5" />
                   {cart.itemCount > 0 && (
-                    <>
-                      <span className="absolute -top-2 -right-2 w-5 h-5 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs rounded-full flex items-center justify-center font-bold shadow-lg animate-pulse">
-                        {cart.itemCount}
-                      </span>
-                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-400 rounded-full animate-ping"></div>
-                    </>
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold">
+                      {cart.itemCount}
+                    </span>
                   )}
-                </div>
-                <div className="absolute inset-0 bg-red-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 -z-10"></div>
-              </Link>
+                </Link>
 
-              {/* User Menu */}
-              {user ? (
-                <div className="relative user-menu">
-                  <button
-                    onClick={() => setShowUserMenu(!showUserMenu)}
-                    className="flex items-center space-x-3 p-2 rounded-xl hover:bg-red-50 transition-all duration-200 group"
-                  >
-                    <div className="relative">
-                      <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
+                {/* User Menu */}
+                {user ? (
+                  <div className="relative user-menu">
+                    <button
+                      onClick={() => setShowUserMenu(!showUserMenu)}
+                      className="flex items-center space-x-2 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                    >
+                      <div className="w-8 h-8 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
                         <span className="text-white text-sm font-bold">
                           {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
                         </span>
                       </div>
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
-                    </div>
-                    <div className="hidden lg:block text-left">
-                      <div className="text-sm font-medium text-gray-900 group-hover:text-red-600">
-                        {user.firstName}
+                      <div className="hidden lg:block text-left">
+                        <div className="text-sm font-medium text-gray-900">{user.firstName}</div>
                       </div>
-                      <div className="text-xs text-gray-500">My Account</div>
-                    </div>
-                    <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-red-600 transition-colors" />
-                  </button>
+                      <ChevronDown className="w-4 h-4 text-gray-400" />
+                    </button>
 
-                  {showUserMenu && (
-                    <div className="absolute right-0 top-full mt-3 w-64 bg-white rounded-2xl shadow-2xl border border-gray-100 py-3 z-50 animate-in slide-in-from-top-2 duration-200">
-                      <div className="px-4 py-3 border-b border-gray-100">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-                            <span className="text-white font-bold">
-                              {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
-                            </span>
-                          </div>
-                          <div>
-                            <p className="text-sm font-semibold text-gray-900">
-                              {user.firstName} {user.lastName}
-                            </p>
-                            <p className="text-xs text-gray-500">{user.email}</p>
-                          </div>
+                    {showUserMenu && (
+                      <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 py-2 z-50">
+                        <div className="px-4 py-3 border-b border-gray-100">
+                          <p className="text-sm font-semibold text-gray-900">
+                            {user.firstName} {user.lastName}
+                          </p>
+                          <p className="text-xs text-gray-500">{user.email}</p>
+                        </div>
+                        
+                        <div className="py-2">
+                          <Link
+                            href="/account"
+                            onClick={() => setShowUserMenu(false)}
+                            className="flex items-center space-x-3 px-4 py-2 hover:bg-red-50 transition-colors"
+                          >
+                            <User className="w-4 h-4 text-red-600" />
+                            <span className="text-gray-700">My Account</span>
+                          </Link>
+                          
+                          <button
+                            onClick={handleLogout}
+                            className="flex items-center space-x-3 px-4 py-2 w-full text-left hover:bg-gray-50 transition-colors"
+                          >
+                            <span className="text-gray-700">Sign Out</span>
+                          </button>
                         </div>
                       </div>
-                      
-                      <div className="py-2">
-                        <Link
-                          href="/account"
-                          onClick={() => setShowUserMenu(false)}
-                          className="flex items-center space-x-3 px-4 py-3 hover:bg-red-50 transition-colors group"
-                        >
-                          <div className="w-8 h-8 bg-red-100 rounded-lg flex items-center justify-center group-hover:bg-red-200">
-                            <User className="w-4 h-4 text-red-600" />
-                          </div>
-                          <span className="text-gray-700 group-hover:text-red-600 font-medium">My Account</span>
-                        </Link>
-                        
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center space-x-3 px-4 py-3 w-full text-left hover:bg-gray-50 transition-colors group"
-                        >
-                          <div className="w-8 h-8 bg-gray-100 rounded-lg flex items-center justify-center group-hover:bg-gray-200">
-                            <span className="text-gray-600 text-sm">→</span>
-                          </div>
-                          <span className="text-gray-700 group-hover:text-gray-900 font-medium">Sign Out</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <Link
-                  href="/account"
-                  className="flex items-center space-x-2 px-4 py-2.5 bg-gradient-to-r from-red-500 to-red-600 text-white rounded-xl hover:from-red-600 hover:to-red-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl transform hover:scale-105 group"
-                >
-                  <div className="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center">
-                    <User className="w-4 h-4 text-white" />
+                    )}
                   </div>
-                  <div className="hidden lg:block text-left">
-                    <div className="text-sm font-semibold">Account</div>
-                    <div className="text-xs opacity-90">Sign in or Register</div>
-                  </div>
-                </Link>
-              )}
+                ) : (
+                  <Link
+                    href="/account"
+                    className="flex items-center space-x-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors font-medium"
+                  >
+                    <User className="w-4 h-4" />
+                    <span className="hidden lg:inline">Account</span>
+                  </Link>
+                )}
 
-              {/* Mobile Menu Button */}
-              <button
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
-                className="lg:hidden p-3 text-gray-700 hover:text-red-600 rounded-xl hover:bg-red-50 transition-all duration-200 group ml-2"
-              >
-                <div className="relative">
+                {/* Mobile Menu Button */}
+                <button
+                  onClick={() => setShowMobileMenu(!showMobileMenu)}
+                  className="lg:hidden p-2 text-gray-700 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors ml-2"
+                >
                   {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-                </div>
-                <div className="absolute inset-0 bg-red-500/10 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-200 -z-10"></div>
-              </button>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -355,21 +306,18 @@ export default function Header() {
           <div className="lg:hidden border-t border-gray-100 bg-white">
             <div className="px-4 py-6 space-y-3">
               {/* Mobile Search */}
-              <div className="md:hidden mb-4">
+              <div className="mb-4">
                 <button
                   onClick={() => {
                     setShowSearch(true);
                     setShowMobileMenu(false);
                   }}
-                  className="w-full flex items-center space-x-3 px-4 py-3 bg-white rounded-xl border-2 border-gray-200 hover:border-red-300 transition-colors shadow-sm"
+                  className="w-full flex items-center space-x-3 px-4 py-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
                 >
-                  <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+                  <div className="w-6 h-6 bg-red-500 rounded-lg flex items-center justify-center">
                     <Search className="w-4 h-4 text-white" />
                   </div>
-                  <div className="flex-1 text-left">
-                    <div className="text-sm font-medium text-gray-700">Search products...</div>
-                    <div className="text-xs text-gray-500">Advanced search available</div>
-                  </div>
+                  <span className="text-gray-700 font-medium">Search products...</span>
                 </button>
               </div>
 
@@ -437,7 +385,6 @@ export default function Header() {
             </div>
           </div>
         )}
-        </div>
       </header>
 
       {/* Global Search Modal */}
