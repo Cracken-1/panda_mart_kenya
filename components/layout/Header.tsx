@@ -109,7 +109,7 @@ export default function Header() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             
             {/* Top Row - Logo, Search, Cart, Account */}
-            <div className="flex items-center justify-between h-14 border-b border-gray-50">
+            <div className="flex items-center justify-between h-16 border-b border-gray-50 pt-3">
               {/* Logo */}
               <div className="flex items-center flex-shrink-0">
                 <Link href="/" className="flex items-center space-x-2 group">
@@ -247,7 +247,7 @@ export default function Header() {
             </div>
 
             {/* Bottom Row - Navigation */}
-            <div className="flex items-center justify-between h-12">
+            <div className="flex items-center justify-between h-12 py-2">
               {/* Desktop Navigation */}
               <nav className="hidden lg:flex items-center space-x-1">
                 {navigation.map((item, index) => (
