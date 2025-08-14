@@ -126,13 +126,13 @@ export default function AuthenticationForm() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
-    
+
     // Format phone number as user types
     let formattedValue = value
     if (name === 'phone') {
       formattedValue = formatPhone(value)
     }
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: formattedValue
@@ -206,7 +206,7 @@ export default function AuthenticationForm() {
 
           {/* Main Message */}
           <div className="mt-16">
-            <motion.h2 
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
@@ -216,13 +216,13 @@ export default function AuthenticationForm() {
               <br />
               Amazing Deals
             </motion.h2>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3 }}
               className="text-white/90 text-lg leading-relaxed"
             >
-              Join thousands of happy customers who save money every day with exclusive deals, 
+              Join thousands of happy customers who save money every day with exclusive deals,
               flash sales, and member-only discounts.
             </motion.p>
           </div>
@@ -282,8 +282,8 @@ export default function AuthenticationForm() {
               {isSignUp ? 'Create Account' : 'Welcome Back'}
             </h1>
             <p className="text-gray-600">
-              {isSignUp 
-                ? 'Join Panda Mart and start saving today' 
+              {isSignUp
+                ? 'Join Panda Mart and start saving today'
                 : 'Sign in to access your account and exclusive deals'
               }
             </p>
@@ -361,13 +361,12 @@ export default function AuthenticationForm() {
                     value={formData.email}
                     onChange={handleInputChange}
                     onBlur={() => handleFieldBlur('email')}
-                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${
-                      fieldTouched.email && validationErrors.email
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${fieldTouched.email && validationErrors.email
                         ? 'border-red-300 bg-red-50'
                         : fieldTouched.email && !validationErrors.email && formData.email
-                        ? 'border-green-300 bg-green-50'
-                        : 'border-gray-300'
-                    }`}
+                          ? 'border-green-300 bg-green-50'
+                          : 'border-gray-300'
+                      }`}
                     placeholder="john@example.com"
                     required
                   />
@@ -406,13 +405,12 @@ export default function AuthenticationForm() {
                       value={formData.phone}
                       onChange={handleInputChange}
                       onBlur={() => handleFieldBlur('phone')}
-                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${
-                        fieldTouched.phone && validationErrors.phone
+                      className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${fieldTouched.phone && validationErrors.phone
                           ? 'border-red-300 bg-red-50'
                           : fieldTouched.phone && !validationErrors.phone && formData.phone
-                          ? 'border-green-300 bg-green-50'
-                          : 'border-gray-300'
-                      }`}
+                            ? 'border-green-300 bg-green-50'
+                            : 'border-gray-300'
+                        }`}
                       placeholder="+254 700 000 000"
                       required={isSignUp}
                     />
@@ -447,13 +445,12 @@ export default function AuthenticationForm() {
                     value={formData.password}
                     onChange={handleInputChange}
                     onBlur={() => handleFieldBlur('password')}
-                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${
-                      fieldTouched.password && validationErrors.password
+                    className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-panda-red-500 focus:border-transparent text-gray-900 bg-white placeholder-gray-500 ${fieldTouched.password && validationErrors.password
                         ? 'border-red-300 bg-red-50'
                         : fieldTouched.password && !validationErrors.password && formData.password
-                        ? 'border-green-300 bg-green-50'
-                        : 'border-gray-300'
-                    }`}
+                          ? 'border-green-300 bg-green-50'
+                          : 'border-gray-300'
+                      }`}
                     placeholder="••••••••"
                     required
                   />
@@ -475,16 +472,15 @@ export default function AuthenticationForm() {
                         {passwordStrength.strength.charAt(0).toUpperCase() + passwordStrength.strength.slice(1).replace('-', ' ')}
                       </span>
                     </div>
-                    
+
                     {/* Strength Bar */}
                     <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
-                      <div 
-                        className={`h-2 rounded-full transition-all duration-300 ${
-                          passwordStrength.strength === 'weak' ? 'w-1/4 bg-red-500' :
-                          passwordStrength.strength === 'medium' ? 'w-2/4 bg-yellow-500' :
-                          passwordStrength.strength === 'strong' ? 'w-3/4 bg-blue-500' :
-                          'w-full bg-green-500'
-                        }`}
+                      <div
+                        className={`h-2 rounded-full transition-all duration-300 ${passwordStrength.strength === 'weak' ? 'w-1/4 bg-red-500' :
+                            passwordStrength.strength === 'medium' ? 'w-2/4 bg-yellow-500' :
+                              passwordStrength.strength === 'strong' ? 'w-3/4 bg-blue-500' :
+                                'w-full bg-green-500'
+                          }`}
                       ></div>
                     </div>
 
@@ -578,8 +574,8 @@ export default function AuthenticationForm() {
                   }}
                   className="text-panda-red-500 hover:text-panda-red-600 font-medium"
                 >
-                  {isSignUp 
-                    ? 'Already have an account? Sign In' 
+                  {isSignUp
+                    ? 'Already have an account? Sign In'
                     : "Don't have an account? Sign Up"
                   }
                 </button>

@@ -17,6 +17,13 @@ export function AccountDashboard() {
 
   const quickActions = [
     {
+      name: 'Checkout',
+      description: 'Complete your purchase',
+      href: '/account/checkout',
+      icon: CheckCircleIcon,
+      color: 'bg-emerald-500',
+    },
+    {
       name: 'View Orders',
       description: 'Track your recent purchases',
       href: '/account/orders',

@@ -106,12 +106,12 @@ export default function ReservationModal({ product, store, onClose }: Reservatio
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      <div className="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+      <div className="flex items-end sm:items-center justify-center min-h-screen px-2 sm:px-4 pt-4 pb-4 sm:pb-20 text-center sm:block sm:p-0">
         {/* Backdrop */}
         <div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" onClick={onClose}></div>
 
         {/* Modal */}
-        <div className="inline-block w-full max-w-2xl my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
+        <div className="inline-block w-full max-w-2xl my-4 sm:my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-t-2xl sm:rounded-2xl max-h-[90vh] sm:max-h-none">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-gray-200">
             <h3 className="text-xl font-bold text-gray-900">
@@ -159,15 +159,34 @@ export default function ReservationModal({ product, store, onClose }: Reservatio
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Quantity
                     </label>
-                    <select
-                      value={quantity}
-                      onChange={(e) => setQuantity(parseInt(e.target.value))}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                    >
-                      {Array.from({ length: Math.min(product.stockCount, 5) }, (_, i) => (
-                        <option key={i + 1} value={i + 1}>{i + 1}</option>
-                      ))}
-                    </select>
+                    <div className="flex items-center justify-center max-w-xs mx-auto sm:mx-0">
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                        disabled={quantity <= 1}
+                        className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-300 text-gray-600 rounded-l-lg border border-r-0 border-gray-300 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                        </svg>
+                      </button>
+                      <div className="flex items-center justify-center w-16 h-10 bg-white border-t border-b border-gray-300 text-center font-semibold text-gray-900">
+                        {quantity}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setQuantity(Math.min(Math.min(product.stockCount, 10), quantity + 1))}
+                        disabled={quantity >= Math.min(product.stockCount, 10)}
+                        className="flex items-center justify-center w-10 h-10 bg-gray-100 hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-300 text-gray-600 rounded-r-lg border border-l-0 border-gray-300 transition-colors"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1 text-center sm:text-left">
+                      Maximum {Math.min(product.stockCount, 10)} items
+                    </p>
                   </div>
 
                   {/* Reservation Period */}
@@ -326,16 +345,16 @@ export default function ReservationModal({ product, store, onClose }: Reservatio
                 <div className="bg-gray-50 rounded-xl p-4">
                   <h5 className="font-medium text-gray-900 mb-3">Price Breakdown</h5>
                   <div className="space-y-2 text-sm">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between text-gray-700">
                       <span>Product Price ({quantity}x)</span>
-                      <span>KSh {(product.price * quantity).toLocaleString()}</span>
+                      <span className="font-medium text-gray-900">KSh {(product.price * quantity).toLocaleString()}</span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex justify-between text-gray-700">
                       <span>Reservation Fee</span>
-                      <span>KSh {reservationFee.toLocaleString()}</span>
+                      <span className="font-medium text-gray-900">KSh {reservationFee.toLocaleString()}</span>
                     </div>
                     <div className="border-t border-gray-200 pt-2 flex justify-between font-semibold">
-                      <span>Total Amount</span>
+                      <span className="text-gray-900">Total Amount</span>
                       <span className="text-emerald-600">KSh {totalAmount.toLocaleString()}</span>
                     </div>
                   </div>

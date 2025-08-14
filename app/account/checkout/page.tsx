@@ -1,11 +1,11 @@
 'use client';
 
 import { useAuth } from '@/lib/hooks/useAuth';
-import ComprehensiveAccountDashboard from '@/components/account/ComprehensiveAccountDashboard';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import AuthenticationForm from '@/components/auth/AuthenticationForm';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import CheckoutDashboard from '@/components/account/CheckoutDashboard';
 
-export default function AccountPage() {
+export default function CheckoutPage() {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
@@ -20,5 +20,5 @@ export default function AccountPage() {
     return <AuthenticationForm />;
   }
 
-  return <ComprehensiveAccountDashboard />;
+  return <CheckoutDashboard />;
 }
