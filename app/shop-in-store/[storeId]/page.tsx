@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import AuthenticationForm from '@/components/auth/AuthenticationForm';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
-import ComprehensiveStoreInventory from '@/components/store/ComprehensiveStoreInventory';
+import StoreInventory from '@/components/store/StoreInventory';
 import { MapPin, Clock, Phone, Star, Navigation, Car, Users, Wifi, ArrowLeft, Share2, Bookmark } from 'lucide-react';
 import Link from 'next/link';
 
@@ -203,12 +203,12 @@ export default function StorePage({ params }: StorePageProps) {
           </div>
 
           {/* Store Info */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Main Info */}
             <div className="lg:col-span-2">
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{store.name}</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">{store.name}</h1>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
                 <div className="space-y-3">
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-gray-400 mt-0.5" />
@@ -251,22 +251,22 @@ export default function StorePage({ params }: StorePageProps) {
               </div>
 
               {/* Store Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{store.totalProducts.toLocaleString()}</div>
-                  <div className="text-sm text-gray-600">Products</div>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6">
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-4 text-center">
+                  <div className="text-lg sm:text-2xl font-bold text-gray-900">{store.totalProducts.toLocaleString()}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Products</div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{store.categories.length}</div>
-                  <div className="text-sm text-gray-600">Categories</div>
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-4 text-center">
+                  <div className="text-lg sm:text-2xl font-bold text-gray-900">{store.categories.length}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Categories</div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{store.staffOnDuty}</div>
-                  <div className="text-sm text-gray-600">Staff Available</div>
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-4 text-center">
+                  <div className="text-lg sm:text-2xl font-bold text-gray-900">{store.staffOnDuty}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Staff Available</div>
                 </div>
-                <div className="bg-gray-50 rounded-lg p-4 text-center">
-                  <div className="text-2xl font-bold text-gray-900">{store.services.length}</div>
-                  <div className="text-sm text-gray-600">Services</div>
+                <div className="bg-gray-50 rounded-lg p-3 sm:p-4 text-center">
+                  <div className="text-lg sm:text-2xl font-bold text-gray-900">{store.services.length}</div>
+                  <div className="text-xs sm:text-sm text-gray-600">Services</div>
                 </div>
               </div>
             </div>
@@ -312,19 +312,24 @@ export default function StorePage({ params }: StorePageProps) {
                 <h3 className="font-semibold text-gray-900 mb-4">Quick Actions</h3>
                 
                 <div className="space-y-3">
-                  <button className="w-full flex items-center justify-center gap-2 bg-emerald-500 text-white py-3 px-4 rounded-lg hover:bg-emerald-600 transition-colors">
-                    <Navigation className="w-4 h-4" />
-                    Get Directions
+                  <button className="w-full flex items-center justify-center gap-2 bg-emerald-500 text-white py-3 px-4 rounded-lg hover:bg-emerald-600 transition-colors text-sm sm:text-base">
+                    <Navigation className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">Get Directions</span>
                   </button>
                   
-                  <button className="w-full flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Phone className="w-4 h-4" />
-                    Call Store
+                  <button className="w-full flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base">
+                    <Phone className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">Call Store</span>
                   </button>
                   
-                  <button className="w-full flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors">
-                    <Clock className="w-4 h-4" />
-                    Schedule Visit
+                  <button className="w-full flex items-center justify-center gap-2 border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-50 transition-colors text-sm sm:text-base">
+                    <Clock className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">Schedule Visit</span>
+                  </button>
+                  
+                  <button className="w-full flex items-center justify-center gap-2 border border-emerald-300 text-emerald-700 py-2 px-4 rounded-lg hover:bg-emerald-50 transition-colors text-sm sm:text-base">
+                    <MapPin className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">Find Nearest Store</span>
                   </button>
                 </div>
               </div>
@@ -376,7 +381,7 @@ export default function StorePage({ params }: StorePageProps) {
 
       {/* Store Inventory */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ComprehensiveStoreInventory store={store} />
+        <StoreInventory store={store} />
       </div>
     </div>
   );

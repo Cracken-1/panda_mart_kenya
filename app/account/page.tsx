@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/lib/hooks/useAuth';
-import ComprehensiveAccountDashboard from '@/components/account/ComprehensiveAccountDashboard';
+import EnhancedAccountDashboard from '@/components/account/EnhancedAccountDashboard';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import AuthenticationForm from '@/components/auth/AuthenticationForm';
 
@@ -20,5 +20,5 @@ export default function AccountPage() {
     return <AuthenticationForm />;
   }
 
-  return <ComprehensiveAccountDashboard />;
+  return <EnhancedAccountDashboard />;
 }

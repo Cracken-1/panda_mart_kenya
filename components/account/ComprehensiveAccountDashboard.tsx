@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/hooks/useAuth';
 import { useCart } from '@/lib/hooks/useCart';
 import { useOrders } from '@/lib/hooks/useOrders';
-import { useWishlist } from '@/lib/hooks/useWishlist';
+// import { useWishlist } from '@/lib/hooks/useWishlist';
 import Link from 'next/link';
 import { 
   ShoppingBag, 
@@ -535,7 +535,8 @@ export default function ComprehensiveAccountDashboard() {
   const { user } = useAuth();
   const { cart } = useCart();
   const { orders } = useOrders();
-  const { items: wishlistItems } = useWishlist();
+  // const { items: wishlistItems } = useWishlist();
+  const wishlistItems = []; // Mock data for now
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState({
     totalOrders: 0,

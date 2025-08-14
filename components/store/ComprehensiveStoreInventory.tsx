@@ -51,7 +51,7 @@ import {
 } from 'lucide-react';
 import ReservationModal from './ReservationModal';
 import { useCart } from '@/lib/hooks/useCart';
-import { useWishlist } from '@/lib/hooks/useWishlist';
+// import { useWishlist } from '@/lib/hooks/useWishlist';
 
 interface Product {
   id: string;
@@ -328,7 +328,11 @@ export default function ComprehensiveStoreInventory({ store }: StoreInventoryPro
   
   // Cart and wishlist functionality
   const { addToCart, cart } = useCart();
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  // const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  // Mock wishlist functions for now
+  const addToWishlist = async (id: string) => console.log('Add to wishlist:', id);
+  const removeFromWishlist = async (id: string) => console.log('Remove from wishlist:', id);
+  const isInWishlist = (id: string) => false;
 
   // Enhanced product catalog with more comprehensive data
   const mockProducts: Product[] = [
