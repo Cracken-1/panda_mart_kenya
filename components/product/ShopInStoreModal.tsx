@@ -86,9 +86,18 @@ export default function ShopInStoreModal({
         ...reservationData
       });
       
+      // Map store IDs to match existing store structure
+      const storeIdMap: Record<string, string> = {
+        '1': 'garden-city',
+        '2': 'galleria', 
+        '3': 'westgate'
+      };
+      
+      const mappedStoreId = storeIdMap[selectedStore.storeId] || selectedStore.storeId;
+      
       // Show success and redirect to shop-in-store
       alert('Product reserved successfully! Redirecting to store page...');
-      router.push(`/shop-in-store/${selectedStore.storeId}?reserved=${product.id}`);
+      router.push(`/shop-in-store/${mappedStoreId}?reserved=${product.id}`);
       onClose();
     } catch (error) {
       console.error('Reservation failed:', error);
@@ -100,7 +109,15 @@ export default function ShopInStoreModal({
 
   const handleVisitStore = () => {
     if (selectedStore) {
-      router.push(`/shop-in-store/${selectedStore.storeId}?product=${product.id}`);
+      // Map store IDs to match existing store structure
+      const storeIdMap: Record<string, string> = {
+        '1': 'garden-city',
+        '2': 'galleria', 
+        '3': 'westgate'
+      };
+      
+      const mappedStoreId = storeIdMap[selectedStore.storeId] || selectedStore.storeId;
+      router.push(`/shop-in-store/${mappedStoreId}?product=${product.id}`);
       onClose();
     }
   };

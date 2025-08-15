@@ -32,6 +32,7 @@ import { useAuth } from '@/lib/hooks/useAuth';
 import { useCart } from '@/lib/hooks/useCart';
 import AuthenticationForm from '@/components/auth/AuthenticationForm';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import ShopInStoreModal from '@/components/product/ShopInStoreModal';
 
 interface Product {
   id: string;
@@ -95,6 +96,8 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [showProductModal, setShowProductModal] = useState(false);
+  const [showShopInStoreModal, setShowShopInStoreModal] = useState(false);
+  const [selectedStoreId, setSelectedStoreId] = useState<string>('');
   
   // Filter states
   const [filters, setFilters] = useState({
@@ -268,7 +271,15 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       return;
     }
     
-    router.push(`/shop-in-store/${storeId}?product=${product.id}`);
+    // Map store IDs to match existing store structure
+    const storeIdMap: Record<string, string> = {
+      '1': 'garden-city',
+      '2': 'galleria', 
+      '3': 'westgate'
+    };
+    
+    const mappedStoreId = storeIdMap[storeId] || storeId;
+    router.push(`/shop-in-store/${mappedStoreId}?product=${product.id}`);
   };
 
   const getStockStatus = (product: Product) => {
@@ -552,6 +563,20 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           onShopInStore={handleShopInStore}
         />
       )}
+
+      {/* Shop in Store Modal */}
+      {showShopInStoreModal && selectedProduct && (
+        <ShopInStoreModal
+          product={selectedProduct}
+          isOpen={showShopInStoreModal}
+          onClose={() => {
+            setShowShopInStoreModal(false);
+            setSelectedProduct(null);
+            setSelectedStoreId('');
+          }}
+          selectedStoreId={selectedStoreId}
+        />
+      )}
     </div>
   );
 }
@@ -677,7 +702,11 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
                 </span>
                 {availableStores.length > 0 && (
                   <button
-                    onClick={() => onShopInStore(product, availableStores[0].storeId)}
+                    onClick={() => {
+                      setSelectedProduct(product);
+                      setSelectedStoreId(availableStores[0].storeId);
+                      setShowShopInStoreModal(true);
+                    }}
                     className="text-sm text-red-600 hover:text-red-700 font-medium flex items-center space-x-1"
                   >
                     <Store className="w-4 h-4" />
@@ -790,7 +819,11 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
             </span>
             {availableStores.length > 0 && (
               <button
-                onClick={() => onShopInStore(product, availableStores[0].storeId)}
+                onClick={() => {
+                  setSelectedProduct(product);
+                  setSelectedStoreId(availableStores[0].storeId);
+                  setShowShopInStoreModal(true);
+                }}
                 className="text-red-600 hover:text-red-700 font-medium flex items-center space-x-1"
               >
                 <Store className="w-3 h-3" />
@@ -1025,7 +1058,11 @@ function ProductDetailsModal({ product, onClose, onAddToCart, onShopInStore }: P
                             {store.stockCount} in stock
                           </div>
                           <button
-                            onClick={() => onShopInStore(product, store.storeId)}
+                            onClick={() => {
+                              setShowProductModal(false);
+                              setSelectedStoreId(store.storeId);
+                              setShowShopInStoreModal(true);
+                            }}
                             className="text-sm text-red-600 hover:text-red-700 font-medium"
                           >
                             Shop in Store
