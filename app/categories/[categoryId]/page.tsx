@@ -63,11 +63,15 @@ interface StoreAvailability {
   storeId: string;
   storeName: string;
   storeAddress: string;
+  storePhone: string;
   distance: number;
   inStock: boolean;
   stockCount: number;
   price: number;
   lastUpdated: string;
+  estimatedRestockDate?: string;
+  canReserve: boolean;
+  reservationHours: number;
 }
 
 interface ProductVariant {
@@ -87,7 +91,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const { addToCart } = useCart();
   const router = useRouter();
   const { categoryId } = useParams();
-  
+
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -98,7 +102,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
   const [showProductModal, setShowProductModal] = useState(false);
   const [showShopInStoreModal, setShowShopInStoreModal] = useState(false);
   const [selectedStoreId, setSelectedStoreId] = useState<string>('');
-  
+
   // Filter states
   const [filters, setFilters] = useState({
     priceRange: [0, 100000],
@@ -112,6 +116,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
 
   // Mock data - In real app, this would come from API
   const mockProducts: Product[] = [
+    // Electronics
     {
       id: '1',
       name: 'iPhone 15 Pro Max',
@@ -121,7 +126,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       discount: 5,
       rating: 4.8,
       reviewCount: 1247,
-      images: ['/products/iphone-15-pro.jpg', '/products/iphone-15-pro-2.jpg'],
+      images: ['/products/iphone-15-pro.jpg'],
       category: 'electronics',
       brand: 'Apple',
       sku: 'APL-IP15PM-256-NT',
@@ -144,31 +149,40 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           storeId: '1',
           storeName: 'Garden City Mall',
           storeAddress: 'Thika Road, Nairobi',
+          storePhone: '020 231 1166',
           distance: 2.5,
           inStock: true,
           stockCount: 8,
           price: 189999,
-          lastUpdated: '2024-01-15T10:30:00Z'
+          lastUpdated: '2024-01-15T10:30:00Z',
+          canReserve: true,
+          reservationHours: 24
         },
         {
           storeId: '2',
           storeName: 'Galleria Mall',
           storeAddress: 'Langata Road, Nairobi',
+          storePhone: '077 866 6666',
           distance: 5.2,
           inStock: true,
           stockCount: 3,
           price: 189999,
-          lastUpdated: '2024-01-15T09:15:00Z'
+          lastUpdated: '2024-01-15T09:15:00Z',
+          canReserve: true,
+          reservationHours: 24
         },
         {
           storeId: '3',
           storeName: 'Westgate Mall',
           storeAddress: 'Westlands, Nairobi',
+          storePhone: '020 445 7890',
           distance: 8.1,
           inStock: false,
           stockCount: 0,
           price: 189999,
-          lastUpdated: '2024-01-15T08:45:00Z'
+          lastUpdated: '2024-01-15T08:45:00Z',
+          canReserve: false,
+          reservationHours: 0
         }
       ],
       variants: [
@@ -209,21 +223,448 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           storeId: '1',
           storeName: 'Garden City Mall',
           storeAddress: 'Thika Road, Nairobi',
+          storePhone: '020 231 1166',
           distance: 2.5,
           inStock: true,
           stockCount: 4,
           price: 159999,
-          lastUpdated: '2024-01-15T11:00:00Z'
+          lastUpdated: '2024-01-15T11:00:00Z',
+          canReserve: true,
+          reservationHours: 24
         },
         {
           storeId: '2',
           storeName: 'Galleria Mall',
           storeAddress: 'Langata Road, Nairobi',
+          storePhone: '077 866 6666',
           distance: 5.2,
           inStock: true,
           stockCount: 2,
           price: 159999,
-          lastUpdated: '2024-01-15T10:30:00Z'
+          lastUpdated: '2024-01-15T10:30:00Z',
+          canReserve: true,
+          reservationHours: 24
+        }
+      ]
+    },
+    {
+      id: '3',
+      name: 'MacBook Air M3',
+      description: '13-inch laptop with M3 chip, 8GB RAM, and all-day battery life',
+      price: 149999,
+      originalPrice: 159999,
+      discount: 6,
+      rating: 4.9,
+      reviewCount: 567,
+      images: ['/products/macbook-air-m3.jpg'],
+      category: 'electronics',
+      brand: 'Apple',
+      sku: 'APL-MBA13-M3-256',
+      inStock: true,
+      stockCount: 12,
+      lowStock: false,
+      isNew: true,
+      isFeatured: true,
+      isOnSale: true,
+      tags: ['laptop', 'productivity', 'portable'],
+      specifications: {
+        'Display': '13.6" Liquid Retina',
+        'Processor': 'Apple M3 chip',
+        'Memory': '8GB unified memory',
+        'Storage': '256GB SSD',
+        'Battery': 'Up to 18 hours'
+      },
+      storeAvailability: [
+        {
+          storeId: '1',
+          storeName: 'Garden City Mall',
+          storeAddress: 'Thika Road, Nairobi',
+          storePhone: '020 231 1166',
+          distance: 2.5,
+          inStock: true,
+          stockCount: 6,
+          price: 149999,
+          lastUpdated: '2024-01-15T10:30:00Z',
+          canReserve: true,
+          reservationHours: 24
+        },
+        {
+          storeId: '3',
+          storeName: 'Westgate Mall',
+          storeAddress: 'Westlands, Nairobi',
+          storePhone: '020 445 7890',
+          distance: 8.1,
+          inStock: true,
+          stockCount: 6,
+          price: 149999,
+          lastUpdated: '2024-01-15T08:45:00Z',
+          canReserve: true,
+          reservationHours: 24
+        }
+      ]
+    },
+
+    // Fashion
+    {
+      id: '4',
+      name: 'Nike Air Max 270',
+      description: 'Comfortable running shoes with Max Air cushioning and breathable mesh upper',
+      price: 12999,
+      originalPrice: 15999,
+      discount: 19,
+      rating: 4.6,
+      reviewCount: 2341,
+      images: ['/products/nike-air-max-270.jpg'],
+      category: 'fashion',
+      brand: 'Nike',
+      sku: 'NIKE-AM270-BLK-42',
+      inStock: true,
+      stockCount: 25,
+      lowStock: false,
+      isNew: false,
+      isFeatured: true,
+      isOnSale: true,
+      tags: ['shoes', 'running', 'comfort'],
+      specifications: {
+        'Material': 'Mesh and synthetic leather',
+        'Sole': 'Rubber with Max Air unit',
+        'Closure': 'Lace-up',
+        'Weight': '310g (size 9)',
+        'Care': 'Wipe clean with damp cloth'
+      },
+      storeAvailability: [
+        {
+          storeId: '1',
+          storeName: 'Garden City Mall',
+          storeAddress: 'Thika Road, Nairobi',
+          storePhone: '020 231 1166',
+          distance: 2.5,
+          inStock: true,
+          stockCount: 15,
+          price: 12999,
+          lastUpdated: '2024-01-15T10:30:00Z',
+          canReserve: true,
+          reservationHours: 12
+        },
+        {
+          storeId: '2',
+          storeName: 'Galleria Mall',
+          storeAddress: 'Langata Road, Nairobi',
+          storePhone: '077 866 6666',
+          distance: 5.2,
+          inStock: true,
+          stockCount: 10,
+          price: 12999,
+          lastUpdated: '2024-01-15T09:15:00Z',
+          canReserve: true,
+          reservationHours: 12
+        }
+      ],
+      variants: [
+        { id: '4', name: 'Size', value: '40', inStock: true },
+        { id: '5', name: 'Size', value: '41', inStock: true },
+        { id: '6', name: 'Size', value: '42', inStock: true },
+        { id: '7', name: 'Color', value: 'Black/White', inStock: true },
+        { id: '8', name: 'Color', value: 'Navy/Red', inStock: false }
+      ]
+    },
+    {
+      id: '5',
+      name: 'Levi\'s 501 Original Jeans',
+      description: 'Classic straight-leg jeans with authentic fit and timeless style',
+      price: 8999,
+      originalPrice: 10999,
+      discount: 18,
+      rating: 4.5,
+      reviewCount: 1876,
+      images: ['/products/levis-501-jeans.jpg'],
+      category: 'fashion',
+      brand: 'Levi\'s',
+      sku: 'LEVIS-501-BLUE-32',
+      inStock: true,
+      stockCount: 18,
+      lowStock: false,
+      isNew: false,
+      isFeatured: false,
+      isOnSale: true,
+      tags: ['jeans', 'classic', 'denim'],
+      specifications: {
+        'Material': '100% Cotton',
+        'Fit': 'Straight leg',
+        'Rise': 'Mid-rise',
+        'Closure': 'Button fly',
+        'Care': 'Machine wash cold'
+      },
+      storeAvailability: [
+        {
+          storeId: '2',
+          storeName: 'Galleria Mall',
+          storeAddress: 'Langata Road, Nairobi',
+          storePhone: '077 866 6666',
+          distance: 5.2,
+          inStock: true,
+          stockCount: 12,
+          price: 8999,
+          lastUpdated: '2024-01-15T09:15:00Z',
+          canReserve: true,
+          reservationHours: 12
+        },
+        {
+          storeId: '3',
+          storeName: 'Westgate Mall',
+          storeAddress: 'Westlands, Nairobi',
+          storePhone: '020 445 7890',
+          distance: 8.1,
+          inStock: true,
+          stockCount: 6,
+          price: 8999,
+          lastUpdated: '2024-01-15T08:45:00Z',
+          canReserve: true,
+          reservationHours: 12
+        }
+      ],
+      variants: [
+        { id: '9', name: 'Size', value: '30', inStock: true },
+        { id: '10', name: 'Size', value: '32', inStock: true },
+        { id: '11', name: 'Size', value: '34', inStock: false },
+        { id: '12', name: 'Color', value: 'Dark Blue', inStock: true },
+        { id: '13', name: 'Color', value: 'Light Blue', inStock: true }
+      ]
+    },
+
+    // Home & Garden
+    {
+      id: '6',
+      name: 'IKEA HEMNES Bed Frame',
+      description: 'Solid wood bed frame with classic design and under-bed storage space',
+      price: 24999,
+      originalPrice: 29999,
+      discount: 17,
+      rating: 4.4,
+      reviewCount: 892,
+      images: ['/products/ikea-hemnes-bed.jpg'],
+      category: 'home-garden',
+      brand: 'IKEA',
+      sku: 'IKEA-HEMNES-QUEEN-WHT',
+      inStock: true,
+      stockCount: 8,
+      lowStock: true,
+      isNew: false,
+      isFeatured: true,
+      isOnSale: true,
+      tags: ['furniture', 'bedroom', 'storage'],
+      specifications: {
+        'Material': 'Solid pine wood',
+        'Size': 'Queen (160x200 cm)',
+        'Height': '66 cm',
+        'Assembly': 'Required',
+        'Warranty': '10 years'
+      },
+      storeAvailability: [
+        {
+          storeId: '1',
+          storeName: 'Garden City Mall',
+          storeAddress: 'Thika Road, Nairobi',
+          storePhone: '020 231 1166',
+          distance: 2.5,
+          inStock: true,
+          stockCount: 3,
+          price: 24999,
+          lastUpdated: '2024-01-15T10:30:00Z',
+          canReserve: true,
+          reservationHours: 48
+        },
+        {
+          storeId: '2',
+          storeName: 'Galleria Mall',
+          storeAddress: 'Langata Road, Nairobi',
+          storePhone: '077 866 6666',
+          distance: 5.2,
+          inStock: true,
+          stockCount: 5,
+          price: 24999,
+          lastUpdated: '2024-01-15T09:15:00Z',
+          canReserve: true,
+          reservationHours: 48
+        }
+      ],
+      variants: [
+        { id: '14', name: 'Color', value: 'White', inStock: true },
+        { id: '15', name: 'Color', value: 'Black-Brown', inStock: true },
+        { id: '16', name: 'Size', value: 'King', price: 29999, inStock: false }
+      ]
+    },
+
+    // Health & Beauty
+    {
+      id: '7',
+      name: 'Nivea Soft Moisturizing Cream',
+      description: 'Light moisturizing cream with jojoba oil and vitamin E for all skin types',
+      price: 899,
+      originalPrice: 1199,
+      discount: 25,
+      rating: 4.3,
+      reviewCount: 3421,
+      images: ['/products/nivea-soft-cream.jpg'],
+      category: 'health-beauty',
+      brand: 'Nivea',
+      sku: 'NIVEA-SOFT-200ML',
+      inStock: true,
+      stockCount: 45,
+      lowStock: false,
+      isNew: false,
+      isFeatured: false,
+      isOnSale: true,
+      tags: ['skincare', 'moisturizer', 'daily-use'],
+      specifications: {
+        'Volume': '200ml',
+        'Skin Type': 'All skin types',
+        'Key Ingredients': 'Jojoba oil, Vitamin E',
+        'Usage': 'Face and body',
+        'Dermatologically': 'Tested'
+      },
+      storeAvailability: [
+        {
+          storeId: '1',
+          storeName: 'Garden City Mall',
+          storeAddress: 'Thika Road, Nairobi',
+          storePhone: '020 231 1166',
+          distance: 2.5,
+          inStock: true,
+          stockCount: 25,
+          price: 899,
+          lastUpdated: '2024-01-15T10:30:00Z',
+          canReserve: true,
+          reservationHours: 6
+        },
+        {
+          storeId: '2',
+          storeName: 'Galleria Mall',
+          storeAddress: 'Langata Road, Nairobi',
+          storePhone: '077 866 6666',
+          distance: 5.2,
+          inStock: true,
+          stockCount: 20,
+          price: 899,
+          lastUpdated: '2024-01-15T09:15:00Z',
+          canReserve: true,
+          reservationHours: 6
+        }
+      ]
+    },
+
+    // Sports & Outdoors
+    {
+      id: '8',
+      name: 'Adidas Football Size 5',
+      description: 'Official size FIFA-approved football with durable synthetic leather construction',
+      price: 2999,
+      originalPrice: 3499,
+      discount: 14,
+      rating: 4.7,
+      reviewCount: 1234,
+      images: ['/products/adidas-football.jpg'],
+      category: 'sports',
+      brand: 'Adidas',
+      sku: 'ADIDAS-FB-SIZE5-WHT',
+      inStock: true,
+      stockCount: 32,
+      lowStock: false,
+      isNew: true,
+      isFeatured: true,
+      isOnSale: true,
+      tags: ['football', 'sports', 'outdoor'],
+      specifications: {
+        'Size': 'Size 5 (Official)',
+        'Material': 'Synthetic leather',
+        'Certification': 'FIFA approved',
+        'Weight': '410-450g',
+        'Circumference': '68-70cm'
+      },
+      storeAvailability: [
+        {
+          storeId: '1',
+          storeName: 'Garden City Mall',
+          storeAddress: 'Thika Road, Nairobi',
+          storePhone: '020 231 1166',
+          distance: 2.5,
+          inStock: true,
+          stockCount: 18,
+          price: 2999,
+          lastUpdated: '2024-01-15T10:30:00Z',
+          canReserve: true,
+          reservationHours: 12
+        },
+        {
+          storeId: '3',
+          storeName: 'Westgate Mall',
+          storeAddress: 'Westlands, Nairobi',
+          storePhone: '020 445 7890',
+          distance: 8.1,
+          inStock: true,
+          stockCount: 14,
+          price: 2999,
+          lastUpdated: '2024-01-15T08:45:00Z',
+          canReserve: true,
+          reservationHours: 12
+        }
+      ]
+    },
+
+    // Food & Beverages
+    {
+      id: '9',
+      name: 'Kenyan AA Coffee Beans',
+      description: 'Premium single-origin coffee beans from the highlands of Kenya, medium roast',
+      price: 1899,
+      originalPrice: 2299,
+      discount: 17,
+      rating: 4.8,
+      reviewCount: 567,
+      images: ['/products/kenyan-coffee-beans.jpg'],
+      category: 'food',
+      brand: 'Kenya Coffee',
+      sku: 'KCF-AA-MED-500G',
+      inStock: true,
+      stockCount: 28,
+      lowStock: false,
+      isNew: true,
+      isFeatured: true,
+      isOnSale: true,
+      tags: ['coffee', 'premium', 'kenyan'],
+      specifications: {
+        'Weight': '500g',
+        'Origin': 'Kenya Highlands',
+        'Roast Level': 'Medium',
+        'Processing': 'Washed',
+        'Altitude': '1400-2000m'
+      },
+      storeAvailability: [
+        {
+          storeId: '1',
+          storeName: 'Garden City Mall',
+          storeAddress: 'Thika Road, Nairobi',
+          storePhone: '020 231 1166',
+          distance: 2.5,
+          inStock: true,
+          stockCount: 15,
+          price: 1899,
+          lastUpdated: '2024-01-15T10:30:00Z',
+          canReserve: true,
+          reservationHours: 6
+        },
+        {
+          storeId: '2',
+          storeName: 'Galleria Mall',
+          storeAddress: 'Langata Road, Nairobi',
+          storePhone: '077 866 6666',
+          distance: 5.2,
+          inStock: true,
+          stockCount: 13,
+          price: 1899,
+          lastUpdated: '2024-01-15T09:15:00Z',
+          canReserve: true,
+          reservationHours: 6
         }
       ]
     }
@@ -242,7 +683,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     // Simulate API call
     setLoading(true);
     setTimeout(() => {
-      const filteredProducts = mockProducts.filter(product => 
+      const filteredProducts = mockProducts.filter(product =>
         product.category === categoryId
       );
       setProducts(filteredProducts);
@@ -255,7 +696,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       router.push('/auth/login');
       return;
     }
-    
+
     addToCart({
       id: product.id,
       name: product.name,
@@ -270,14 +711,14 @@ export default function CategoryPage({ params }: CategoryPageProps) {
       router.push('/auth/login');
       return;
     }
-    
+
     // Map store IDs to match existing store structure
     const storeIdMap: Record<string, string> = {
       '1': 'garden-city',
-      '2': 'galleria', 
+      '2': 'galleria',
       '3': 'westgate'
     };
-    
+
     const mappedStoreId = storeIdMap[storeId] || storeId;
     router.push(`/shop-in-store/${mappedStoreId}?product=${product.id}`);
   };
@@ -323,16 +764,16 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     return true;
   });
 
-  if (!user) {
-    return <AuthenticationForm />;
-  }
-
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <LoadingSpinner size="lg" />
       </div>
     );
+  }
+
+  if (!user) {
+    return <AuthenticationForm />;
   }
 
   return (
@@ -364,7 +805,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
           <div className="hidden lg:block w-64 flex-shrink-0">
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
-              
+
               {/* Search */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -477,7 +918,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                     <SlidersHorizontal className="w-4 h-4" />
                     <span>Filters</span>
                   </button>
-                  
+
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-gray-600">Sort by:</span>
                     <select
@@ -497,21 +938,19 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                 <div className="flex items-center space-x-2">
                   <button
                     onClick={() => setViewMode('grid')}
-                    className={`p-2 rounded-lg transition-colors ${
-                      viewMode === 'grid' 
-                        ? 'bg-red-100 text-red-600' 
-                        : 'text-gray-400 hover:text-gray-600'
-                    }`}
+                    className={`p-2 rounded-lg transition-colors ${viewMode === 'grid'
+                      ? 'bg-red-100 text-red-600'
+                      : 'text-gray-400 hover:text-gray-600'
+                      }`}
                   >
                     <Grid className="w-5 h-5" />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 rounded-lg transition-colors ${
-                      viewMode === 'list' 
-                        ? 'bg-red-100 text-red-600' 
-                        : 'text-gray-400 hover:text-gray-600'
-                    }`}
+                    className={`p-2 rounded-lg transition-colors ${viewMode === 'list'
+                      ? 'bg-red-100 text-red-600'
+                      : 'text-gray-400 hover:text-gray-600'
+                      }`}
                   >
                     <List className="w-5 h-5" />
                   </button>
@@ -527,11 +966,10 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                 <p className="text-gray-600">Try adjusting your filters or search terms</p>
               </div>
             ) : (
-              <div className={`grid gap-6 ${
-                viewMode === 'grid' 
-                  ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
-                  : 'grid-cols-1'
-              }`}>
+              <div className={`grid gap-6 ${viewMode === 'grid'
+                ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3'
+                : 'grid-cols-1'
+                }`}>
                 {filteredProducts.map((product) => (
                   <ProductCard
                     key={product.id}
@@ -593,7 +1031,7 @@ interface ProductCardProps {
 function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDetails }: ProductCardProps) {
   const stockStatus = getStockStatus(product);
   const StockIcon = stockStatus.icon;
-  
+
   const availableStores = product.storeAvailability.filter(store => store.inStock);
 
   if (viewMode === 'list') {
@@ -646,17 +1084,16 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
                     </span>
                   )}
                 </div>
-                
+
                 <div className="flex items-center space-x-1">
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-4 h-4 ${
-                          i < Math.floor(product.rating)
-                            ? 'text-yellow-400 fill-current'
-                            : 'text-gray-300'
-                        }`}
+                        className={`w-4 h-4 ${i < Math.floor(product.rating)
+                          ? 'text-yellow-400 fill-current'
+                          : 'text-gray-300'
+                          }`}
                       />
                     ))}
                   </div>
@@ -681,7 +1118,7 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
                   <Eye className="w-4 h-4" />
                   <span>View Details</span>
                 </button>
-                
+
                 {product.inStock && (
                   <button
                     onClick={() => onAddToCart(product)}
@@ -727,7 +1164,7 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
       {/* Product Image */}
       <div className="relative aspect-square bg-gray-100 flex items-center justify-center">
         <Package className="w-16 h-16 text-gray-400" />
-        
+
         {/* Badges */}
         <div className="absolute top-3 left-3 flex flex-col space-y-1">
           {product.isNew && (
@@ -741,7 +1178,7 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
             </span>
           )}
         </div>
-        
+
         {product.isOnSale && (
           <span className="absolute top-3 right-3 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
             -{product.discount}%
@@ -753,7 +1190,7 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
           <button className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors">
             <Heart className="w-4 h-4 text-gray-600" />
           </button>
-          <button 
+          <button
             onClick={() => onViewDetails(product)}
             className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
           >
@@ -778,11 +1215,10 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
             {[...Array(5)].map((_, i) => (
               <Star
                 key={i}
-                className={`w-4 h-4 ${
-                  i < Math.floor(product.rating)
-                    ? 'text-yellow-400 fill-current'
-                    : 'text-gray-300'
-                }`}
+                className={`w-4 h-4 ${i < Math.floor(product.rating)
+                  ? 'text-yellow-400 fill-current'
+                  : 'text-gray-300'
+                  }`}
               />
             ))}
           </div>
@@ -872,7 +1308,7 @@ function ProductDetailsModal({ product, onClose, onAddToCart, onShopInStore }: P
 
   const stockStatus = getStockStatus(product);
   const StockIcon = stockStatus.icon;
-  
+
   const availableStores = product.storeAvailability.filter(store => store.inStock);
 
   return (
@@ -890,25 +1326,24 @@ function ProductDetailsModal({ product, onClose, onAddToCart, onShopInStore }: P
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 mb-2">{product.name}</h2>
                 <p className="text-gray-600 mb-4">{product.description}</p>
-                
+
                 {/* Rating */}
                 <div className="flex items-center space-x-2 mb-4">
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`w-5 h-5 ${
-                          i < Math.floor(product.rating)
-                            ? 'text-yellow-400 fill-current'
-                            : 'text-gray-300'
-                        }`}
+                        className={`w-5 h-5 ${i < Math.floor(product.rating)
+                          ? 'text-yellow-400 fill-current'
+                          : 'text-gray-300'
+                          }`}
                       />
                     ))}
                   </div>
                   <span className="text-gray-600">({product.reviewCount} reviews)</span>
                 </div>
               </div>
-              
+
               <button
                 onClick={onClose}
                 className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
@@ -968,11 +1403,10 @@ function ProductDetailsModal({ product, onClose, onAddToCart, onShopInStore }: P
                               ...selectedVariants,
                               [name]: variant.value
                             })}
-                            className={`px-3 py-2 border rounded-lg text-sm font-medium transition-colors ${
-                              selectedVariants[name] === variant.value
-                                ? 'border-red-500 bg-red-50 text-red-600'
-                                : 'border-gray-300 text-gray-700 hover:border-gray-400'
-                            } ${!variant.inStock ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`px-3 py-2 border rounded-lg text-sm font-medium transition-colors ${selectedVariants[name] === variant.value
+                              ? 'border-red-500 bg-red-50 text-red-600'
+                              : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                              } ${!variant.inStock ? 'opacity-50 cursor-not-allowed' : ''}`}
                             disabled={!variant.inStock}
                           >
                             {variant.value}
@@ -1033,7 +1467,7 @@ function ProductDetailsModal({ product, onClose, onAddToCart, onShopInStore }: P
                   Out of Stock
                 </button>
               )}
-              
+
               <button className="w-full border border-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
                 <Heart className="w-5 h-5" />
                 <span>Add to Wishlist</span>
