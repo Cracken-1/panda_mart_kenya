@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/lib/hooks/useAuth';
-import AuthenticationForm from '@/components/auth/AuthenticationForm';
-import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { useParams, useRouter } from 'next/navigation';
 import {
   Search,
   Filter,
@@ -12,628 +10,1062 @@ import {
   Star,
   Heart,
   ShoppingCart,
+  MapPin,
   Package,
+  Truck,
+  Store,
   Eye,
-  TrendingUp,
-  Award,
-  Zap,
+  Share2,
+  ChevronDown,
+  SlidersHorizontal,
+  Tag,
   Clock,
   CheckCircle,
-  AlertTriangle,
-  MapPin,
-  Smartphone,
-  Shirt,
-  Home,
-  Sparkles,
-  Dumbbell,
-  UtensilsCrossed,
-  ArrowLeft,
-  SlidersHorizontal,
-  X,
-  ChevronDown,
-  ChevronUp
+  AlertCircle,
+  XCircle,
+  ArrowUpDown,
+  Zap,
+  Award,
+  TrendingUp
 } from 'lucide-react';
-import Link from 'next/link';
+import { useAuth } from '@/lib/hooks/useAuth';
+import { useCart } from '@/lib/hooks/useCart';
+import AuthenticationForm from '@/components/auth/AuthenticationForm';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 
 interface Product {
   id: string;
   name: string;
+  description: string;
   price: number;
   originalPrice?: number;
-  brand: string;
+  discount?: number;
   rating: number;
   reviewCount: number;
-  image: string;
+  images: string[];
+  category: string;
+  brand: string;
+  sku: string;
   inStock: boolean;
   stockCount: number;
-  isOnSale: boolean;
-  isFeatured: boolean;
+  lowStock: boolean;
   isNew: boolean;
+  isFeatured: boolean;
+  isOnSale: boolean;
   tags: string[];
-  category: string;
-  subcategory: string;
+  specifications: Record<string, string>;
+  storeAvailability: StoreAvailability[];
+  variants?: ProductVariant[];
+}
+
+interface StoreAvailability {
+  storeId: string;
+  storeName: string;
+  storeAddress: string;
+  distance: number;
+  inStock: boolean;
+  stockCount: number;
+  price: number;
+  lastUpdated: string;
+}
+
+interface ProductVariant {
+  id: string;
+  name: string;
+  value: string;
+  price?: number;
+  inStock: boolean;
 }
 
 interface CategoryPageProps {
-  params: {
-    categoryId: string;
-  };
+  params: { categoryId: string };
 }
 
 export default function CategoryPage({ params }: CategoryPageProps) {
-  const { user, isLoading } = useAuth();
+  const { user } = useAuth();
+  const { addToCart } = useCart();
+  const router = useRouter();
+  const { categoryId } = useParams();
+  
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSubcategory, setSelectedSubcategory] = useState('all');
-  const [selectedBrand, setSelectedBrand] = useState('all');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000]);
-  const [sortBy, setSortBy] = useState('featured');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [sortBy, setSortBy] = useState('featured');
   const [showFilters, setShowFilters] = useState(false);
-  const [showOnlyInStock, setShowOnlyInStock] = useState(false);
-  const [showOnlyOnSale, setShowOnlyOnSale] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [showProductModal, setShowProductModal] = useState(false);
+  
+  // Filter states
+  const [filters, setFilters] = useState({
+    priceRange: [0, 100000],
+    brands: [] as string[],
+    rating: 0,
+    availability: 'all', // all, in-stock, low-stock
+    discount: false,
+    newArrivals: false,
+    featured: false
+  });
 
-  const categoryInfo = {
-    electronics: {
-      name: 'Electronics',
-      icon: Smartphone,
-      description: 'Latest technology and gadgets for modern living',
-      subcategories: ['Smartphones', 'Laptops', 'TVs', 'Audio', 'Gaming', 'Accessories'],
-      totalProducts: 2450
-    },
-    fashion: {
-      name: 'Fashion',
-      icon: Shirt,
-      description: 'Trendy clothing and accessories for every style',
-      subcategories: ['Men\'s Clothing', 'Women\'s Clothing', 'Shoes', 'Accessories', 'Bags', 'Jewelry'],
-      totalProducts: 1890
-    },
-    'home-garden': {
-      name: 'Home & Garden',
-      icon: Home,
-      description: 'Everything for your home and outdoor spaces',
-      subcategories: ['Furniture', 'Appliances', 'Decor', 'Kitchen', 'Garden', 'Tools'],
-      totalProducts: 1560
-    },
-    'health-beauty': {
-      name: 'Health & Beauty',
-      icon: Sparkles,
-      description: 'Personal care and wellness products',
-      subcategories: ['Skincare', 'Makeup', 'Hair Care', 'Health', 'Fragrances', 'Personal Care'],
-      totalProducts: 980
-    },
-    sports: {
-      name: 'Sports & Outdoors',
-      icon: Dumbbell,
-      description: 'Gear for active lifestyles and outdoor adventures',
-      subcategories: ['Fitness', 'Outdoor', 'Sports Equipment', 'Activewear', 'Footwear', 'Accessories'],
-      totalProducts: 750
-    },
-    food: {
-      name: 'Food & Beverages',
-      icon: UtensilsCrossed,
-      description: 'Fresh groceries and gourmet selections',
-      subcategories: ['Fresh Produce', 'Pantry', 'Beverages', 'Snacks', 'Frozen', 'Organic'],
-      totalProducts: 3200
-    }
-  };
-
-  const currentCategory = categoryInfo[params.categoryId as keyof typeof categoryInfo];
-
-  // Mock products data
+  // Mock data - In real app, this would come from API
   const mockProducts: Product[] = [
     {
       id: '1',
-      name: 'iPhone 15 Pro 128GB',
-      price: 145000,
-      originalPrice: 155000,
-      brand: 'Apple',
+      name: 'iPhone 15 Pro Max',
+      description: 'Latest iPhone with titanium design, A17 Pro chip, and advanced camera system',
+      price: 189999,
+      originalPrice: 199999,
+      discount: 5,
       rating: 4.8,
-      reviewCount: 324,
-      image: '/products/iphone-15-pro.jpg',
+      reviewCount: 1247,
+      images: ['/products/iphone-15-pro.jpg', '/products/iphone-15-pro-2.jpg'],
+      category: 'electronics',
+      brand: 'Apple',
+      sku: 'APL-IP15PM-256-NT',
       inStock: true,
-      stockCount: 12,
-      isOnSale: true,
-      isFeatured: true,
+      stockCount: 15,
+      lowStock: false,
       isNew: true,
-      tags: ['flagship', 'premium', 'camera'],
-      category: 'Electronics',
-      subcategory: 'Smartphones'
+      isFeatured: true,
+      isOnSale: true,
+      tags: ['smartphone', 'premium', 'latest'],
+      specifications: {
+        'Display': '6.7" Super Retina XDR',
+        'Storage': '256GB',
+        'Camera': '48MP Main + 12MP Ultra Wide',
+        'Battery': 'Up to 29 hours video playback',
+        'Processor': 'A17 Pro chip'
+      },
+      storeAvailability: [
+        {
+          storeId: '1',
+          storeName: 'Garden City Mall',
+          storeAddress: 'Thika Road, Nairobi',
+          distance: 2.5,
+          inStock: true,
+          stockCount: 8,
+          price: 189999,
+          lastUpdated: '2024-01-15T10:30:00Z'
+        },
+        {
+          storeId: '2',
+          storeName: 'Galleria Mall',
+          storeAddress: 'Langata Road, Nairobi',
+          distance: 5.2,
+          inStock: true,
+          stockCount: 3,
+          price: 189999,
+          lastUpdated: '2024-01-15T09:15:00Z'
+        },
+        {
+          storeId: '3',
+          storeName: 'Westgate Mall',
+          storeAddress: 'Westlands, Nairobi',
+          distance: 8.1,
+          inStock: false,
+          stockCount: 0,
+          price: 189999,
+          lastUpdated: '2024-01-15T08:45:00Z'
+        }
+      ],
+      variants: [
+        { id: '1', name: 'Color', value: 'Natural Titanium', inStock: true },
+        { id: '2', name: 'Color', value: 'Blue Titanium', inStock: true },
+        { id: '3', name: 'Storage', value: '512GB', price: 219999, inStock: true }
+      ]
     },
     {
       id: '2',
       name: 'Samsung Galaxy S24 Ultra',
-      price: 135000,
-      originalPrice: 145000,
-      brand: 'Samsung',
+      description: 'Premium Android smartphone with S Pen, 200MP camera, and AI features',
+      price: 159999,
+      originalPrice: 169999,
+      discount: 6,
       rating: 4.7,
-      reviewCount: 289,
-      image: '/products/samsung-s24.jpg',
+      reviewCount: 892,
+      images: ['/products/galaxy-s24-ultra.jpg'],
+      category: 'electronics',
+      brand: 'Samsung',
+      sku: 'SAM-GS24U-256-BK',
       inStock: true,
-      stockCount: 8,
-      isOnSale: true,
-      isFeatured: true,
+      stockCount: 7,
+      lowStock: true,
       isNew: false,
-      tags: ['android', 'stylus', 'camera'],
-      category: 'Electronics',
-      subcategory: 'Smartphones'
-    },
-    {
-      id: '3',
-      name: 'MacBook Air M3 13"',
-      price: 165000,
-      brand: 'Apple',
-      rating: 4.9,
-      reviewCount: 156,
-      image: '/products/macbook-air.jpg',
-      inStock: true,
-      stockCount: 4,
-      isOnSale: false,
       isFeatured: true,
-      isNew: true,
-      tags: ['laptop', 'productivity', 'portable'],
-      category: 'Electronics',
-      subcategory: 'Laptops'
+      isOnSale: true,
+      tags: ['smartphone', 'android', 's-pen'],
+      specifications: {
+        'Display': '6.8" Dynamic AMOLED 2X',
+        'Storage': '256GB',
+        'Camera': '200MP Main + 50MP Periscope',
+        'Battery': '5000mAh',
+        'Processor': 'Snapdragon 8 Gen 3'
+      },
+      storeAvailability: [
+        {
+          storeId: '1',
+          storeName: 'Garden City Mall',
+          storeAddress: 'Thika Road, Nairobi',
+          distance: 2.5,
+          inStock: true,
+          stockCount: 4,
+          price: 159999,
+          lastUpdated: '2024-01-15T11:00:00Z'
+        },
+        {
+          storeId: '2',
+          storeName: 'Galleria Mall',
+          storeAddress: 'Langata Road, Nairobi',
+          distance: 5.2,
+          inStock: true,
+          stockCount: 2,
+          price: 159999,
+          lastUpdated: '2024-01-15T10:30:00Z'
+        }
+      ]
     }
   ];
 
+  const categoryNames: Record<string, string> = {
+    'electronics': 'Electronics',
+    'fashion': 'Fashion',
+    'home-garden': 'Home & Garden',
+    'health-beauty': 'Health & Beauty',
+    'sports': 'Sports & Outdoors',
+    'food': 'Food & Beverages'
+  };
+
   useEffect(() => {
+    // Simulate API call
+    setLoading(true);
     setTimeout(() => {
-      setProducts(mockProducts);
-      setFilteredProducts(mockProducts);
+      const filteredProducts = mockProducts.filter(product => 
+        product.category === categoryId
+      );
+      setProducts(filteredProducts);
       setLoading(false);
     }, 1000);
-  }, []);
+  }, [categoryId]);
 
-  useEffect(() => {
-    let filtered = [...products];
-
-    // Filter by search
-    if (searchQuery) {
-      filtered = filtered.filter(product =>
-        product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        product.brand.toLowerCase().includes(searchQuery.toLowerCase())
-      );
+  const handleAddToCart = (product: Product) => {
+    if (!user) {
+      router.push('/auth/login');
+      return;
     }
-
-    // Filter by subcategory
-    if (selectedSubcategory !== 'all') {
-      filtered = filtered.filter(product => product.subcategory === selectedSubcategory);
-    }
-
-    // Filter by brand
-    if (selectedBrand !== 'all') {
-      filtered = filtered.filter(product => product.brand === selectedBrand);
-    }
-
-    // Filter by price range
-    filtered = filtered.filter(product => 
-      product.price >= priceRange[0] && product.price <= priceRange[1]
-    );
-
-    // Filter by stock
-    if (showOnlyInStock) {
-      filtered = filtered.filter(product => product.inStock);
-    }
-
-    // Filter by sale
-    if (showOnlyOnSale) {
-      filtered = filtered.filter(product => product.isOnSale);
-    }
-
-    // Sort products
-    filtered.sort((a, b) => {
-      switch (sortBy) {
-        case 'price-low':
-          return a.price - b.price;
-        case 'price-high':
-          return b.price - a.price;
-        case 'rating':
-          return b.rating - a.rating;
-        case 'newest':
-          return (b.isNew ? 1 : 0) - (a.isNew ? 1 : 0);
-        case 'popular':
-          return b.reviewCount - a.reviewCount;
-        case 'featured':
-        default:
-          return (b.isFeatured ? 1 : 0) - (a.isFeatured ? 1 : 0);
-      }
+    
+    addToCart({
+      id: product.id,
+      name: product.name,
+      price: product.price,
+      image: product.images[0],
+      quantity: 1
     });
+  };
 
-    setFilteredProducts(filtered);
-  }, [products, searchQuery, selectedSubcategory, selectedBrand, priceRange, sortBy, showOnlyInStock, showOnlyOnSale]);
+  const handleShopInStore = (product: Product, storeId: string) => {
+    if (!user) {
+      router.push('/auth/login');
+      return;
+    }
+    
+    router.push(`/shop-in-store/${storeId}?product=${product.id}`);
+  };
 
-  const uniqueBrands = [...new Set(products.map(p => p.brand))];
+  const getStockStatus = (product: Product) => {
+    if (!product.inStock) {
+      return { status: 'out-of-stock', color: 'text-red-600', bg: 'bg-red-50', icon: XCircle };
+    }
+    if (product.lowStock) {
+      return { status: 'low-stock', color: 'text-orange-600', bg: 'bg-orange-50', icon: AlertCircle };
+    }
+    return { status: 'in-stock', color: 'text-green-600', bg: 'bg-green-50', icon: CheckCircle };
+  };
 
-  if (isLoading || loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <LoadingSpinner />
-      </div>
-    );
-  }
+  const filteredProducts = products.filter(product => {
+    if (searchQuery && !product.name.toLowerCase().includes(searchQuery.toLowerCase())) {
+      return false;
+    }
+    if (filters.brands.length > 0 && !filters.brands.includes(product.brand)) {
+      return false;
+    }
+    if (product.price < filters.priceRange[0] || product.price > filters.priceRange[1]) {
+      return false;
+    }
+    if (filters.rating > 0 && product.rating < filters.rating) {
+      return false;
+    }
+    if (filters.availability === 'in-stock' && !product.inStock) {
+      return false;
+    }
+    if (filters.availability === 'low-stock' && !product.lowStock) {
+      return false;
+    }
+    if (filters.discount && !product.isOnSale) {
+      return false;
+    }
+    if (filters.newArrivals && !product.isNew) {
+      return false;
+    }
+    if (filters.featured && !product.isFeatured) {
+      return false;
+    }
+    return true;
+  });
 
   if (!user) {
     return <AuthenticationForm />;
   }
 
-  if (!currentCategory) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Category Not Found</h1>
-          <Link href="/" className="text-blue-600 hover:text-blue-700">
-            Return to Home
-          </Link>
-        </div>
+        <LoadingSpinner size="lg" />
       </div>
     );
   }
 
-  const CategoryIcon = currentCategory.icon;
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Category Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4 mb-6">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-blue-100 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              Back to Home
-            </Link>
-          </div>
-          
-          <div className="text-center">
-            <div className="w-20 h-20 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CategoryIcon className="w-10 h-10" />
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">
+                {categoryNames[categoryId as string] || 'Category'}
+              </h1>
+              <p className="text-gray-600 mt-2">
+                Discover our wide selection of {categoryNames[categoryId as string]?.toLowerCase()} products
+              </p>
             </div>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              {currentCategory.name}
-            </h1>
-            <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
-              {currentCategory.description}
-            </p>
-            
-            <div className="text-lg">
-              <span className="font-semibold">{currentCategory.totalProducts.toLocaleString()}</span>
-              <span className="text-blue-200"> products available</span>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-500">
+                {filteredProducts.length} products found
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Filters and Search */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-          {/* Search */}
-          <div className="relative mb-6">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-            <input
-              type="text"
-              placeholder={`Search in ${currentCategory.name}...`}
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-
-          {/* Quick Filters */}
-          <div className="flex flex-wrap gap-2 mb-6">
-            <button
-              onClick={() => setShowOnlyInStock(!showOnlyInStock)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                showOnlyInStock ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              In Stock Only
-            </button>
-            <button
-              onClick={() => setShowOnlyOnSale(!showOnlyOnSale)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                showOnlyOnSale ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              On Sale
-            </button>
-            <button
-              onClick={() => setSortBy('featured')}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                sortBy === 'featured' ? 'bg-purple-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Featured
-            </button>
-            <button
-              onClick={() => setSortBy('newest')}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                sortBy === 'newest' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              New Arrivals
-            </button>
-          </div>
-
-          {/* Advanced Filters Toggle */}
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              Advanced Filters
-              {showFilters ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
-
-            <div className="flex items-center gap-4">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="featured">Featured</option>
-                <option value="newest">Newest</option>
-                <option value="popular">Most Popular</option>
-                <option value="rating">Highest Rated</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-              </select>
-
-              <div className="flex border border-gray-300 rounded-lg overflow-hidden">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2 ${viewMode === 'grid' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
-                >
-                  <Grid className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2 ${viewMode === 'list' ? 'bg-blue-500 text-white' : 'text-gray-600 hover:bg-gray-50'}`}
-                >
-                  <List className="w-4 h-4" />
-                </button>
+        <div className="flex gap-8">
+          {/* Filters Sidebar */}
+          <div className="hidden lg:block w-64 flex-shrink-0">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">Filters</h3>
+              
+              {/* Search */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Search Products
+                </label>
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search..."
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  />
+                </div>
               </div>
-            </div>
-          </div>
 
-          {/* Advanced Filters */}
-          {showFilters && (
-            <div className="mt-6 p-4 bg-gray-50 rounded-lg space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Subcategory</label>
-                  <select
-                    value={selectedSubcategory}
-                    onChange={(e) => setSelectedSubcategory(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="all">All Subcategories</option>
-                    {currentCategory.subcategories.map((sub) => (
-                      <option key={sub} value={sub}>{sub}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
-                  <select
-                    value={selectedBrand}
-                    onChange={(e) => setSelectedBrand(e.target.value)}
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  >
-                    <option value="all">All Brands</option>
-                    {uniqueBrands.map((brand) => (
-                      <option key={brand} value={brand}>{brand}</option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Price Range: KSh {priceRange[0].toLocaleString()} - KSh {priceRange[1].toLocaleString()}
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="range"
-                      min="0"
-                      max="200000"
-                      step="5000"
-                      value={priceRange[0]}
-                      onChange={(e) => setPriceRange([parseInt(e.target.value), priceRange[1]])}
-                      className="flex-1"
-                    />
-                    <input
-                      type="range"
-                      min="0"
-                      max="200000"
-                      step="5000"
-                      value={priceRange[1]}
-                      onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
-                      className="flex-1"
-                    />
+              {/* Price Range */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Price Range
+                </label>
+                <div className="space-y-2">
+                  <input
+                    type="range"
+                    min="0"
+                    max="200000"
+                    value={filters.priceRange[1]}
+                    onChange={(e) => setFilters({
+                      ...filters,
+                      priceRange: [filters.priceRange[0], parseInt(e.target.value)]
+                    })}
+                    className="w-full"
+                  />
+                  <div className="flex justify-between text-sm text-gray-600">
+                    <span>KSh {filters.priceRange[0].toLocaleString()}</span>
+                    <span>KSh {filters.priceRange[1].toLocaleString()}</span>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
 
-          <div className="mt-4 text-sm text-gray-600">
-            Showing {filteredProducts.length} of {products.length} products
-          </div>
-        </div>
-
-        {/* Products Grid */}
-        <div className={`grid gap-6 ${
-          viewMode === 'grid' 
-            ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-            : 'grid-cols-1'
-        }`}>
-          {filteredProducts.map((product) => (
-            <div
-              key={product.id}
-              className={`bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 group ${
-                viewMode === 'list' ? 'flex' : ''
-              }`}
-            >
-              {/* Product Image */}
-              <div className={`relative ${viewMode === 'list' ? 'w-48 flex-shrink-0' : 'aspect-square'}`}>
-                <div className="w-full h-full bg-gray-200 flex items-center justify-center">
-                  <Package className="w-16 h-16 text-gray-400" />
-                </div>
-                
-                {/* Badges */}
-                <div className="absolute top-3 left-3 flex flex-col gap-1">
-                  {product.isOnSale && (
-                    <span className="bg-red-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
-                      SALE
-                    </span>
-                  )}
-                  {product.isNew && (
-                    <span className="bg-blue-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
-                      NEW
-                    </span>
-                  )}
-                  {product.isFeatured && (
-                    <span className="bg-purple-500 text-white px-2 py-1 rounded-lg text-xs font-bold">
-                      FEATURED
-                    </span>
-                  )}
-                </div>
-
-                {/* Stock Status */}
-                <div className={`absolute top-3 right-3 px-2 py-1 rounded-lg text-xs font-medium ${
-                  !product.inStock ? 'bg-red-100 text-red-800' :
-                  product.stockCount <= 5 ? 'bg-yellow-100 text-yellow-800' :
-                  'bg-green-100 text-green-800'
-                }`}>
-                  {!product.inStock ? 'Out of Stock' :
-                   product.stockCount <= 5 ? `${product.stockCount} left` :
-                   'In Stock'}
-                </div>
-
-                {/* Quick Actions */}
-                <div className="absolute bottom-3 right-3 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button className="p-2 bg-white/90 backdrop-blur-sm rounded-lg hover:bg-white transition-colors">
-                    <Heart className="w-4 h-4 text-gray-600" />
-                  </button>
-                  <button className="p-2 bg-white/90 backdrop-blur-sm rounded-lg hover:bg-white transition-colors">
-                    <Eye className="w-4 h-4 text-gray-600" />
-                  </button>
+              {/* Availability */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Availability
+                </label>
+                <div className="space-y-2">
+                  {[
+                    { value: 'all', label: 'All Products' },
+                    { value: 'in-stock', label: 'In Stock' },
+                    { value: 'low-stock', label: 'Low Stock' }
+                  ].map((option) => (
+                    <label key={option.value} className="flex items-center">
+                      <input
+                        type="radio"
+                        name="availability"
+                        value={option.value}
+                        checked={filters.availability === option.value}
+                        onChange={(e) => setFilters({
+                          ...filters,
+                          availability: e.target.value
+                        })}
+                        className="text-red-600 focus:ring-red-500"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">{option.label}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
 
-              {/* Product Info */}
-              <div className={`p-6 ${viewMode === 'list' ? 'flex-1' : ''}`}>
-                <div className="mb-3">
-                  <h3 className="font-bold text-gray-900 mb-1 line-clamp-2">{product.name}</h3>
-                  <p className="text-sm text-gray-600">{product.brand} • {product.subcategory}</p>
+              {/* Quick Filters */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Quick Filters
+                </label>
+                <div className="space-y-2">
+                  {[
+                    { key: 'discount', label: 'On Sale' },
+                    { key: 'newArrivals', label: 'New Arrivals' },
+                    { key: 'featured', label: 'Featured' }
+                  ].map((filter) => (
+                    <label key={filter.key} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={filters[filter.key as keyof typeof filters] as boolean}
+                        onChange={(e) => setFilters({
+                          ...filters,
+                          [filter.key]: e.target.checked
+                        })}
+                        className="text-red-600 focus:ring-red-500 rounded"
+                      />
+                      <span className="ml-2 text-sm text-gray-700">{filter.label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Toolbar */}
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className="lg:hidden flex items-center space-x-2 px-4 py-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                  >
+                    <SlidersHorizontal className="w-4 h-4" />
+                    <span>Filters</span>
+                  </button>
+                  
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600">Sort by:</span>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value)}
+                      className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    >
+                      <option value="featured">Featured</option>
+                      <option value="price-low">Price: Low to High</option>
+                      <option value="price-high">Price: High to Low</option>
+                      <option value="rating">Highest Rated</option>
+                      <option value="newest">Newest First</option>
+                    </select>
+                  </div>
                 </div>
 
-                {/* Rating */}
-                <div className="flex items-center mb-3">
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 rounded-lg transition-colors ${
+                      viewMode === 'grid' 
+                        ? 'bg-red-100 text-red-600' 
+                        : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  >
+                    <Grid className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => setViewMode('list')}
+                    className={`p-2 rounded-lg transition-colors ${
+                      viewMode === 'list' 
+                        ? 'bg-red-100 text-red-600' 
+                        : 'text-gray-400 hover:text-gray-600'
+                    }`}
+                  >
+                    <List className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Products Grid/List */}
+            {filteredProducts.length === 0 ? (
+              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
+                <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">No products found</h3>
+                <p className="text-gray-600">Try adjusting your filters or search terms</p>
+              </div>
+            ) : (
+              <div className={`grid gap-6 ${
+                viewMode === 'grid' 
+                  ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-3' 
+                  : 'grid-cols-1'
+              }`}>
+                {filteredProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    viewMode={viewMode}
+                    onAddToCart={handleAddToCart}
+                    onShopInStore={handleShopInStore}
+                    onViewDetails={(product) => {
+                      setSelectedProduct(product);
+                      setShowProductModal(true);
+                    }}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Product Details Modal */}
+      {showProductModal && selectedProduct && (
+        <ProductDetailsModal
+          product={selectedProduct}
+          onClose={() => {
+            setShowProductModal(false);
+            setSelectedProduct(null);
+          }}
+          onAddToCart={handleAddToCart}
+          onShopInStore={handleShopInStore}
+        />
+      )}
+    </div>
+  );
+}
+
+// Product Card Component
+interface ProductCardProps {
+  product: Product;
+  viewMode: 'grid' | 'list';
+  onAddToCart: (product: Product) => void;
+  onShopInStore: (product: Product, storeId: string) => void;
+  onViewDetails: (product: Product) => void;
+}
+
+function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDetails }: ProductCardProps) {
+  const stockStatus = getStockStatus(product);
+  const StockIcon = stockStatus.icon;
+  
+  const availableStores = product.storeAvailability.filter(store => store.inStock);
+
+  if (viewMode === 'list') {
+    return (
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+        <div className="flex gap-6">
+          {/* Product Image */}
+          <div className="relative w-32 h-32 flex-shrink-0">
+            <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
+              <Package className="w-12 h-12 text-gray-400" />
+            </div>
+            {product.isNew && (
+              <span className="absolute top-2 left-2 bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                New
+              </span>
+            )}
+            {product.isOnSale && (
+              <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+                -{product.discount}%
+              </span>
+            )}
+          </div>
+
+          {/* Product Info */}
+          <div className="flex-1">
+            <div className="flex justify-between items-start mb-2">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">{product.name}</h3>
+                <p className="text-gray-600 text-sm mb-2">{product.description}</p>
+                <div className="flex items-center space-x-2 mb-2">
+                  <span className="text-xs text-gray-500">SKU: {product.sku}</span>
+                  <span className="text-xs text-gray-300">•</span>
+                  <span className="text-xs text-gray-500">Brand: {product.brand}</span>
+                </div>
+              </div>
+              <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
+                <Heart className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <span className="text-2xl font-bold text-gray-900">
+                    KSh {product.price.toLocaleString()}
+                  </span>
+                  {product.originalPrice && (
+                    <span className="text-lg text-gray-500 line-through">
+                      KSh {product.originalPrice.toLocaleString()}
+                    </span>
+                  )}
+                </div>
+                
+                <div className="flex items-center space-x-1">
                   <div className="flex items-center">
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
                         className={`w-4 h-4 ${
-                          i < Math.floor(product.rating) 
-                            ? 'text-yellow-400 fill-current' 
+                          i < Math.floor(product.rating)
+                            ? 'text-yellow-400 fill-current'
                             : 'text-gray-300'
                         }`}
                       />
                     ))}
                   </div>
-                  <span className="ml-2 text-sm font-medium">{product.rating}</span>
-                  <span className="ml-1 text-xs text-gray-500">({product.reviewCount})</span>
+                  <span className="text-sm text-gray-600">({product.reviewCount})</span>
                 </div>
 
-                {/* Price */}
-                <div className="mb-4">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xl font-bold text-gray-900">
-                      KSh {product.price.toLocaleString()}
-                    </span>
-                    {product.originalPrice && (
-                      <span className="text-sm text-gray-500 line-through">
-                        KSh {product.originalPrice.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
-                  {product.originalPrice && (
-                    <div className="text-sm text-green-600 font-medium">
-                      Save KSh {(product.originalPrice - product.price).toLocaleString()}
-                    </div>
-                  )}
-                </div>
-
-                {/* Tags */}
-                <div className="mb-4">
-                  <div className="flex flex-wrap gap-1">
-                    {product.tags.slice(0, 3).map((tag) => (
-                      <span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="space-y-2">
-                  <button
-                    disabled={!product.inStock}
-                    className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${
-                      product.inStock
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white hover:from-blue-600 hover:to-purple-700 shadow-lg hover:shadow-xl'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                  >
-                    <ShoppingCart className="w-5 h-5" />
-                    {product.inStock ? 'Add to Cart' : 'Out of Stock'}
-                  </button>
-                  
-                  <div className="flex gap-2">
-                    <button className="flex-1 border-2 border-gray-300 text-gray-700 py-2 px-4 rounded-xl font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
-                      <Heart className="w-4 h-4" />
-                      Wishlist
-                    </button>
-                    <button className="flex-1 border-2 border-gray-300 text-gray-700 py-2 px-4 rounded-xl font-semibold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
-                      <MapPin className="w-4 h-4" />
-                      Find in Store
-                    </button>
-                  </div>
+                <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium ${stockStatus.bg} ${stockStatus.color}`}>
+                  <StockIcon className="w-3 h-3" />
+                  <span>
+                    {stockStatus.status === 'in-stock' && `${product.stockCount} in stock`}
+                    {stockStatus.status === 'low-stock' && `Only ${product.stockCount} left`}
+                    {stockStatus.status === 'out-of-stock' && 'Out of stock'}
+                  </span>
                 </div>
               </div>
+
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => onViewDetails(product)}
+                  className="px-4 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
+                >
+                  <Eye className="w-4 h-4" />
+                  <span>View Details</span>
+                </button>
+                
+                {product.inStock && (
+                  <button
+                    onClick={() => onAddToCart(product)}
+                    className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors flex items-center space-x-2"
+                  >
+                    <ShoppingCart className="w-4 h-4" />
+                    <span>Add to Cart</span>
+                  </button>
+                )}
+              </div>
             </div>
-          ))}
+
+            {/* Store Availability */}
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">
+                  Available in {availableStores.length} store{availableStores.length !== 1 ? 's' : ''}
+                </span>
+                {availableStores.length > 0 && (
+                  <button
+                    onClick={() => onShopInStore(product, availableStores[0].storeId)}
+                    className="text-sm text-red-600 hover:text-red-700 font-medium flex items-center space-x-1"
+                  >
+                    <Store className="w-4 h-4" />
+                    <span>Shop in Store</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Grid view
+  return (
+    <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow group">
+      {/* Product Image */}
+      <div className="relative aspect-square bg-gray-100 flex items-center justify-center">
+        <Package className="w-16 h-16 text-gray-400" />
+        
+        {/* Badges */}
+        <div className="absolute top-3 left-3 flex flex-col space-y-1">
+          {product.isNew && (
+            <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+              New
+            </span>
+          )}
+          {product.isFeatured && (
+            <span className="bg-blue-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+              Featured
+            </span>
+          )}
+        </div>
+        
+        {product.isOnSale && (
+          <span className="absolute top-3 right-3 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
+            -{product.discount}%
+          </span>
+        )}
+
+        {/* Quick Actions */}
+        <div className="absolute top-3 right-3 flex flex-col space-y-2 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors">
+            <Heart className="w-4 h-4 text-gray-600" />
+          </button>
+          <button 
+            onClick={() => onViewDetails(product)}
+            className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors"
+          >
+            <Eye className="w-4 h-4 text-gray-600" />
+          </button>
+          <button className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors">
+            <Share2 className="w-4 h-4 text-gray-600" />
+          </button>
+        </div>
+      </div>
+
+      {/* Product Info */}
+      <div className="p-4">
+        <div className="mb-2">
+          <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">{product.name}</h3>
+          <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
         </div>
 
-        {/* No Results */}
-        {filteredProducts.length === 0 && (
-          <div className="text-center py-12">
-            <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No products found</h3>
-            <p className="text-gray-600 mb-4">Try adjusting your filters or search terms</p>
-            <button
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedSubcategory('all');
-                setSelectedBrand('all');
-                setPriceRange([0, 200000]);
-                setShowOnlyInStock(false);
-                setShowOnlyOnSale(false);
-              }}
-              className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors font-medium"
-            >
-              Clear All Filters
-            </button>
+        {/* Rating */}
+        <div className="flex items-center space-x-1 mb-2">
+          <div className="flex items-center">
+            {[...Array(5)].map((_, i) => (
+              <Star
+                key={i}
+                className={`w-4 h-4 ${
+                  i < Math.floor(product.rating)
+                    ? 'text-yellow-400 fill-current'
+                    : 'text-gray-300'
+                }`}
+              />
+            ))}
           </div>
-        )}
+          <span className="text-sm text-gray-600">({product.reviewCount})</span>
+        </div>
+
+        {/* Price */}
+        <div className="flex items-center space-x-2 mb-3">
+          <span className="text-xl font-bold text-gray-900">
+            KSh {product.price.toLocaleString()}
+          </span>
+          {product.originalPrice && (
+            <span className="text-sm text-gray-500 line-through">
+              KSh {product.originalPrice.toLocaleString()}
+            </span>
+          )}
+        </div>
+
+        {/* Stock Status */}
+        <div className={`flex items-center space-x-1 px-2 py-1 rounded-full text-xs font-medium mb-3 ${stockStatus.bg} ${stockStatus.color}`}>
+          <StockIcon className="w-3 h-3" />
+          <span>
+            {stockStatus.status === 'in-stock' && `${product.stockCount} in stock`}
+            {stockStatus.status === 'low-stock' && `Only ${product.stockCount} left`}
+            {stockStatus.status === 'out-of-stock' && 'Out of stock'}
+          </span>
+        </div>
+
+        {/* Store Availability */}
+        <div className="mb-4">
+          <div className="flex items-center justify-between text-sm">
+            <span className="text-gray-600">
+              Available in {availableStores.length} store{availableStores.length !== 1 ? 's' : ''}
+            </span>
+            {availableStores.length > 0 && (
+              <button
+                onClick={() => onShopInStore(product, availableStores[0].storeId)}
+                className="text-red-600 hover:text-red-700 font-medium flex items-center space-x-1"
+              >
+                <Store className="w-3 h-3" />
+                <span>Shop in Store</span>
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className="flex space-x-2">
+          {product.inStock ? (
+            <button
+              onClick={() => onAddToCart(product)}
+              className="flex-1 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center space-x-2"
+            >
+              <ShoppingCart className="w-4 h-4" />
+              <span>Add to Cart</span>
+            </button>
+          ) : (
+            <button
+              disabled
+              className="flex-1 bg-gray-300 text-gray-500 py-2 px-4 rounded-lg cursor-not-allowed"
+            >
+              Out of Stock
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );
+}
+
+// Product Details Modal Component
+interface ProductDetailsModalProps {
+  product: Product;
+  onClose: () => void;
+  onAddToCart: (product: Product) => void;
+  onShopInStore: (product: Product, storeId: string) => void;
+}
+
+function ProductDetailsModal({ product, onClose, onAddToCart, onShopInStore }: ProductDetailsModalProps) {
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({});
+  const [quantity, setQuantity] = useState(1);
+  const [activeTab, setActiveTab] = useState('overview');
+
+  const stockStatus = getStockStatus(product);
+  const StockIcon = stockStatus.icon;
+  
+  const availableStores = product.storeAvailability.filter(store => store.inStock);
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden">
+        <div className="flex h-full">
+          {/* Product Images */}
+          <div className="w-1/2 bg-gray-100 flex items-center justify-center">
+            <Package className="w-32 h-32 text-gray-400" />
+          </div>
+
+          {/* Product Details */}
+          <div className="w-1/2 p-8 overflow-y-auto">
+            <div className="flex justify-between items-start mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900 mb-2">{product.name}</h2>
+                <p className="text-gray-600 mb-4">{product.description}</p>
+                
+                {/* Rating */}
+                <div className="flex items-center space-x-2 mb-4">
+                  <div className="flex items-center">
+                    {[...Array(5)].map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-5 h-5 ${
+                          i < Math.floor(product.rating)
+                            ? 'text-yellow-400 fill-current'
+                            : 'text-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-gray-600">({product.reviewCount} reviews)</span>
+                </div>
+              </div>
+              
+              <button
+                onClick={onClose}
+                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <XCircle className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Price */}
+            <div className="flex items-center space-x-3 mb-6">
+              <span className="text-3xl font-bold text-gray-900">
+                KSh {product.price.toLocaleString()}
+              </span>
+              {product.originalPrice && (
+                <span className="text-xl text-gray-500 line-through">
+                  KSh {product.originalPrice.toLocaleString()}
+                </span>
+              )}
+              {product.discount && (
+                <span className="bg-red-100 text-red-600 px-2 py-1 rounded-full text-sm font-medium">
+                  Save {product.discount}%
+                </span>
+              )}
+            </div>
+
+            {/* Stock Status */}
+            <div className={`flex items-center space-x-2 px-3 py-2 rounded-lg mb-6 ${stockStatus.bg}`}>
+              <StockIcon className={`w-5 h-5 ${stockStatus.color}`} />
+              <span className={`font-medium ${stockStatus.color}`}>
+                {stockStatus.status === 'in-stock' && `${product.stockCount} units in stock`}
+                {stockStatus.status === 'low-stock' && `Only ${product.stockCount} units left`}
+                {stockStatus.status === 'out-of-stock' && 'Currently out of stock'}
+              </span>
+            </div>
+
+            {/* Variants */}
+            {product.variants && product.variants.length > 0 && (
+              <div className="mb-6">
+                <h4 className="font-medium text-gray-900 mb-3">Options</h4>
+                <div className="space-y-3">
+                  {Object.entries(
+                    product.variants.reduce((acc, variant) => {
+                      if (!acc[variant.name]) acc[variant.name] = [];
+                      acc[variant.name].push(variant);
+                      return acc;
+                    }, {} as Record<string, typeof product.variants>)
+                  ).map(([name, variants]) => (
+                    <div key={name}>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {name}
+                      </label>
+                      <div className="flex flex-wrap gap-2">
+                        {variants.map((variant) => (
+                          <button
+                            key={variant.id}
+                            onClick={() => setSelectedVariants({
+                              ...selectedVariants,
+                              [name]: variant.value
+                            })}
+                            className={`px-3 py-2 border rounded-lg text-sm font-medium transition-colors ${
+                              selectedVariants[name] === variant.value
+                                ? 'border-red-500 bg-red-50 text-red-600'
+                                : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                            } ${!variant.inStock ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            disabled={!variant.inStock}
+                          >
+                            {variant.value}
+                            {variant.price && (
+                              <span className="ml-1 text-xs">
+                                (+KSh {(variant.price - product.price).toLocaleString()})
+                              </span>
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Quantity */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Quantity
+              </label>
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  -
+                </button>
+                <span className="px-4 py-2 border border-gray-300 rounded-lg min-w-[60px] text-center">
+                  {quantity}
+                </span>
+                <button
+                  onClick={() => setQuantity(Math.min(product.stockCount, quantity + 1))}
+                  className="p-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  disabled={quantity >= product.stockCount}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="space-y-3 mb-6">
+              {product.inStock ? (
+                <button
+                  onClick={() => onAddToCart(product)}
+                  className="w-full bg-red-500 text-white py-3 px-6 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center space-x-2 font-medium"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  <span>Add to Cart</span>
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="w-full bg-gray-300 text-gray-500 py-3 px-6 rounded-lg cursor-not-allowed"
+                >
+                  Out of Stock
+                </button>
+              )}
+              
+              <button className="w-full border border-gray-300 text-gray-700 py-3 px-6 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2">
+                <Heart className="w-5 h-5" />
+                <span>Add to Wishlist</span>
+              </button>
+            </div>
+
+            {/* Store Availability */}
+            <div className="border-t border-gray-200 pt-6">
+              <h4 className="font-medium text-gray-900 mb-4">Store Availability</h4>
+              <div className="space-y-3">
+                {product.storeAvailability.map((store) => (
+                  <div key={store.storeId} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div>
+                      <div className="font-medium text-gray-900">{store.storeName}</div>
+                      <div className="text-sm text-gray-600">{store.storeAddress}</div>
+                      <div className="text-xs text-gray-500">{store.distance}km away</div>
+                    </div>
+                    <div className="text-right">
+                      {store.inStock ? (
+                        <div>
+                          <div className="text-sm font-medium text-green-600">
+                            {store.stockCount} in stock
+                          </div>
+                          <button
+                            onClick={() => onShopInStore(product, store.storeId)}
+                            className="text-sm text-red-600 hover:text-red-700 font-medium"
+                          >
+                            Shop in Store
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="text-sm text-red-600">Out of stock</div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Specifications */}
+            <div className="border-t border-gray-200 pt-6 mt-6">
+              <h4 className="font-medium text-gray-900 mb-4">Specifications</h4>
+              <div className="space-y-2">
+                {Object.entries(product.specifications).map(([key, value]) => (
+                  <div key={key} className="flex justify-between py-2 border-b border-gray-100">
+                    <span className="text-gray-600">{key}</span>
+                    <span className="font-medium text-gray-900">{value}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Helper function (moved outside component)
+function getStockStatus(product: Product) {
+  if (!product.inStock) {
+    return { status: 'out-of-stock', color: 'text-red-600', bg: 'bg-red-50', icon: XCircle };
+  }
+  if (product.lowStock) {
+    return { status: 'low-stock', color: 'text-orange-600', bg: 'bg-orange-50', icon: AlertCircle };
+  }
+  return { status: 'in-stock', color: 'text-green-600', bg: 'bg-green-50', icon: CheckCircle };
 }
