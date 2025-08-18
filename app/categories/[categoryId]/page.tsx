@@ -772,10 +772,6 @@ export default function CategoryPage({ params }: CategoryPageProps) {
     );
   }
 
-  if (!user) {
-    return <AuthenticationForm />;
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Category Header */}
@@ -981,6 +977,7 @@ export default function CategoryPage({ params }: CategoryPageProps) {
                       setSelectedProduct(product);
                       setShowProductModal(true);
                     }}
+                    user={user}
                   />
                 ))}
               </div>
@@ -1026,9 +1023,10 @@ interface ProductCardProps {
   onAddToCart: (product: Product) => void;
   onShopInStore: (product: Product, storeId: string) => void;
   onViewDetails: (product: Product) => void;
+  user: any;
 }
 
-function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDetails }: ProductCardProps) {
+function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDetails, user }: ProductCardProps) {
   const stockStatus = getStockStatus(product);
   const StockIcon = stockStatus.icon;
 
@@ -1140,6 +1138,10 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
                 {availableStores.length > 0 && (
                   <button
                     onClick={() => {
+                      if (!user) {
+                        router.push('/auth/login');
+                        return;
+                      }
                       setSelectedProduct(product);
                       setSelectedStoreId(availableStores[0].storeId);
                       setShowShopInStoreModal(true);
@@ -1147,7 +1149,7 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
                     className="text-sm text-red-600 hover:text-red-700 font-medium flex items-center space-x-1"
                   >
                     <Store className="w-4 h-4" />
-                    <span>Shop in Store</span>
+                    <span>{user ? 'Shop in Store' : 'Sign in for Store'}</span>
                   </button>
                 )}
               </div>
@@ -1256,17 +1258,26 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
             {availableStores.length > 0 && (
               <button
                 onClick={() => {
+                  if (!user) {
+                    router.push('/auth/login');
+                    return;
+                  }
                   setSelectedProduct(product);
                   setSelectedStoreId(availableStores[0].storeId);
                   setShowShopInStoreModal(true);
                 }}
-                className="text-red-600 hover:text-red-700 font-medium flex items-center space-x-1"
+                className="text-red-600 hover:text-red-700 font-medium flex items-center space-x-1 transition-colors"
               >
                 <Store className="w-3 h-3" />
-                <span>Shop in Store</span>
+                <span>{user ? 'Shop in Store' : 'Sign in to Shop'}</span>
               </button>
             )}
           </div>
+          {availableStores.length > 0 && !user && (
+            <div className="mt-2 text-xs text-gray-500">
+              Sign in to reserve and shop at our physical stores
+            </div>
+          )}
         </div>
 
         {/* Actions */}
@@ -1277,7 +1288,7 @@ function ProductCard({ product, viewMode, onAddToCart, onShopInStore, onViewDeta
               className="flex-1 bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition-colors flex items-center justify-center space-x-2"
             >
               <ShoppingCart className="w-4 h-4" />
-              <span>Add to Cart</span>
+              <span>{user ? 'Add to Cart' : 'Sign in to Buy'}</span>
             </button>
           ) : (
             <button
